@@ -1,0 +1,9 @@
+spring:
+   thymeleaf:
+      cache: false 
+server:
+   ssl:
+      key-store: certificates/keyStore.p12
+      key-store-password: certificates
+      key-store-type: PKCS12
+   port: 8443
