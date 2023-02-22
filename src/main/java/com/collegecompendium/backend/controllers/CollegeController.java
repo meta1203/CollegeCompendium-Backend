@@ -29,6 +29,7 @@ public class CollegeController {
 	// Spring annotation - defines a REST endpoint to be handled by
 	// the annotated function. function arguments can be annotated
 	// for input (ex @RequestBody) or implicit (eg. HttpServletResponse)
+	// TEST
 
 	// This annotation is for the POST HTTP method
 	@PostMapping("/college")
