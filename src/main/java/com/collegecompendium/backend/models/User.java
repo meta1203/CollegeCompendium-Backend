@@ -7,16 +7,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Builder.Default;
 
 @Entity
+@Builder
+// `user` is an H2 reserved word, so force this
+// table to be called `users` instead
+@Table(name = "users")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-    private final String id;
+	@Default
+    private final String id = UUID.randomUUID().toString();
 	@NotNull
 	@Email
 	@Column(length = 1024)
@@ -45,11 +53,14 @@ public class User {
     	this.location = "";
     }
     
-	public User(String id, String email, String firstName, String lastName, String location) {
+    public User(String id, @NotNull @Email String email, @NotNull @NotEmpty String username, @NotNull String firstName,
+			@NotNull String lastName, @Size(max = 16) String middleInitial, @NotNull String location) {
 		this.id = id;
 		this.email = email;
+		this.username = username;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.middleInitial = middleInitial;
 		this.location = location;
 	}
 	
