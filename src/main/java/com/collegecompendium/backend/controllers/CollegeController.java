@@ -1,7 +1,10 @@
 package com.collegecompendium.backend.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import com.collegecompendium.backend.models.Degrees;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -105,5 +108,23 @@ public class CollegeController {
 		}
 		collegeRepository.delete(query.get());
 		return true;
+	}
+
+
+	/**
+	 * Gets colleges offering a certain degree name.
+	 */
+	@GetMapping("/colleges/{degreeName}")
+	public List<College> getCollegesByDegreeName(String degreeName) {
+		List<College> colleges = new ArrayList<>();
+		for(College college : collegeRepository.findAll()){
+			for(Degrees degree : college.getDegrees()){
+				if(degree.getDegreeName().equals(degreeName)){
+					colleges.add(college);
+					break;
+				}
+			}
+		}
+		return colleges;
 	}
 }

@@ -33,9 +33,9 @@ public class College {
 	// the GenerationType is how the id is generated
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
-	
+
 	@ElementCollection
-	private List<String> majors;
+	private List<Degrees> degrees;
 	
 	// JSR 380 - ensures that this value cannot be empty
 	@NotEmpty
