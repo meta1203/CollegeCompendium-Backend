@@ -23,7 +23,7 @@ public class User {
     private String email;
 	@NotNull
 	@NotEmpty
-	@Column(length = 128)
+	@Column(length = 128, unique = true)
 	private String username;
 	@NotNull
 	@Column(length = 128)
