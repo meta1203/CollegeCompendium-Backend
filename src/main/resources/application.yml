@@ -1,1 +1,31 @@
+# src/main/resources/application.yml
+# WIP
 
+spring:
+  datasource:
+    platform: mariadb
+    driverClassName: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/ourDB
+    username: runit
+    password: downmid
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true  
+  
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            client-id: fGEfhQw23cfGNHhZQSxd7PrLBgbckdY6
+            client-secret: g9ebI0i81HHKRuwGeR5HoHHtoa4Zl4iSnz0dY64L_YxRjkOSHqSL1zY2tQMrXUsf
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            # trailing slash is important!
+            issuer-uri: https://dev-yrjc5x2ila2084mu.us.auth0.com/
