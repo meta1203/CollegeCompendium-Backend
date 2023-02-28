@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.collegecompendium.backend.models.Degrees;
+import com.collegecompendium.backend.models.Degree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -118,7 +118,7 @@ public class CollegeController {
 	public List<College> getCollegesByDegreeName(String degreeName) {
 		List<College> colleges = new ArrayList<>();
 		for(College college : collegeRepository.findAll()){
-			for(Degrees degree : college.getDegrees()){
+			for(Degree degree : college.getDegrees()){
 				if(degree.getDegreeName().equals(degreeName)){
 					colleges.add(college);
 					break;

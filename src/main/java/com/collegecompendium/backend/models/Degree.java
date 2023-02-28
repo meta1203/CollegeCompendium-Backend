@@ -1,6 +1,5 @@
 package com.collegecompendium.backend.models;
 
-import com.collegecompendium.backend.repositories.CollegeRepository;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,9 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
 
 /**
  * This class represents a college degree. It contains the name of the degree and the number of credits required to earn it.
@@ -20,7 +16,7 @@ import java.util.ArrayList;
  */
 @Data
 @Entity
-public class Degrees {
+public class Degree {
     private enum DegreeType {
         ASSOCIATE,
         BACHELOR,
