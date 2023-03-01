@@ -10,6 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -18,15 +20,19 @@ import lombok.Data;
 
 @Data
 @Entity
-@JsonIdentityInfo( 
-		  generator = ObjectIdGenerators.PropertyGenerator.class, 
-		  property = "id")
+/*
+ * Not sure if needed with bi-directional link to User - User is "owner"
+ * @JsonIdentityInfo( generator = ObjectIdGenerators.PropertyGenerator.class,
+ * property = "id")
+ */
 
 public class Student {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private String id;
+	/*
+	 * @Id
+	 * 
+	 * @GeneratedValue(strategy = GenerationType.UUID) private String id;
+	 */
 	
 	@NotEmpty
 	@Size(min = 8, max = 120)
@@ -55,5 +61,8 @@ public class Student {
 	
 	//TODO Majors?
 	
-	
+	//Creates foreign key in student table in "user_id" which is linked to a primary key in User (owner) 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
