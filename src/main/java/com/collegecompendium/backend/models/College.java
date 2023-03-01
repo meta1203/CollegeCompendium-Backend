@@ -67,7 +67,7 @@ public class College {
 		this.id = null;
 	}
 	
-	public boolean getId(String checkId) {
-		return id.equals(checkId);
+	public String getId() {
+		return id;
 	}
 }
