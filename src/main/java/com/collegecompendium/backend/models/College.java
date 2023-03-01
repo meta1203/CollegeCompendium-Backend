@@ -1,9 +1,8 @@
 package com.collegecompendium.backend.models;
 
 import java.util.List;
-import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
@@ -17,7 +16,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.Getter;
 
 // Lombok's Data annotation - https://projectlombok.org/features/Data
 @Data
@@ -25,10 +23,14 @@ import lombok.Getter;
 @Entity
 // Jackson JSON annotation - instructs Jackson to prevent circular reference 
 // loops by replacing nested whole objects with their ID instead
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo( 
+		  generator = ObjectIdGenerators.PropertyGenerator.class, 
+		  property = "id")
 public class College {
-
+	// JPA - denotes this field as a unique id
 	@Id
+	// JPA - denotes this field as auto-generated
+	// the GenerationType is how the id is generated
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
@@ -36,49 +38,36 @@ public class College {
 	private List<Degree> degrees;
 	
 	// JSR 380 - ensures that this value cannot be empty
-
 	@NotEmpty
+	// JSR 380 - ensures that this value cannot be null
 	@NotNull
 	private String name;
-
 	@NotEmpty
 	@NotNull
+	// JSR 380 - ensures that this value cannot be fewer than 10 characters,
+	// nor more than 120 characters
 	@Size(min = 10, max = 120)
 	@NotNull
+	// JPA - defines the size of the column as stored in the DB
 	@Column(length = 120)
 	private String location;
-
+	
 	@NotNull
 	@Size(min = 12, max = 1024)
 	@Column(length = 1024)
 	private String url;
-
+	
+	// JSR 380 - ensures that this value cannot be lower than 100
 	@Min(100)
 	@NotNull
+	// this value is in whole dollars
 	private Integer cost;
 	
-	@NotNull
-	private String website;
-	
-	@NotNull
-	private String appURL;
-	
-	public College(@JsonProperty("id") String id, @JsonProperty("name") String name,
-			@JsonProperty("location") String location, @JsonProperty("url") String url,
-			@JsonProperty("cost") Integer cost, @JsonProperty("majors") List<String> majors) {
-		this.id = id;
-		this.name = name;
-		this.location = location;
-		this.url = url;
-		this.cost = cost;
-		this.majors = majors;
+	public void setId(String val) {
+		this.id = null;
 	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getId() {
-		return id;
+	
+	public boolean getId(String checkId) {
+		return id.equals(checkId);
 	}
 }
