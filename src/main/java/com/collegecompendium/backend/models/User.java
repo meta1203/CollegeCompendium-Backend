@@ -24,7 +24,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Default
-    private final String id = UUID.randomUUID().toString();
+    private String id = UUID.randomUUID().toString();
 	@NotNull
 	@Email
 	@Column(length = 1024)

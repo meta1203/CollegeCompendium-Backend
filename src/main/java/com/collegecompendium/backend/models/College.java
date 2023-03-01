@@ -37,6 +37,10 @@ public class College {
 	@ElementCollection
 	private List<Degree> degrees;
 	
+	/*
+	 * TODO Do we make a Major model for Colleges/Students?
+	 * @ElementCollection private List<Major> majors;
+	 */
 	// JSR 380 - ensures that this value cannot be empty
 	@NotEmpty
 	// JSR 380 - ensures that this value cannot be null
