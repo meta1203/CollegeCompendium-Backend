@@ -33,8 +33,9 @@ public class College {
 	private String id;
 
 	@ElementCollection
-	@Getter
-	private List<String> majors;
+	private List<Degree> degrees;
+	
+	// JSR 380 - ensures that this value cannot be empty
 
 	@NotEmpty
 	@NotNull
