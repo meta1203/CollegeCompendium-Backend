@@ -1,12 +1,6 @@
 spring:
   security:
     oauth2:
-      client:
-        registration:
-          auth0:
-            client-id: fGEfhQw23cfGNHhZQSxd7PrLBgbckdY6
-            client-secret: g9ebI0i81HHKRuwGeR5HoHHtoa4Zl4iSnz0dY64L_YxRjkOSHqSL1zY2tQMrXUsf
-            scope:
-              - openid
-              - profile
-              - email
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-yrjc5x2ila2084mu.us.auth0.com/

@@ -12,11 +12,17 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
+import lombok.NoArgsConstructor;
 
 @Entity
+// Lombok builder
 @Builder
+// Lombok constructors
+@NoArgsConstructor
+@AllArgsConstructor
 // `user` is an H2 reserved word, so force this
 // table to be called `users` instead
 @Table(name = "users")
@@ -25,6 +31,9 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Default
     private final String id = UUID.randomUUID().toString();
+	@NotNull
+	@Column(length = 256, unique = true)
+	private String auth0Id;
 	@NotNull
 	@Email
 	@Column(length = 1024)
@@ -44,25 +53,6 @@ public class User {
 	private String middleInitial;
 	@NotNull
     private String location;
-    
-    public User() {
-    	this.id = UUID.randomUUID().toString();
-    	this.email = "";
-    	this.firstName = "";
-    	this.lastName = "";
-    	this.location = "";
-    }
-    
-    public User(String id, @NotNull @Email String email, @NotNull @NotEmpty String username, @NotNull String firstName,
-			@NotNull String lastName, @Size(max = 16) String middleInitial, @NotNull String location) {
-		this.id = id;
-		this.email = email;
-		this.username = username;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.middleInitial = middleInitial;
-		this.location = location;
-	}
 	
 	public String getEmail() {
 		return email;

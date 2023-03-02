@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.collegecompendium.backend.models.Degree;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 // Spring annotation - marks this class as providing REST API endpoints
 @RestController
+// this has to be put on every controller we want to access from a
+// web browser (CORS my beloathed)
+@CrossOrigin(origins = "http://localhost:3000")
 public class CollegeController {
 	// Spring annotation - injects a defined Spring Bean here
 	// These beans can be implicit (eg. @Component on a class/interface
