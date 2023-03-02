@@ -26,8 +26,9 @@ public class UserController {
     }
     
     // used to test endpoint security
-    /* @GetMapping("/student")
+    @GetMapping("/student")
     public Object pingAuth(@AuthenticationPrincipal Jwt token) {
-    	return token;
-    } */
+    	//return token;
+    	return User.getAuth0(token);
+    }
 }
