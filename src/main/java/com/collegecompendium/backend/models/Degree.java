@@ -30,7 +30,7 @@ public class Degree {
 
     @NotEmpty
     @NotNull
-    private String degreeName;
+    private String name;
 
     // These actually can be empty/null, if the school doesn't provide enough data
     private DegreeType degreeType;

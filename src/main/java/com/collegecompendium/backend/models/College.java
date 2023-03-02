@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -34,7 +34,7 @@ public class College {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
-	@ElementCollection
+	@ManyToMany
 	private List<Degree> degrees;
 	
 	// JSR 380 - ensures that this value cannot be empty

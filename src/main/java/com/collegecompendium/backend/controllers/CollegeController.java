@@ -119,7 +119,7 @@ public class CollegeController {
 		List<College> colleges = new ArrayList<>();
 		for(College college : collegeRepository.findAll()){
 			for(Degree degree : college.getDegrees()){
-				if(degree.getDegreeName().equals(degreeName)){
+				if(degree.getName().equals(degreeName)){
 					colleges.add(college);
 					break;
 				}
