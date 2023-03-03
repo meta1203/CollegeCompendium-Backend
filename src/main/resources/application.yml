@@ -1,1 +1,6 @@
-
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-yrjc5x2ila2084mu.us.auth0.com/
