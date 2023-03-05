@@ -12,6 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import com.collegecompendium.backend.models.User;
 import com.collegecompendium.backend.repositories.UserRepository;
 
+import lombok.Builder;
+
 @SpringBootTest
 @ActiveProfiles("dev")
 public class UserTests {
