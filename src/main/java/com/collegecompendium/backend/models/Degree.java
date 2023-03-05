@@ -35,4 +35,8 @@ public class Degree {
     // These actually can be empty/null, if the school doesn't provide enough data
     private DegreeType degreeType;
     private int creditsRequired;
+    
+    public String getName() {
+        return name;
+    }
 }

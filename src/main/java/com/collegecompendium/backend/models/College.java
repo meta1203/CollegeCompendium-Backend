@@ -2,14 +2,8 @@ package com.collegecompendium.backend.models;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -37,4 +31,8 @@ public class College extends User {
 	@Min(100)
 	@NotNull
 	private Integer cost;
+	
+	public List<Degree> getDegrees() {
+	    return degrees;
+	}
 }
