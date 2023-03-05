@@ -40,7 +40,7 @@ public abstract class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Default
-    private final String id = UUID.randomUUID().toString();
+    private String id = UUID.randomUUID().toString();
 	
 	@NotNull
 	@Column(length = 256, unique = true)
@@ -95,7 +95,10 @@ public abstract class User {
 	public String getId() {
 		return id;
 	}
-
+	public void setId(String val) {
+		this.id = null;
+	}
+	
 	public String getUsername() {
 		return username;
 	}
