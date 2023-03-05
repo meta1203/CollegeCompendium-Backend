@@ -12,34 +12,25 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Builder.Default;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Entity
-// Lombok builder
-@Builder
 // Lombok constructors
 @NoArgsConstructor
 @AllArgsConstructor
-// `user` is an H2 reserved word, so force this
-// table to be called `users` instead
-@Table(name = "users")
+@EqualsAndHashCode
 public abstract class User {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Default
     private String id = UUID.randomUUID().toString();
 	
 	@NotNull
