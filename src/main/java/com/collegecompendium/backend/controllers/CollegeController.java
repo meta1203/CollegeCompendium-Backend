@@ -120,10 +120,13 @@ public class CollegeController {
 	 */
 	@GetMapping("/colleges/{degreeName}")
 	public List<College> getCollegesByDegreeName(String degreeName) {
+		// TODO: modify this function to use the CollegeRepository's
+		// findByDegreeIn function
+		
 		List<College> colleges = new ArrayList<>();
-		for(College college : collegeRepository.findAll()){
-			for(Degree degree : college.getDegrees()){
-				if(degree.getName().equals(degreeName)){
+		for(College college : collegeRepository.findAll()) {
+			for(Degree degree : college.getDegrees()) {
+				if(degree.getName().equals(degreeName)) {
 					colleges.add(college);
 					break;
 				}

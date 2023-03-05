@@ -37,7 +37,7 @@ public class College extends User {
 	@NotNull
 	private Integer cost;
 	
-	//Check why @Data isn't picking this up - Erik
+	// TODO: Check why @Data isn't picking this up - Erik
 	public List<Degree> getDegrees() {
 	    return degrees;
 	}

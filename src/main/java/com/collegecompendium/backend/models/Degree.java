@@ -36,6 +36,7 @@ public class Degree {
     private DegreeType degreeType;
     private int creditsRequired;
     
+    // TODO: Check why @Data isn't picking this up - Erik
     public String getName() {
         return name;
     }
