@@ -16,6 +16,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -26,7 +27,7 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.NoArgsConstructor;
 
-@Entity
+@MappedSuperclass
 // Lombok builder
 @Builder
 // Lombok constructors
@@ -95,8 +96,9 @@ public abstract class User {
 	public String getId() {
 		return id;
 	}
+	
 	public void setId(String val) {
-		this.id = null;
+		this.id = val;
 	}
 	
 	public String getUsername() {
