@@ -23,12 +23,14 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @MappedSuperclass
 // Lombok constructors
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@SuperBuilder
 public abstract class User {
 	
 	@Id
@@ -49,9 +51,7 @@ public abstract class User {
 	@Column(length = 128, unique = true)
 	private String username;
 	
-	@NotEmpty
-	@NotNull
-	@Size(min = 10, max = 120)
+	@Size(min = 0, max = 120)
 	@NotNull
 	@Column(length = 120)
 	private String location;
