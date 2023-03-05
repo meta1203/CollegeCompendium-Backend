@@ -44,7 +44,7 @@ public class StudentController {
 		return query.get();
 	}
 	
-	@PutMapping("/college/{id}")
+	@PutMapping("/student/{id}")
 	public Student updateStudent(@RequestBody Student input, HttpServletResponse response) {
 		Optional<Student> query = studentRepository.findById(input.getId());
 		if(query.isEmpty()) {
@@ -55,7 +55,7 @@ public class StudentController {
 		return student;
 	}
 	
-	@DeleteMapping("/college/{id}")
+	@DeleteMapping("/student/{id}")
 	public boolean deleteStudent(@PathVariable String id, HttpServletResponse response) {
 		Optional<Student> query = studentRepository.findById(id);
 		if(query.isEmpty()) {
