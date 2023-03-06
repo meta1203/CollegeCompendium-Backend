@@ -9,51 +9,52 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.collegecompendium.backend.models.User;
-import com.collegecompendium.backend.repositories.UserRepository;
+import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.repositories.StudentRepository;
 
 @SpringBootTest
 @ActiveProfiles("dev")
 public class UserTests {
 	@Autowired
-	private UserRepository userRepository;
+	private StudentRepository studentRepository;
 	
 	@Test
-	void testUserRepo() {
+	void testStudentRepo() {
 		final String EMAIL_ADDRESS = "hancock.hunter@gmail.com";
 		// create
-		User user = User.builder()
+		Student student = Student.builder()
 				.email(EMAIL_ADDRESS)
 				.firstName("Hunter")
 				.lastName("Hancock")
 				.middleInitial("A")
 				.location("Socorro, New Mexico")
 				.username("meta1203")
+				.auth0Id("an auth0 id")
 				.build();
 		
-		user = userRepository.save(user);
-		assertNotNull(user.getId());
-		assertEquals(user.getEmail(), EMAIL_ADDRESS);
+		student = studentRepository.save(student);
+		assertNotNull(student.getId());
+		assertEquals(student.getEmail(), EMAIL_ADDRESS);
 		
-		String id = user.getId();
+		String id = student.getId();
 		
-		System.out.println(user);
+		System.out.println(student);
 		
 		// read
-		User fetchedUser = userRepository.findDistinctByUsername("meta1203");
-		assertEquals(user.getId(), fetchedUser.getId());
-		assertEquals(user.getEmail(), fetchedUser.getEmail());
+		Student fetchedStudent = studentRepository.findDistinctByUsername("meta1203");
+		assertEquals(student.getId(), fetchedStudent.getId());
+		assertEquals(student.getEmail(), fetchedStudent.getEmail());
 		
 		// update
 		// test auto-update
-		user.setUsername("meta42069");
-		userRepository.save(user);
+		student.setUsername("meta42069");
+		studentRepository.save(student);
 		
-		fetchedUser = userRepository.findById(id).get();
-		assertEquals(user.getUsername(), fetchedUser.getUsername());
+		fetchedStudent = studentRepository.findById(id).get();
+		assertEquals(student.getUsername(), fetchedStudent.getUsername());
 		
 		// delete
-		userRepository.delete(user);
-		assertTrue(userRepository.findById(id).isEmpty());
+		studentRepository.delete(student);
+		assertTrue(studentRepository.findById(id).isEmpty());
 	}
 }
