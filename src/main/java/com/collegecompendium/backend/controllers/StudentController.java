@@ -2,6 +2,8 @@ package com.collegecompendium.backend.controllers;
 
 import java.util.Optional;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -59,15 +61,33 @@ public class StudentController {
 		}
 	}
 	
-	@PutMapping("/student/{id}")
-	public Student updateStudent(@RequestBody Student input, HttpServletResponse response) {
-		Optional<Student> query = studentRepository.findById(input.getId());
-		if(query.isEmpty()) {
-			response.setStatus(404);
+
+
+	@PutMapping("/student")
+	public Student modifyStudent(
+		@RequestBody Student input, 
+		@AuthenticationPrincipal Jwt token, 
+		HttpServletResponse response) {
+		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
+		// If the student does not exist, sending back 404. 
+		if(result == null) {
+			response.setStatus(403);
 			return null;
 		}
-		Student student = query.get();
-		return student;
+		if (! token.getSubject().equals(input.getAuth0Id())) {
+			reponse.setStatus(403);
+			return null;
+		}
+		if (! input.getAuth0Id().equals(result.getAuth0Id())) {
+			response.setStatus(403);
+			return null;
+		}
+		if (! input.getId().equals(result.getId())) {
+			response.setStatus(403);
+			return null;
+		}
+		input = studentRepository.save(input);
+		return input;
 	}
 	
 	@DeleteMapping("/student/{id}")
