@@ -74,8 +74,4 @@ public abstract class User {
 		if (response.getStatusCode().is2xxSuccessful()) return response.getBody();
 		return null;
 	}
-		
-	public void setId(String val) {
-		this.id = val;
-	}	
 }
