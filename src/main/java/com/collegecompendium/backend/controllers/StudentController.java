@@ -2,8 +2,6 @@ package com.collegecompendium.backend.controllers;
 
 import java.util.Optional;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -75,7 +73,7 @@ public class StudentController {
 			return null;
 		}
 		if (! token.getSubject().equals(input.getAuth0Id())) {
-			reponse.setStatus(403);
+			response.setStatus(403);
 			return null;
 		}
 		if (! input.getAuth0Id().equals(result.getAuth0Id())) {
