@@ -59,15 +59,41 @@ public class StudentController {
 		}
 	}
 	
-	@PutMapping("/student/{id}")
-	public Student updateStudent(@RequestBody Student input, HttpServletResponse response) {
-		Optional<Student> query = studentRepository.findById(input.getId());
-		if(query.isEmpty()) {
+
+
+	@PutMapping("/student")
+	public Student modifyStudent(
+		@RequestBody Student input, 
+		@AuthenticationPrincipal Jwt token, 
+		HttpServletResponse response) {
+		
+		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
+		
+		// if the student does not exist, sending back 404.
+		if(result == null) {
 			response.setStatus(404);
 			return null;
 		}
-		Student student = query.get();
-		return student;
+		
+		// if the token does not belong to the caller, return 403
+		if (! token.getSubject().equals(input.getAuth0Id())) {
+			response.setStatus(403);
+			return null;
+		}
+		
+		if (! input.getAuth0Id().equals(result.getAuth0Id())) {
+			response.setStatus(403);
+			return null;
+		}
+		
+		// if the id is different, overwrite given id
+		if (! input.getId().equals(result.getId())) {
+			input.setId(result.getId());
+		}
+		
+		// update the db with the new student object
+		input = studentRepository.save(input);
+		return input;
 	}
 	
 	@DeleteMapping("/student/{id}")
