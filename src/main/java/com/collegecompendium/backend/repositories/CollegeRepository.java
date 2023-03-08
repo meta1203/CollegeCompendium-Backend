@@ -25,6 +25,6 @@ public interface CollegeRepository extends CrudRepository<College, String>{
 	// will at some point), check out this web page for info on how to do that:
 	// https://docs.spring.io/spring-data/data-jpa/docs/current/reference/html/#jpa.query-methods.query-creation
 	
-	List<College> findByDegreeIn(Degree... degrees);
-	List<College> findByDegreeIn(List<Degree> degrees);
+	List<College> findByDegreesIn(Degree... degrees);
+	List<College> findByDegreesIn(List<Degree> degrees);
 }
