@@ -3,6 +3,8 @@ package com.collegecompendium.backend.controllers;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +46,19 @@ public class StudentController {
 		return query.get();
 	}
 	
+	@GetMapping("/student")
+	public Student getCallingStudent(@AuthenticationPrincipal Jwt token, HttpServletResponse response) {
+		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
+		if(result == null) {
+			response.setStatus(404);
+			Student newUser = createJwtStudent(token);
+			return newUser;
+		} else {
+			response.setStatus(200);
+			return result;
+		}
+	}
+	
 	@PutMapping("/student/{id}")
 	public Student updateStudent(@RequestBody Student input, HttpServletResponse response) {
 		Optional<Student> query = studentRepository.findById(input.getId());
@@ -67,4 +82,20 @@ public class StudentController {
 	}
 	
 	//Possible "get students by degree(s)"?
+	
+	private Student createJwtStudent(Jwt token) {
+		
+	    Student student = new Student();
+	    student.setEmail(token.getClaim("email"));
+	    student.setUsername(token.getClaim("nickname"));
+	    student.setLocation("");
+	    student.setFirstName(token.getClaim("given_name"));
+	    student.setLastName(token.getClaim("family_name"));
+	    student.setMiddleInitial("");
+	    student.setHighschool("");
+	    student.setCollege("");
+	    student.setSatScore(null);
+	    student.setActScore(null);
+	    return student;
+	}
 }

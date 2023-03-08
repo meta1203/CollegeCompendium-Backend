@@ -14,7 +14,7 @@ import com.collegecompendium.backend.models.User;
 @RestController
 public class UserController {
 
-    @PostMapping("/user")
+    @PostMapping("/test/user")
     public User addUser(@RequestBody User user) {
     	// TODO: validate input
         // user = userRepository.save(user);
@@ -22,7 +22,7 @@ public class UserController {
     }
     
     // used to test endpoint security
-    @GetMapping("/student")
+    @GetMapping("/test")
     public Object pingAuth(@AuthenticationPrincipal Jwt token) {
     	//return token;
     	return User.getAuth0(token);

@@ -8,5 +8,5 @@ import jakarta.transaction.Transactional;
 @Transactional
 public interface StudentRepository extends CrudRepository<Student, String> {
 	public Student findDistinctByUsername(String username);
-	//TODO findByName() Student/User?
+	public Student findDistinctByAuth0Id(String auth0Id);
 }
