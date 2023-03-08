@@ -66,24 +66,32 @@ public class StudentController {
 		@RequestBody Student input, 
 		@AuthenticationPrincipal Jwt token, 
 		HttpServletResponse response) {
+		
 		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
-		// If the student does not exist, sending back 404. 
+		
+		// if the student does not exist, sending back 404.
 		if(result == null) {
-			response.setStatus(403);
+			response.setStatus(404);
 			return null;
 		}
+		
+		// if the token does not belong to the caller, return 403
 		if (! token.getSubject().equals(input.getAuth0Id())) {
 			response.setStatus(403);
 			return null;
 		}
+		
 		if (! input.getAuth0Id().equals(result.getAuth0Id())) {
 			response.setStatus(403);
 			return null;
 		}
+		
+		// if the id is different, overwrite given id
 		if (! input.getId().equals(result.getId())) {
-			response.setStatus(403);
-			return null;
+			input.setId(result.getId());
 		}
+		
+		// update the db with the new student object
 		input = studentRepository.save(input);
 		return input;
 	}
