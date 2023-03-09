@@ -2,7 +2,6 @@ package com.collegecompendium.backend.repositories;
 
 import java.util.List;
 
-import com.collegecompendium.backend.models.Student;
 import org.springframework.data.repository.CrudRepository;
 
 import com.collegecompendium.backend.models.College;
