@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import com.collegecompendium.backend.models.Degree;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,28 +77,40 @@ public class CollegeController {
 		return query.get();
 	}
 
-	@PutMapping("/college/{id}")
-	public College updateCollege(
+
+
+	@PutMapping("/college")
+	public College modifyCollege(
 			@RequestBody College input,
-			HttpServletResponse response
-			) {
-		Optional<College> query = collegeRepository.findById(input.getId());
-		if (query.isEmpty()) {
-			// couldn't find it, so return a 404
-			response.setStatus(404);
+			@AuthenticationPrincipal Jwt token,
+			HttpServletResponse response) {
+		College result = collegeRepository.findDistinctByAuth0Id(token.getSubject());
+		// if the college doesn't exist then send back a 403
+		if (result == null) {
+			response.setStatus(403);
 			return null;
 		}
+		// if the token doesn't belong to the caller, then send back 403
+		if (! token.getSubject().equals(input.getAuth0Id())) {
+			response.setStatus(403);
+			return null;
+		}
+		// if the given auth0Id doesn't match the auth0Id in our db
+		if (! input.getAuth0Id().equals(result.getAuth0Id())) {
+			response.setStatus(403);
+			return null;
+		}
+		// if the id is different, then we overwrite given id
+		if (! input.getId().equals(result.getId())) {
+			input.setId(result.getId());
+		}
 
-		College college = query.get();
-		
-		// any object obtained from a repository is automatically wired
-		// up to the database; simply make changes to the object and
-		// they will be persisted into the DB
-		
-		// I really don't feel like implementing this right now, so this will be
-		// left as an exercise for the reader ;)
-		
-		return college;
+		// update database w/ new college and return college
+		input = collegeRepository.save(input);
+		return input;
+
+
+
 	}
 
 	@DeleteMapping("/college/{id}")

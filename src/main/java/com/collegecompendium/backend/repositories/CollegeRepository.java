@@ -27,4 +27,6 @@ public interface CollegeRepository extends CrudRepository<College, String>{
 	
 	List<College> findByDegreesIn(Degree... degrees);
 	List<College> findByDegreesIn(List<Degree> degrees);
+
+	public College findDistinctByAuth0Id(String auth0Id);
 }
