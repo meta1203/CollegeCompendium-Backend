@@ -2,6 +2,7 @@ package com.collegecompendium.backend.repositories;
 
 import java.util.List;
 
+import com.collegecompendium.backend.models.Student;
 import org.springframework.data.repository.CrudRepository;
 
 import com.collegecompendium.backend.models.College;
@@ -27,4 +28,6 @@ public interface CollegeRepository extends CrudRepository<College, String>{
 	
 	List<College> findByDegreesIn(Degree... degrees);
 	List<College> findByDegreesIn(List<Degree> degrees);
+
+	public College findDistinctByAuth0Id(String auth0Id);
 }
