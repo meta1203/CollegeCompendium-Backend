@@ -28,12 +28,28 @@ public class StudentController {
 	private StudentRepository studentRepository;
 	
 	@PostMapping("/student")
-	public Student createNewStudent(@RequestAttribute Student input, HttpServletResponse respone) {
+	public Student createNewStudent(@RequestAttribute Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
+		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
+
+		// Checking if it already exists, if so then do not let them create a new one.
+		if(result != null) {
+			response.setStatus(400);
+			return null;
+		}
+
+		// Setting the student's auth0Id to the generated jwt token.
+		input.setAuth0Id(token.getSubject());
+
+		// Setting the ID to null will allow the User Model to generate the information.
 		input.setId(null);
-		
+
+
+
+		// Saving the student to the db
 		Student output = studentRepository.save(input);
 		return output;
 	}
+
 	
 	@GetMapping("/student/{id}")
 	public Student getStudentById(@PathVariable String id, HttpServletResponse response) {
