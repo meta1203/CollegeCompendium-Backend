@@ -2,7 +2,6 @@ package com.collegecompendium.backend.models;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.UUID;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -37,7 +36,7 @@ public abstract class User {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-    private String id = UUID.randomUUID().toString();
+    private String id;
 	
 	@NotNull
 	@Column(length = 256, unique = true)
@@ -52,6 +51,18 @@ public abstract class User {
 	@NotEmpty
 	@Column(length = 128, unique = true)
 	private String username;
+	
+	@NotNull
+	@Column(length = 128)
+    private String firstName;
+	
+	@NotNull
+	@Column(length = 128)
+    private String lastName;
+	
+	@Column(length = 16)
+	@Size(max = 16)
+	private String middleInitial;
 	
 	@Size(min = 0, max = 120)
 	@NotNull

@@ -21,18 +21,6 @@ import lombok.experimental.SuperBuilder;
 @Entity
 public class Student extends User {
 	
-	@NotNull
-	@Column(length = 128)
-    private String firstName;
-	
-	@NotNull
-	@Column(length = 128)
-    private String lastName;
-	
-	@Column(length = 16)
-	@Size(max = 16)
-	private String middleInitial;
-	
 	@Size(min = 0, max = 120)
 	@Column(length = 120)
 	private String highschool;
