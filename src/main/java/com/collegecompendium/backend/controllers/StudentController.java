@@ -28,7 +28,7 @@ public class StudentController {
 	private StudentRepository studentRepository;
 	
 	@PostMapping("/student")
-	public Student createNewStudent(@RequestAttribute Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
+	public Student createNewStudent(@RequestBody Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
 		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
 
 		// Checking if it already exists, if so then do not let them create a new one.
