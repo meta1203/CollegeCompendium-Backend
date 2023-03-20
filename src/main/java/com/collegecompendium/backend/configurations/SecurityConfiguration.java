@@ -29,7 +29,7 @@ import lombok.extern.log4j.Log4j2;
 public class SecurityConfiguration {
 	@Profile("prod")
 	@Bean
-	public SecurityFilterChain productionSecurity(HttpSecurity http) throws Exception {
+	SecurityFilterChain productionSecurity(HttpSecurity http) throws Exception {
 		// get default security settings
 		http = basicSecurity(http);
 		// finalize the security configuration
@@ -38,7 +38,7 @@ public class SecurityConfiguration {
 
 	@Profile("dev")
 	@Bean
-	public SecurityFilterChain developmentSecurity(
+	SecurityFilterChain developmentSecurity(
 			HttpSecurity http,
 			JwtDecoder jwtDecoder,
 			Jwt injectedToken
@@ -57,28 +57,28 @@ public class SecurityConfiguration {
 		return http.build();
 	}
 
-	@Bean
-	public Jwt injectedJwt() {
-		Jwt ret = new Jwt(
-				"token1234",
-				Instant.now(),
-				Instant.now().plusSeconds(3600),
-				Map.of("alg", "none"),
-				// claims
-				Map.of(
-						"sub", "test|1234",
-						"permissions", List.of("student", "college")
-				)
-				);
-		log.error("LOOK ==> injected token is " + ret.getTokenValue());
-		return ret;
-	}
+    @Bean
+    Jwt injectedJwt() {
+        Jwt ret = new Jwt(
+                "token1234",
+                Instant.now(),
+                Instant.now().plusSeconds(3600),
+                Map.of("alg", "none"),
+                // claims
+                Map.of(
+                        "sub", "test|1234",
+                        "permissions", List.of("student", "college")
+                )
+        );
+        log.error("LOOK ==> injected token is " + ret.getTokenValue());
+        return ret;
+    }
 	
 	// gets everything auth0 knows about the given JWT token
 	// returns a HashMap because there's no documentation I can find
 	// that provides a fixed model 
 	@Bean
-	public Function<Jwt, Map<String, String>> tokenToAuth0Data(
+	Function<Jwt, Map<String, String>> tokenToAuth0Data(
 			RestTemplate rt,
 			Jwt injectedJwt
 			) {
@@ -109,20 +109,22 @@ public class SecurityConfiguration {
 	private HttpSecurity basicSecurity(HttpSecurity http) throws Exception {
 		// enable JWT token handling
 		http.oauth2ResourceServer()
-		.jwt()
-		// use the permissions claim on the provided token for auto conversion
-		.jwtAuthenticationConverter(this.jwtAuthenticationConverter());
+			.jwt()
+				// use the permissions claim on the provided token for auto conversion
+				.jwtAuthenticationConverter(this.jwtAuthenticationConverter());
 
 		// enforce permissions 
 		http.authorizeHttpRequests()
-		.requestMatchers("/student", "/student/**")
-		.hasAuthority("PERM_student")
-		.requestMatchers("/college", "/college/**")
-		.hasAuthority("PERM_college")
-		.anyRequest()
-		.authenticated();
+			.requestMatchers("/student", "/student/**")
+				.hasAuthority("PERM_student")
+			.requestMatchers("/college", "/college/**")
+				.hasAuthority("PERM_college")
+			.anyRequest()
+				.authenticated();
 
+		// enable CORS
 		http.cors();
+		
 		return http;
 	}
 

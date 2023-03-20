@@ -84,7 +84,7 @@ public class DatabaseConfiguration {
 	}
 
 	@Bean
-	public RestTemplate restTemplate() {
+	RestTemplate restTemplate() {
 		return new RestTemplateBuilder()
 				.errorHandler(new ResponseErrorHandler() {
 					@Override
