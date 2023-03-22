@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +27,7 @@ public class StudentController {
 	private StudentRepository studentRepository;
 	
 	@PostMapping("/student")
-	public Student createNewStudent(@RequestAttribute Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
+	public Student createNewStudent(@RequestBody Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
 		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
 
 		// Checking if it already exists, if so then do not let them create a new one.
@@ -42,8 +41,6 @@ public class StudentController {
 
 		// Setting the ID to null will allow the User Model to generate the information.
 		input.setId(null);
-
-
 
 		// Saving the student to the db
 		Student output = studentRepository.save(input);

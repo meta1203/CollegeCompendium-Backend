@@ -1,10 +1,16 @@
 package com.collegecompendium.backend.configurations;
 
+import java.io.IOException;
+
 import javax.sql.DataSource;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.ResponseErrorHandler;
+import org.springframework.web.client.RestTemplate;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -25,55 +31,81 @@ public class DatabaseConfiguration {
 	// Spring annotation - defines a "Spring Bean"; promotes an instantiated object
 	// to a singleton that can be injected anywhere Spring touches by using the 
 	// @Autowired annotation
-    @Bean
-    // Spring annotation - limits the annotated entity to only be active when the
-    // specified Spring profile is active
-    // https://www.baeldung.com/spring-profiles
-    @Profile("dev")
-    DataSource inMemoryDataSource() {
-        // set the data source's JDBC URL.
-        // I'm using H2's in-memory DB for demonstration purposes 
-        config.setJdbcUrl("jdbc:h2:mem:testdb");
+	@Bean
+	// Spring annotation - limits the annotated entity to only be active when the
+	// specified Spring profile is active
+	// https://www.baeldung.com/spring-profiles
+	@Profile("dev")
+	DataSource inMemoryDataSource() {
+		// set the data source's JDBC URL.
+		// I'm using H2's in-memory DB for demonstration purposes 
+		config.setJdbcUrl("jdbc:h2:mem:testdb");
 
-        // set the username and password for the DB. set this how you want, just don't hard-code it in plain-text
-        // H2's in-memory DB doesn't require a username or password, but they're commented here for the sake of completeness
-        //config.setUsername(System.getenv("DB_USERNAME"));
-        //config.setPassword(System.getenv("DB_PASSWORD"));
+		// set the username and password for the DB. set this how you want, just don't hard-code it in plain-text
+		// H2's in-memory DB doesn't require a username or password, but they're commented here for the sake of completeness
+		//config.setUsername(System.getenv("DB_USERNAME"));
+		//config.setPassword(System.getenv("DB_PASSWORD"));
 
-        // enforce transactionality
-        config.setAutoCommit(false);
+		// enforce transactionality
+		config.setAutoCommit(false);
 
-        // some basic connection pooling stuff. tweak as needed
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(15);
+		// some basic connection pooling stuff. tweak as needed
+		config.setMinimumIdle(5);
+		config.setMaximumPoolSize(15);
 
-        // basic test query to see if the connection is alive. SELECT 1 should work for most stuff, but you might need to change it.
-        config.setConnectionTestQuery("SELECT 1");
+		// basic test query to see if the connection is alive. SELECT 1 should work for most stuff, but you might need to change it.
+		config.setConnectionTestQuery("SELECT 1");
 
-        return new HikariDataSource(config);
-    }
-    
-    @Bean
-    @Profile("prod")
-    DataSource mariaDataSource() { 
-    	// get db connection string from environment variables
-        config.setJdbcUrl("jdbc:mariadb://" + System.getenv("DB_URL") + ":3306/" + System.getenv("DB_DATABASE"));
+		return new HikariDataSource(config);
+	}
 
-        // get DB username from environment variables
-        config.setUsername(System.getenv("DB_USERNAME"));
-        // get DB password from environment variables
-        config.setPassword(System.getenv("DB_PASSWORD"));
+	@Bean
+	@Profile("prod")
+	DataSource mariaDataSource() { 
+		// get db connection string from environment variables
+		config.setJdbcUrl("jdbc:mariadb://" + System.getenv("DB_URL") + ":3306/" + System.getenv("DB_DATABASE"));
 
-        // enforce transactionality
-        config.setAutoCommit(false);
+		// get DB username from environment variables
+		config.setUsername(System.getenv("DB_USERNAME"));
+		// get DB password from environment variables
+		config.setPassword(System.getenv("DB_PASSWORD"));
 
-        // some basic connection pooling stuff. tweak as needed
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(15);
+		// enforce transactionality
+		config.setAutoCommit(false);
 
-        // basic test query to see if the connection is alive. SELECT 1 should work for most stuff, but you might need to change it.
-        config.setConnectionTestQuery("SELECT 1");
+		// some basic connection pooling stuff. tweak as needed
+		config.setMinimumIdle(5);
+		config.setMaximumPoolSize(15);
 
-        return new HikariDataSource(config);
-    }
+		// basic test query to see if the connection is alive. SELECT 1 should work for most stuff, but you might need to change it.
+		config.setConnectionTestQuery("SELECT 1");
+
+		return new HikariDataSource(config);
+	}
+
+	@Bean
+	RestTemplate restTemplate() {
+		return new RestTemplateBuilder()
+				.errorHandler(new ResponseErrorHandler() {
+					@Override
+					public boolean hasError(ClientHttpResponse response) throws IOException {
+						// This we always want to accept a response, 
+						// regardless of error code
+						return false;
+					}
+
+					@Override
+					public void handleError(ClientHttpResponse response) throws IOException {
+						// this will never get called due to hasError always
+						// returning false, so do nothing
+					}
+
+					@Override
+					public String toString() {
+						return "Hunter's fancy custom REST error handler :)";
+					}
+				})
+				.build();
+
+	}
 }

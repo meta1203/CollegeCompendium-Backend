@@ -7,16 +7,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.repositories.StudentRepository;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("dev")
 public class UserTests {
 	@Autowired
 	private StudentRepository studentRepository;
+//	@Autowired
+//	private Jwt injectedJwt;
+//	@Autowired
+//	private RestTemplate restTemplate;
 	
 	@Test
 	void testStudentRepo() {
