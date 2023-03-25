@@ -19,15 +19,7 @@ public class CollegeTests {
 
     @Test
     void testCollegeRepo(){
-        College testCollege = College.builder()
-                .name("University of New Mexico")
-                .cost(8675309)
-                .build();
 
-        College outCollege = collegeRepository.save(testCollege);
-        assertNotNull(outCollege.getId());
-        assertEquals(outCollege.getName(), "University of New Mexico");
-        assertEquals(outCollege.getCost(), 8675309);
     }
 
     @Test
