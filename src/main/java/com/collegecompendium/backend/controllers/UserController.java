@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.models.User;
-import com.collegecompendium.backend.repositories.CollegeRepository;
+import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 import com.collegecompendium.backend.repositories.StudentRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ public class UserController {
 	@Autowired
 	private StudentRepository studentRepository;
 	@Autowired
-	private CollegeRepository collegeRepository;
+	private CollegeAdminRepository collegeAdminRepository;
 	@Autowired
 	private Function<Jwt, Map<String,String>> tokenToAuth0Data;
 
@@ -55,7 +55,7 @@ public class UserController {
     		return student;
     	}
     	
-    	CollegeAdmin collegeAdmin = collegeRepository.findDistinctByAuth0Id(token.getSubject());
+    	CollegeAdmin collegeAdmin = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
     	if (collegeAdmin != null) {
     		return collegeAdmin;
     	}

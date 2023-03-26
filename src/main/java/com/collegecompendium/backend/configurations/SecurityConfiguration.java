@@ -67,7 +67,7 @@ public class SecurityConfiguration {
                 // claims
                 Map.of(
                         "sub", "test|1234",
-                        "permissions", List.of("student", "college")
+                        "permissions", List.of("student", "collegeAdmin")
                 )
         );
         log.error("LOOK ==> injected token is " + ret.getTokenValue());
@@ -113,12 +113,13 @@ public class SecurityConfiguration {
 				// use the permissions claim on the provided token for auto conversion
 				.jwtAuthenticationConverter(this.jwtAuthenticationConverter());
 
-		// enforce permissions 
+		// enforce permissions
+		// changed /college to /collegeAdmin
 		http.authorizeHttpRequests()
 			.requestMatchers("/student", "/student/**")
 				.hasAuthority("PERM_student")
-			.requestMatchers("/college", "/college/**")
-				.hasAuthority("PERM_college")
+			.requestMatchers("/collegeAdmin", "/collegeAdmin/**")
+				.hasAuthority("PERM_collegeAdmin")
 			.anyRequest()
 				.authenticated();
 

@@ -19,7 +19,7 @@ import jakarta.transaction.Transactional;
 // this interface extends CrudRepository, which uses the generic types
 // CollegeAdmin (denotes the class to provide a CRUD repo for) and String
 // (denotes the ID type on the class)
-public interface CollegeRepository extends CrudRepository<CollegeAdmin, String>{
+public interface CollegeAdminRepository extends CrudRepository<CollegeAdmin, String>{
 	// so, this doesn't actually need any defined functions to get started
 	// on a basic level. If you need more than just "get by ID" (which you likely
 	// will at some point), check out this web page for info on how to do that:

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.collegecompendium.backend.models.CollegeAdmin;
-import com.collegecompendium.backend.repositories.CollegeRepository;
+import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -33,7 +33,7 @@ public class CollegeAdminController {
 	// that extends a special type of class/interface) or explicit
 	// (@Bean on a function that returns a value)
 	@Autowired
-	private CollegeRepository collegeRepository;
+	private CollegeAdminRepository collegeAdminRepository;
 
 	// Spring annotation - defines a REST endpoint to be handled by
 	// the annotated function. function arguments can be annotated
@@ -41,7 +41,7 @@ public class CollegeAdminController {
 	// TEST
 
 	// This annotation is for the POST HTTP method
-	@PostMapping("/college")
+	@PostMapping("/collegeAdmin")
 	public CollegeAdmin createNewCollegeAdmin(
 			@RequestBody CollegeAdmin input, 
 			HttpServletResponse response) {
@@ -49,7 +49,7 @@ public class CollegeAdminController {
 		input.setId(null);
 		// save the college to the database, saving the backing
 		// object to a new `output` variable
-		CollegeAdmin output = collegeRepository.save(input);
+		CollegeAdmin output = collegeAdminRepository.save(input);
 		// send this new object back to the client via JSON
 		// Spring automagically (un)marshals JSON to and from
 		// classes for you
@@ -59,14 +59,14 @@ public class CollegeAdminController {
 	// This annotation is for the GET HTTP method
 	// Notice the `{id}` in there. That is used by Spring's
 	// @PathVariable annotation to get variables encoded in the path
-	@GetMapping("/college/{id}")
+	@GetMapping("/collegeAdmin/{id}")
 	public CollegeAdmin getCollegeAdminById(
 			// Spring annotation - takes a variable from the
 			// REST path and bundles it so we can use it in our code
 			@PathVariable String id,
 			HttpServletResponse response
 			) {
-		Optional<CollegeAdmin> query = collegeRepository.findById(id);
+		Optional<CollegeAdmin> query = collegeAdminRepository.findById(id);
 		if (query.isEmpty()) {
 			// couldn't find it, so return a 404
 			response.setStatus(404);
@@ -79,12 +79,12 @@ public class CollegeAdminController {
 
 
 
-	@PutMapping("/college")
+	@PutMapping("/collegeAdmin")
 	public CollegeAdmin modifyCollegeAdmin(
 			@RequestBody CollegeAdmin input,
 			@AuthenticationPrincipal Jwt token,
 			HttpServletResponse response) {
-		CollegeAdmin result = collegeRepository.findDistinctByAuth0Id(token.getSubject());
+		CollegeAdmin result = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
 		// if the college doesn't exist then send back a 403
 		if (result == null) {
 			response.setStatus(403);
@@ -106,39 +106,42 @@ public class CollegeAdminController {
 		}
 
 		// update database w/ new college and return college
-		input = collegeRepository.save(input);
+		input = collegeAdminRepository.save(input);
 		return input;
 
 
 
 	}
 
-	@DeleteMapping("/college/{id}")
+	@DeleteMapping("/collegeAdmin/{id}")
 	public boolean deleteCollege(
 			@PathVariable String id,
 			HttpServletResponse response
 			) {
-		Optional<CollegeAdmin> query = collegeRepository.findById(id);
+		Optional<CollegeAdmin> query = collegeAdminRepository.findById(id);
 		if (query.isEmpty()) {
 			// couldn't find it, so return a 404
 			response.setStatus(404);
 			return false;
 		}
-		collegeRepository.delete(query.get());
+		collegeAdminRepository.delete(query.get());
 		return true;
 	}
 
 
 	/**
 	 * Gets colleges offering a certain degree name.
+	 * TODO: With the splitting of College/CollegeAdmin, these will need to 
+	 * be gone over w/ how we handle these. Remember that actual institutions
+	 * will now be their own, unique objects.
 	 */
-	@GetMapping("/colleges/{degreeName}")
+	@GetMapping("/collegeAdmins/{degreeName}")
 	public List<CollegeAdmin> getCollegeAdminsByDegreeName(String degreeName) {
-		// TODO: modify this function to use the CollegeRepository's
+		// TODO: modify this function to use the CollegeAdminRepository's
 		// findByDegreeIn function
 		
 		List<CollegeAdmin> collegeAdmins = new ArrayList<>();
-		for(CollegeAdmin collegeAdmin : collegeRepository.findAll()) {
+		for(CollegeAdmin collegeAdmin : collegeAdminRepository.findAll()) {
 			for(Degree degree : collegeAdmin.getDegrees()) {
 				if(degree.getName().equals(degreeName)) {
 					collegeAdmins.add(collegeAdmin);
