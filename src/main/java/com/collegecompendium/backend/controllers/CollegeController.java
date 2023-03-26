@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.collegecompendium.backend.models.College;
+import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.repositories.CollegeRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,14 +42,14 @@ public class CollegeController {
 
 	// This annotation is for the POST HTTP method
 	@PostMapping("/college")
-	public College createNewCollege(
-			@RequestBody College input, 
+	public CollegeAdmin createNewCollegeAdmin(
+			@RequestBody CollegeAdmin input, 
 			HttpServletResponse response) {
 		// set the ID to null so it can be auto-generated
 		input.setId(null);
 		// save the college to the database, saving the backing
 		// object to a new `output` variable
-		College output = collegeRepository.save(input);
+		CollegeAdmin output = collegeRepository.save(input);
 		// send this new object back to the client via JSON
 		// Spring automagically (un)marshals JSON to and from
 		// classes for you
@@ -60,13 +60,13 @@ public class CollegeController {
 	// Notice the `{id}` in there. That is used by Spring's
 	// @PathVariable annotation to get variables encoded in the path
 	@GetMapping("/college/{id}")
-	public College getCollegeById(
+	public CollegeAdmin getCollegeAdminById(
 			// Spring annotation - takes a variable from the
 			// REST path and bundles it so we can use it in our code
 			@PathVariable String id,
 			HttpServletResponse response
 			) {
-		Optional<College> query = collegeRepository.findById(id);
+		Optional<CollegeAdmin> query = collegeRepository.findById(id);
 		if (query.isEmpty()) {
 			// couldn't find it, so return a 404
 			response.setStatus(404);
@@ -80,11 +80,11 @@ public class CollegeController {
 
 
 	@PutMapping("/college")
-	public College modifyCollege(
-			@RequestBody College input,
+	public CollegeAdmin modifyCollegeAdmin(
+			@RequestBody CollegeAdmin input,
 			@AuthenticationPrincipal Jwt token,
 			HttpServletResponse response) {
-		College result = collegeRepository.findDistinctByAuth0Id(token.getSubject());
+		CollegeAdmin result = collegeRepository.findDistinctByAuth0Id(token.getSubject());
 		// if the college doesn't exist then send back a 403
 		if (result == null) {
 			response.setStatus(403);
@@ -118,7 +118,7 @@ public class CollegeController {
 			@PathVariable String id,
 			HttpServletResponse response
 			) {
-		Optional<College> query = collegeRepository.findById(id);
+		Optional<CollegeAdmin> query = collegeRepository.findById(id);
 		if (query.isEmpty()) {
 			// couldn't find it, so return a 404
 			response.setStatus(404);
@@ -133,19 +133,19 @@ public class CollegeController {
 	 * Gets colleges offering a certain degree name.
 	 */
 	@GetMapping("/colleges/{degreeName}")
-	public List<College> getCollegesByDegreeName(String degreeName) {
+	public List<CollegeAdmin> getCollegeAdminsByDegreeName(String degreeName) {
 		// TODO: modify this function to use the CollegeRepository's
 		// findByDegreeIn function
 		
-		List<College> colleges = new ArrayList<>();
-		for(College college : collegeRepository.findAll()) {
-			for(Degree degree : college.getDegrees()) {
+		List<CollegeAdmin> collegeAdmins = new ArrayList<>();
+		for(CollegeAdmin collegeAdmin : collegeRepository.findAll()) {
+			for(Degree degree : collegeAdmin.getDegrees()) {
 				if(degree.getName().equals(degreeName)) {
-					colleges.add(college);
+					collegeAdmins.add(collegeAdmin);
 					break;
 				}
 			}
 		}
-		return colleges;
+		return collegeAdmins;
 	}
 }

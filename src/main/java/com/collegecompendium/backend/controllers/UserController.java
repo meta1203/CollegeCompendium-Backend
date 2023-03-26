@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.collegecompendium.backend.models.College;
+import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.models.User;
 import com.collegecompendium.backend.repositories.CollegeRepository;
@@ -55,9 +55,9 @@ public class UserController {
     		return student;
     	}
     	
-    	College college = collegeRepository.findDistinctByAuth0Id(token.getSubject());
-    	if (college != null) {
-    		return college;
+    	CollegeAdmin collegeAdmin = collegeRepository.findDistinctByAuth0Id(token.getSubject());
+    	if (collegeAdmin != null) {
+    		return collegeAdmin;
     	}
     	
     	Map<String, String> auth0Data = tokenToAuth0Data.apply(token);

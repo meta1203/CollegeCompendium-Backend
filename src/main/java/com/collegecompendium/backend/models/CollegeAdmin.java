@@ -19,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-public class College extends User {
+public class CollegeAdmin extends User {
 	
 	@ManyToMany
 	private List<Degree> degrees;
