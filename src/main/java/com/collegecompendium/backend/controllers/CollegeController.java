@@ -56,6 +56,33 @@ public class CollegeController {
 		return output;
 	}
 
+	/**
+	 * Returns the college of the calling token
+	 * @param token - the token of the calling user
+	 * @param response - the response object to set the status code
+	 * @return the college of the calling token
+	 */
+	@GetMapping("/college")
+	public College getCollege(
+			@AuthenticationPrincipal Jwt token,
+			HttpServletResponse response) {
+
+		// This will have to change depending on how CollegeUser is implemented.
+		College result = collegeRepository.findDistinctByAuth0Id(token.getSubject());
+
+		// if the college doesn't exist then send back a 403
+		if (result == null) {
+			response.setStatus(403);
+			return null;
+		}
+		// if the token doesn't belong to the result, then send back 403
+		if (! token.getSubject().equals(result.getAuth0Id())) {
+			response.setStatus(403);
+			return null;
+		}
+		return result;
+	}
+
 	// This annotation is for the GET HTTP method
 	// Notice the `{id}` in there. That is used by Spring's
 	// @PathVariable annotation to get variables encoded in the path
