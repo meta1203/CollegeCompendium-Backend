@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
+import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.CollegeAdmin;
-import com.collegecompendium.backend.models.Degree;
 
 import jakarta.transaction.Transactional;
 
@@ -25,8 +25,9 @@ public interface CollegeAdminRepository extends CrudRepository<CollegeAdmin, Str
 	// will at some point), check out this web page for info on how to do that:
 	// https://docs.spring.io/spring-data/data-jpa/docs/current/reference/html/#jpa.query-methods.query-creation
 	
-	List<CollegeAdmin> findByDegreesIn(Degree... degrees);
-	List<CollegeAdmin> findByDegreesIn(List<Degree> degrees);
+	//List<CollegeAdmin> findByDegreesIn(Degree... degrees);
+	//List<CollegeAdmin> findByDegreesIn(List<Degree> degrees);
+	List<CollegeAdmin> findByCollege(College college);
 
 	public CollegeAdmin findDistinctByAuth0Id(String auth0Id);
 }

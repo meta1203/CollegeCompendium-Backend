@@ -1,10 +1,8 @@
 package com.collegecompendium.backend.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.collegecompendium.backend.models.Degree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -17,8 +15,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.repositories.CollegeAdminRepository;
+import com.collegecompendium.backend.repositories.CollegeRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -34,7 +34,8 @@ public class CollegeAdminController {
 	// (@Bean on a function that returns a value)
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
-
+	@Autowired
+	private CollegeRepository collegeRepository;
 	// Spring annotation - defines a REST endpoint to be handled by
 	// the annotated function. function arguments can be annotated
 	// for input (ex @RequestBody) or implicit (eg. HttpServletResponse)
@@ -105,7 +106,7 @@ public class CollegeAdminController {
 			input.setId(result.getId());
 		}
 
-		// update database w/ new college and return college
+		// update database w/ new collegeAdmin and return college
 		input = collegeAdminRepository.save(input);
 		return input;
 
@@ -114,7 +115,7 @@ public class CollegeAdminController {
 	}
 
 	@DeleteMapping("/collegeAdmin/{id}")
-	public boolean deleteCollege(
+	public boolean deleteCollegeAdmin(
 			@PathVariable String id,
 			HttpServletResponse response
 			) {
@@ -135,20 +136,22 @@ public class CollegeAdminController {
 	 * be gone over w/ how we handle these. Remember that actual institutions
 	 * will now be their own, unique objects.
 	 */
-	@GetMapping("/collegeAdmins/{degreeName}")
-	public List<CollegeAdmin> getCollegeAdminsByDegreeName(String degreeName) {
+	@GetMapping("/collegeAdmins/college/{collegeId}")
+	public List<CollegeAdmin> getCollegeAdminsByCollegeId(@PathVariable String collegeId, HttpServletResponse response) {
 		// TODO: modify this function to use the CollegeAdminRepository's
 		// findByDegreeIn function
-		
-		List<CollegeAdmin> collegeAdmins = new ArrayList<>();
-		for(CollegeAdmin collegeAdmin : collegeAdminRepository.findAll()) {
-			for(Degree degree : collegeAdmin.getDegrees()) {
-				if(degree.getName().equals(degreeName)) {
-					collegeAdmins.add(collegeAdmin);
-					break;
-				}
-			}
+
+	    Optional<College> collegeQuery = collegeRepository.findById(collegeId);
+        if (collegeQuery.isEmpty()) {
+        	response.setStatus(404);
+            return null;
+        }
+		List<CollegeAdmin> collegeAdmins = collegeAdminRepository.findByCollege(collegeQuery.get());
+		if (collegeAdmins.isEmpty()) {
+			response.setStatus(204);
+			return null;
 		}
 		return collegeAdmins;
-	}
+    }
+
 }
