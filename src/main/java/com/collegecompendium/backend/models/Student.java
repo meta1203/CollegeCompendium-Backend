@@ -38,4 +38,9 @@ public class Student extends User {
 	@NotNull
 	@Builder.Default
 	private List<String> activities = new ArrayList<>();
+	
+	@Size(min = 0, max = 120)
+	@NotNull
+	@Column(length = 120)
+	private String location;
 }

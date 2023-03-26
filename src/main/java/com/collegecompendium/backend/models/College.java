@@ -4,7 +4,11 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +19,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-public class CollegeTmp {
+public class College {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private String id;
+	
+	@OneToMany(mappedBy = "college")
+	private List<CollegeAdmin> collegeAdmins;
 	
 	@ManyToMany
 	private List<Degree> degrees;
@@ -31,10 +42,18 @@ public class CollegeTmp {
 	
 	@Min(100)
 	@NotNull
-	private Integer cost;
+	private Integer inStateCost;
 	
-	// TODO: Check why @Data isn't picking this up - Erik
+	@Min(100)
+	@NotNull
+	private Integer outStateCost;
+
 	public List<Degree> getDegrees() {
 	    return degrees;
 	}
+		
+	@Size(min = 0, max = 120)
+	@NotNull
+	@Column(length = 120)
+	private String location;
 }
