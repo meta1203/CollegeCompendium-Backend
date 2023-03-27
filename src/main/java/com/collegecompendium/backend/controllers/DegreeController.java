@@ -8,5 +8,5 @@ public class DegreeController {
 //    private DegreeRepository degreeRepository;
 //
 //    @Autowired
-//    private CollegeRepository collegeRepository;
+//    private CollegeAdminRepository collegeRepository;
 }
