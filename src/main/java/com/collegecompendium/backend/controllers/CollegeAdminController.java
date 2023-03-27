@@ -148,7 +148,7 @@ public class CollegeAdminController {
         }
 		List<CollegeAdmin> collegeAdmins = collegeAdminRepository.findByCollege(collegeQuery.get());
 		if (collegeAdmins.isEmpty()) {
-			response.setStatus(204);
+			response.setStatus(404);
 			return null;
 		}
 		return collegeAdmins;

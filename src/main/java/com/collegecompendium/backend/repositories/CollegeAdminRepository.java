@@ -26,8 +26,6 @@ public interface CollegeAdminRepository extends CrudRepository<CollegeAdmin, Str
 	// will at some point), check out this web page for info on how to do that:
 	// https://docs.spring.io/spring-data/data-jpa/docs/current/reference/html/#jpa.query-methods.query-creation
 	
-	//List<CollegeAdmin> findByDegreesIn(Degree... degrees);
-	//List<CollegeAdmin> findByDegreesIn(List<Degree> degrees);
 	List<CollegeAdmin> findByCollege(College college);
 	public CollegeAdmin findDistinctByUsername(String username);
 	public CollegeAdmin findDistinctByAuth0Id(String auth0Id);
