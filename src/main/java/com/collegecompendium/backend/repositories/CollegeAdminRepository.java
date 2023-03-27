@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.CollegeAdmin;
+import com.collegecompendium.backend.models.Student;
 
 import jakarta.transaction.Transactional;
 
@@ -28,6 +29,6 @@ public interface CollegeAdminRepository extends CrudRepository<CollegeAdmin, Str
 	//List<CollegeAdmin> findByDegreesIn(Degree... degrees);
 	//List<CollegeAdmin> findByDegreesIn(List<Degree> degrees);
 	List<CollegeAdmin> findByCollege(College college);
-
+	public CollegeAdmin findDistinctByUsername(String username);
 	public CollegeAdmin findDistinctByAuth0Id(String auth0Id);
 }

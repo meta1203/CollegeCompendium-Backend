@@ -10,7 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 import com.collegecompendium.backend.repositories.StudentRepository;
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
@@ -18,6 +20,8 @@ import com.collegecompendium.backend.repositories.StudentRepository;
 public class UserTests {
 	@Autowired
 	private StudentRepository studentRepository;
+	@Autowired
+	private CollegeAdminRepository collegeAdminRepository;
 //	@Autowired
 //	private Jwt injectedJwt;
 //	@Autowired
@@ -61,5 +65,43 @@ public class UserTests {
 		// delete
 		studentRepository.delete(student);
 		assertTrue(studentRepository.findById(id).isEmpty());
+	}
+	@Test
+	void testCollegeAdminRepo() {
+		final String EMAIL_ADDRESS = "Vote.Hamdy@gmail.com";
+		// C
+		CollegeAdmin collegeAdmin = CollegeAdmin.builder()
+				.email(EMAIL_ADDRESS)
+				.firstName("Erik")
+				.lastName("Noll")
+				.middleInitial("E")
+				.username("mountainDewYoloSwag420")
+				.auth0Id("weRnotAlone")
+				.build();
+		
+		collegeAdmin = collegeAdminRepository.save(collegeAdmin);
+		assertNotNull(collegeAdmin.getId());
+		assertEquals(collegeAdmin.getEmail(), EMAIL_ADDRESS);
+		
+		String collegeAdminId = collegeAdmin.getId();
+		
+		System.out.println(collegeAdmin);
+	
+		// R
+		CollegeAdmin fetchedCollegeAdmin = collegeAdminRepository.findDistinctByUsername("mountainDewYoloSwag420");
+		assertEquals(collegeAdmin.getId(), fetchedCollegeAdmin.getId());
+		assertEquals(collegeAdmin.getEmail(), fetchedCollegeAdmin.getEmail());
+		
+		// update
+		// test auto-update
+		collegeAdmin.setUsername("itmeUrBro");
+		collegeAdminRepository.save(collegeAdmin);
+				
+		fetchedCollegeAdmin = collegeAdminRepository.findById(collegeAdminId).get();
+		assertEquals(collegeAdmin.getUsername(), fetchedCollegeAdmin.getUsername());
+				
+		// delete
+		collegeAdminRepository.delete(collegeAdmin);
+		assertTrue(collegeAdminRepository.findById(collegeAdminId).isEmpty());
 	}
 }
