@@ -27,6 +27,7 @@ public class UserTests {
 //	@Autowired
 //	private RestTemplate restTemplate;
 	
+	//Need to add find by CollegeId test when we create College objects
 	@Test
 	void testStudentRepo() {
 		final String EMAIL_ADDRESS = "hancock.hunter@gmail.com";
