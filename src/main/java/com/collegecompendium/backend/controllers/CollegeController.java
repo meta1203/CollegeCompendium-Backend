@@ -98,7 +98,7 @@ public class CollegeController {
 
 		// if the college doesn't exist then send back a 403
 		if (result == null) {
-			response.setStatus(403);
+			response.setStatus(404);
 			return null;
 		}
 		// if the token doesn't belong to the result, then send back 403
