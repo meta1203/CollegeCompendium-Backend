@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.collegecompendium.backend.configurations.Auth0Provider;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.repositories.StudentRepository;
 
@@ -25,6 +26,9 @@ public class StudentController {
 	
 	@Autowired
 	private StudentRepository studentRepository;
+	
+	@Autowired
+	private Auth0Provider auth0Provider;
 	
 	@PostMapping("/student")
 	public Student createNewStudent(@RequestBody Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
@@ -44,6 +48,9 @@ public class StudentController {
 
 		// Saving the student to the db
 		Student output = studentRepository.save(input);
+		
+		// add student permission to auth0
+		auth0Provider.addPermissionToUser(output, "student");
 		return output;
 	}
 
