@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,16 @@ public class DatabaseConfiguration {
 	 * that implements javax.sql.DataSource.
 	 */
 	private HikariConfig config = new HikariConfig();
+	
+	// fetch properties for connecting to the db
+	@Value("${DB_URL:}")
+	private String url;
+	@Value("${DB_DATABASE:}")
+	private String database;
+	@Value("${DB_USERNAME:}")
+	private String username;
+	@Value("${DB_PASSWORD:}")
+	private String password;
 
 	// Spring annotation - defines a "Spring Bean"; promotes an instantiated object
 	// to a singleton that can be injected anywhere Spring touches by using the 
@@ -63,12 +74,12 @@ public class DatabaseConfiguration {
 	@Profile("prod")
 	DataSource mariaDataSource() { 
 		// get db connection string from environment variables
-		config.setJdbcUrl("jdbc:mariadb://" + System.getenv("DB_URL") + ":3306/" + System.getenv("DB_DATABASE"));
+		config.setJdbcUrl("jdbc:mariadb://" + url + ":3306/" + database);
 
 		// get DB username from environment variables
-		config.setUsername(System.getenv("DB_USERNAME"));
+		config.setUsername(username);
 		// get DB password from environment variables
-		config.setPassword(System.getenv("DB_PASSWORD"));
+		config.setPassword(password);
 
 		// enforce transactionality
 		config.setAutoCommit(false);

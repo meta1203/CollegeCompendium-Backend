@@ -1,26 +1,18 @@
 package com.collegecompendium.backend.configurations;
 
-import java.net.URI;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -77,7 +69,7 @@ public class SecurityConfiguration {
 	// gets everything auth0 knows about the given JWT token
 	// returns a HashMap because there's no documentation I can find
 	// that provides a fixed model 
-	@Bean
+	/* @Bean
 	Function<Jwt, Map<String, String>> tokenToAuth0Data(
 			RestTemplate rt,
 			Jwt injectedJwt
@@ -104,7 +96,7 @@ public class SecurityConfiguration {
 			if (response.getStatusCode().is2xxSuccessful()) return response.getBody();
 			return null;
 		};
-	}
+	} */
 
 	private HttpSecurity basicSecurity(HttpSecurity http) throws Exception {
 		// enable JWT token handling
