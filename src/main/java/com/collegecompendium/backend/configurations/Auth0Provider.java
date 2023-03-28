@@ -35,14 +35,19 @@ public class Auth0Provider {
 	@Value("${AUTH0_SECRET:}")
 	private String secret;
 
+	// gets everything auth0 knows about the given JWT token
+	// returns a HashMap because there's no documentation I can find
+	// that provides a fixed model
 	public Map<String,String> tokenToAuth0Data(Jwt token) {
-		if (token.getTokenValue().equals(injectedJwt.getTokenValue()))
+		// use the injected token if we're performing tests
+		if (token.getTokenValue().equals(injectedJwt.getTokenValue())) {
 			return Map.of(
 					"email", "john.smith@example.com",
 					"given_name", "John",
 					"family_name", "Smith",
 					"nickname", "jsmith12"
 					);
+		}
 
 		RequestEntity<Void> request = RequestEntity
 				.get(URI.create(url + "userinfo"))

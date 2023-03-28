@@ -65,38 +65,6 @@ public class SecurityConfiguration {
         log.error("LOOK ==> injected token is " + ret.getTokenValue());
         return ret;
     }
-	
-	// gets everything auth0 knows about the given JWT token
-	// returns a HashMap because there's no documentation I can find
-	// that provides a fixed model 
-	/* @Bean
-	Function<Jwt, Map<String, String>> tokenToAuth0Data(
-			RestTemplate rt,
-			Jwt injectedJwt
-			) {
-		return (token) -> {
-			if (token.getTokenValue().equals(injectedJwt.getTokenValue()))
-				return Map.of(
-						"email", "john.smith@example.com",
-						"given_name", "John",
-						"family_name", "Smith",
-						"nickname", "jsmith12"
-						);
-			
-			RequestEntity<Void> request = RequestEntity
-					.get(URI.create("https://dev-yrjc5x2ila2084mu.us.auth0.com/userinfo"))
-					.accept(MediaType.APPLICATION_JSON)
-					.header("Authorization", "Bearer " + token.getTokenValue()).build();
-			
-			ResponseEntity<HashMap<String, String>> response = rt.exchange(
-					request, 
-					new ParameterizedTypeReference<HashMap<String, String>>() {}
-					);
-			
-			if (response.getStatusCode().is2xxSuccessful()) return response.getBody();
-			return null;
-		};
-	} */
 
 	private HttpSecurity basicSecurity(HttpSecurity http) throws Exception {
 		// enable JWT token handling
