@@ -1,7 +1,6 @@
 package com.collegecompendium.backend.controllers;
 
 import java.util.Map;
-import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.collegecompendium.backend.configurations.Auth0Provider;
 import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.models.User;
@@ -28,7 +28,7 @@ public class UserController {
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
 	@Autowired
-	private Function<Jwt, Map<String,String>> tokenToAuth0Data;
+	private Auth0Provider auth0Provider;
 
     @PostMapping("/test/user")
     public User addUser(@RequestBody User user) {
@@ -41,7 +41,7 @@ public class UserController {
     @GetMapping("/test")
     public Object pingAuth(@AuthenticationPrincipal Jwt token) {
     	//return token;
-    	return tokenToAuth0Data.apply(token);
+    	return auth0Provider.tokenToAuth0Data(token);
     }
     
     @GetMapping("/user")
@@ -60,7 +60,7 @@ public class UserController {
     		return collegeAdmin;
     	}
     	
-    	Map<String, String> auth0Data = tokenToAuth0Data.apply(token);
+    	Map<String, String> auth0Data = auth0Provider.tokenToAuth0Data(token);
     	student = Student.builder()
     			.email(auth0Data.get("email"))
     			.firstName(auth0Data.get("given_name"))
