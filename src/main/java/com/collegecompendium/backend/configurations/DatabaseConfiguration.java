@@ -72,7 +72,7 @@ public class DatabaseConfiguration {
 
 	@Bean
 	@Profile("prod")
-	DataSource mariaDataSource() { 
+	DataSource mariaDataSource() {
 		// get db connection string from environment variables
 		config.setJdbcUrl("jdbc:mariadb://" + url + ":3306/" + database);
 

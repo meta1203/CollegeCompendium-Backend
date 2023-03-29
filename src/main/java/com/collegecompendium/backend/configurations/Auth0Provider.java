@@ -64,6 +64,10 @@ public class Auth0Provider {
 	}
 	
 	public void addPermissionToUser(User user, String permission) {
+		// if this is the test user, don't do anything
+		if (user.getAuth0Id().equals(injectedJwt.getSubject()))
+			return;
+		
 		RequestEntity<String> req = RequestEntity.post(URI.create(url + "api/v2/users/" + user.getAuth0Id() + "/permissions"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("authorization", "Bearer " + this.getManagementToken())
