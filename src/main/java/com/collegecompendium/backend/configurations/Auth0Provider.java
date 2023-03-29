@@ -69,15 +69,17 @@ public class Auth0Provider {
 		if (user.getAuth0Id().equals(injectedJwt.getSubject()))
 			return;
 		
-		RequestEntity<String> req = RequestEntity.post(URI.create(url + UriUtils.encode("api/v2/users/" + user.getAuth0Id() + "/permissions", "UTF-8")))
+		RequestEntity<String> req = RequestEntity.post(URI.create(url + "api/v2/users/" + UriUtils.encode(user.getAuth0Id(), "UTF-8") + "/permissions"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("authorization", "Bearer " + this.getManagementToken())
 				.header("cache-control", "no-cache")
 				.body("{\"permissions\":[{\"resource_server_identifier\":\"https://tcfc.us.to/cc_api\",\"permission_name\":\""+permission+"\"}]}");
 		
 		ResponseEntity<Void> resp = restTemplate.exchange(req, Void.class);
-		if (! resp.getStatusCode().is2xxSuccessful())
+		if (! resp.getStatusCode().is2xxSuccessful()) {
+			log.error("error getting " + req.getUrl());
 			throw new RuntimeException("Bad response code " + resp.getStatusCode().value() + " when adding Auth0 permission.");
+		}
 	}
 
 	private String token = null;
