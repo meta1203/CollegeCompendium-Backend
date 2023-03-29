@@ -54,9 +54,4 @@ public abstract class User {
 	@Size(max = 16)
 	private String middleInitial;
 	
-	@Size(min = 0, max = 120)
-	@NotNull
-	@Column(length = 120)
-	private String location;
-	
 }
