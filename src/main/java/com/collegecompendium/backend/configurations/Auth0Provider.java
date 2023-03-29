@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 
 import com.collegecompendium.backend.models.User;
 
@@ -68,7 +69,7 @@ public class Auth0Provider {
 		if (user.getAuth0Id().equals(injectedJwt.getSubject()))
 			return;
 		
-		RequestEntity<String> req = RequestEntity.post(URI.create(url + "api/v2/users/" + user.getAuth0Id() + "/permissions"))
+		RequestEntity<String> req = RequestEntity.post(URI.create(url + UriUtils.encode("api/v2/users/" + user.getAuth0Id() + "/permissions", "UTF-8")))
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("authorization", "Bearer " + this.getManagementToken())
 				.header("cache-control", "no-cache")
