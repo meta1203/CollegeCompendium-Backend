@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.collegecompendium.backend.models.CollegeAdmin;
+import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 import com.collegecompendium.backend.repositories.StudentRepository;
@@ -37,7 +38,7 @@ public class UserTests {
 				.firstName("Hunter")
 				.lastName("Hancock")
 				.middleInitial("A")
-				.location("Socorro, New Mexico")
+				.location(new Location("Neel Dr, Socorro, NM 87801", "34.063226", "-106.905866"))
 				.username("meta1203")
 				.auth0Id("an auth0 id")
 				.build();
@@ -67,6 +68,7 @@ public class UserTests {
 		studentRepository.delete(student);
 		assertTrue(studentRepository.findById(id).isEmpty());
 	}
+	
 	@Test
 	void testCollegeAdminRepo() {
 		final String EMAIL_ADDRESS = "Vote.Hamdy@gmail.com";

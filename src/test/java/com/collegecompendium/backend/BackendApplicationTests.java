@@ -22,7 +22,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
+import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
+
+import lombok.extern.log4j.Log4j2;
 
 // Spring annotation - flags this as a test suite
 // DEFINED_PORT is used to get the web server up and running
@@ -32,6 +35,7 @@ import com.collegecompendium.backend.models.Student;
 @ActiveProfiles("dev")
 // run in order specified by @Order
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Log4j2
 class BackendApplicationTests {
 	@Autowired
 	private Jwt injectedJwt;
@@ -52,6 +56,7 @@ class BackendApplicationTests {
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.build();
+		
 		ResponseEntity<Student> resp = restTemplate.exchange(req1, Student.class);
 		// do expected value first, followed by tested value
 		// this is because should the assertion fail, the message
@@ -64,7 +69,7 @@ class BackendApplicationTests {
 		student.setActScore(31);
 		student.setMiddleInitial("A");
 		student.setHighschool("Example High School");
-		student.setLocation("A place");
+		student.setLocation(new Location("Neel Dr, Socorro, NM 87801", "34.063226", "-106.905866"));
 		
 		RequestEntity<Student> req2 = RequestEntity
 				.post(URI.create("http://localhost:8080/student"))
@@ -82,5 +87,18 @@ class BackendApplicationTests {
 		resp = restTemplate.exchange(req2, Student.class);
 		assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
 		assertNull(resp.getBody());
+	}
+	
+	@Test
+	@Order(2)
+	void testLocation() {
+		Location abq = new Location("35.1054", "-106.6465");
+		Location denv = new Location("39.762", "-104.8758");
+		log.warn(abq.getLatitude() + " | " + abq.getLongitude());
+		assertEquals("35.105400", abq.getLatitude());
+		assertEquals("-104.875800", denv.getLongitude());
+		log.warn("distance is " + abq.distanceFrom(denv));
+		assertEquals(4.981897434713003, abq.distanceFrom(denv));
+		assertEquals(0, abq.distanceFrom(abq));
 	}
 }

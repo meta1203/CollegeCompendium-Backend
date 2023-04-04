@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.collegecompendium.backend.configurations.Auth0Provider;
 import com.collegecompendium.backend.models.CollegeAdmin;
+import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.models.User;
 import com.collegecompendium.backend.repositories.CollegeAdminRepository;
@@ -67,6 +68,7 @@ public class UserController {
     			.lastName(auth0Data.get("family_name"))
     			.username(auth0Data.get("nickname"))
     			.id(null)
+    			.location(new Location("0.0", "0.0"))
     			.build();
     	
     	response.setStatus(404);

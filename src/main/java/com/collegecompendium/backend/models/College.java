@@ -3,6 +3,7 @@ package com.collegecompendium.backend.models;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -52,8 +53,6 @@ public class College {
 	    return degrees;
 	}
 		
-	@Size(min = 0, max = 120)
-	@NotNull
-	@Column(length = 120)
-	private String location;
+	@Embedded
+	private Location location;
 }

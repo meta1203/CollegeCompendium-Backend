@@ -15,4 +15,8 @@ public interface CollegeRepository extends CrudRepository<College, String>{
 	Optional<College> findById(String id);
 	List<College> findByDegreesIn(Degree... degrees);
 	List<College> findByDegreesIn(List<Degree> degrees);
+	
+//	@Query("select c from College c " + 
+//	"where c.latitude BETWEEN :startDate AND :endDate")
+//	public List<College> getAllCollegesNear(@Param("startDate")Integer startDate,@Param("endDate")Integer endDate);
 }
