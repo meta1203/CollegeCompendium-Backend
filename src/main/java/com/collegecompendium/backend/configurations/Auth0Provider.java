@@ -113,7 +113,7 @@ public class Auth0Provider {
 		Map<String,String> body = resp.getBody();
 		this.token = body.get("access_token");
 		this.validFor = Integer.parseInt(body.get("expires_in"));
-		log.info("Auth0 token permissions: " + body.get("scope"));
+		// log.info("Auth0 token permissions: " + body.get("scope"));
 
 		return this.token;
 	}

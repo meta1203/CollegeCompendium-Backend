@@ -1,5 +1,6 @@
 package com.collegecompendium.backend.models;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -18,8 +19,8 @@ public class Location {
 	@Size(min = 0, max = 200)
 	private String address;
 	
-	private int latitudeInt;
-	private int longitudeInt;
+	private int latitude;
+	private int longitude;
 	
 	// this constructor & its annotations define how
 	// Jackson will (de)serialize JSON representations
@@ -28,8 +29,8 @@ public class Location {
 			@JsonProperty("address") String address, 
 			@JsonProperty("latitude") String latitude, 
 			@JsonProperty("longitude") String longitude) {
-		this.latitudeInt = strToFixedPrecision(latitude);
-		this.longitudeInt = strToFixedPrecision(longitude);
+		this.latitude = strToFixedPrecision(latitude);
+		this.longitude = strToFixedPrecision(longitude);
 	}
 	
 	public Location(String latitude, String longitude) {
@@ -42,18 +43,18 @@ public class Location {
 	@SuppressWarnings("unused")
 	private Location() {
 		this.address = "";
-		this.latitudeInt = 0;
-		this.longitudeInt = 0;
+		this.latitude = 0;
+		this.longitude = 0;
 	}
 	
 	@JsonGetter
 	public String getLatitude() {
-		return fixedPrecisionToStr(latitudeInt);
+		return fixedPrecisionToStr(latitude);
 	}
 	
 	@JsonGetter
 	public String getLongitude() {
-		return fixedPrecisionToStr(longitudeInt);
+		return fixedPrecisionToStr(longitude);
 	}
 	
 	@JsonGetter
@@ -62,14 +63,14 @@ public class Location {
 	}
 	
 	public double distanceFrom(Location two) {
-		double a = Double.parseDouble(fixedPrecisionToStr(this.latitudeInt - two.latitudeInt));
-		double b = Double.parseDouble(fixedPrecisionToStr(this.longitudeInt - two.longitudeInt));
+		double a = Double.parseDouble(fixedPrecisionToStr(this.latitude - two.latitude));
+		double b = Double.parseDouble(fixedPrecisionToStr(this.longitude - two.longitude));
 		// this is INCORRECT, as sphere topology is non-euclidean
 		// BUT this should be close enough :^)
 		return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
 	}
 	
-	private String fixedPrecisionToStr(int input) {
+	public static String fixedPrecisionToStr(int input) {
 		StringBuilder temp = new StringBuilder(Integer.toString(input));
 		// left-pad integer to 8 places
 		while (temp.length() < 8) {
@@ -79,7 +80,7 @@ public class Location {
 		return temp.toString();
 	}
 	
-	private int strToFixedPrecision(String input) {
+	public static int strToFixedPrecision(String input) {
 		String[] split = input.split(Pattern.quote("."));
 		if (split.length != 2) {
 			throw new IllegalArgumentException("coordinate " + input + " is malformed.");
@@ -102,8 +103,8 @@ public class Location {
 			return false;
 		
 		Location o2 = (Location)o;
-		return this.address.equals(o2.address) &&
-				this.latitudeInt == o2.latitudeInt &&
-				this.longitudeInt == o2.longitudeInt;
+		return Objects.equals(this.address, o2.address) &&
+				this.latitude == o2.latitude &&
+				this.longitude == o2.longitude;
 	}
 }

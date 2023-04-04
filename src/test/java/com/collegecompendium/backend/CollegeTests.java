@@ -13,14 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Location;
-import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.repositories.CollegeRepository;
-import com.collegecompendium.backend.repositories.StudentRepository;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -31,10 +28,6 @@ import lombok.extern.log4j.Log4j2;
 public class CollegeTests {
     @Autowired
     private CollegeRepository collegeRepository; // CRUD repo for database
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private Jwt injectedToken;
 
     @Test
     @Order(3)
@@ -71,12 +64,12 @@ public class CollegeTests {
     			.build();
     	unm = collegeRepository.save(unm);
     	
-    	Student ourGuy = studentRepository.findDistinctByAuth0Id(injectedToken.getSubject());
-    	assertNotNull(ourGuy);
+    	Location nearby = new Location("Neel Dr, Socorro, NM 87801", "34.063226", "-106.905866");
     	
-    	List<College> nearbyColleges = collegeRepository.findAllCollegesNear(ourGuy.getLocation(), 100000);
+    	List<College> nearbyColleges = collegeRepository.findAllCollegesNear(nearby, 1000);
     	assertNotNull(nearbyColleges);
     	assertFalse(nearbyColleges.isEmpty());
-    	log.warn(nearbyColleges.stream().map(c -> c.toString()).collect(Collectors.joining("[ ", ", ", " ]")));
+    	log.warn(nearbyColleges.stream().map(c -> c.getName()).collect(Collectors.joining("[ ", ", ", " ]")));
+    	log.warn(nearbyColleges.stream().flatMap(c -> c.getDegrees().stream()).map(deg -> deg.getName()).collect(Collectors.joining(", ")));
     }
 }
