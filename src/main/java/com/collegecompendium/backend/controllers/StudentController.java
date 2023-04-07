@@ -134,7 +134,7 @@ public class StudentController {
 	    Student student = new Student();
 	    student.setEmail(token.getClaim("email"));
 	    student.setUsername(token.getClaim("nickname"));
-	    student.setLocation("");
+	    student.setLocation(null);
 	    student.setFirstName(token.getClaim("given_name"));
 	    student.setLastName(token.getClaim("family_name"));
 	    student.setMiddleInitial("");

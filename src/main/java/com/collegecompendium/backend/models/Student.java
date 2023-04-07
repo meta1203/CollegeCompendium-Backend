@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -39,8 +40,6 @@ public class Student extends User {
 	@Builder.Default
 	private List<String> activities = new ArrayList<>();
 	
-	@Size(min = 0, max = 120)
-	@NotNull
-	@Column(length = 120)
-	private String location;
+	@Embedded
+	private Location location;
 }

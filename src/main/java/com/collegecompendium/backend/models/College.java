@@ -1,8 +1,10 @@
 package com.collegecompendium.backend.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,11 +15,15 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class College {
 	
@@ -26,10 +32,12 @@ public class College {
 	private String id;
 	
 	@OneToMany(mappedBy = "college")
-	private List<CollegeAdmin> collegeAdmins;
+	@Builder.Default
+	private List<CollegeAdmin> collegeAdmins = new ArrayList<CollegeAdmin>();
 	
 	@ManyToMany
-	private List<Degree> degrees;
+	@Builder.Default
+	private List<Degree> degrees = new ArrayList<Degree>();
 	
 	@NotEmpty
 	@NotNull
@@ -48,12 +56,6 @@ public class College {
 	@NotNull
 	private Integer outStateCost;
 
-	public List<Degree> getDegrees() {
-	    return degrees;
-	}
-		
-	@Size(min = 0, max = 120)
-	@NotNull
-	@Column(length = 120)
-	private String location;
+	@Embedded
+	private Location location;
 }

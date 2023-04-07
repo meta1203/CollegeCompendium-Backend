@@ -1,5 +1,8 @@
 package com.collegecompendium.backend;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,8 @@ public class Auth0Tests {
 		Assumptions.assumeFalse(secret == null || secret.isEmpty());
 		Assumptions.assumeFalse(client == null || client.isEmpty());
 		
-		log.info("got the following token: " + auth0Provider.getManagementToken());
+		String mgmtToken = auth0Provider.getManagementToken();
+		assertNotNull(mgmtToken);
+		assertFalse(mgmtToken.isEmpty());
 	}
 }
