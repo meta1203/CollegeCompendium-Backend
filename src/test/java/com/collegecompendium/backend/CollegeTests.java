@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Location;
+import com.collegecompendium.backend.models.Photo;
 import com.collegecompendium.backend.repositories.CollegeRepository;
 
 import lombok.extern.log4j.Log4j2;
@@ -38,11 +39,24 @@ public class CollegeTests {
     			.outStateCost(20000)
     			.location(new Location("34.066017", "-106.905613"))
     			.url("https://www.nmt.edu/")
+                .photos(List.of(
+                        Photo.builder().url("https://imgur.com/F7DlWnf").build(),
+                        Photo.builder().url("https://imgur.com/funxCwh").build()
+                ))
+                .phoneNumber("555-123-4567")
+                .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                .popularity(69)
     			.build();
     	College output = collegeRepository.save(input);
     	
     	assertEquals(input.getLocation(), output.getLocation());
     	assertEquals(input.getUrl(), output.getUrl());
+    	assertEquals(input.getPhoneNumber(), output.getPhoneNumber());
+        assertEquals(input.getDescription(), output.getDescription());
+        assertEquals(input.getPopularity(), output.getPopularity());
+        assertEquals(input.getPhotos().size(), output.getPhotos().size());
+        assertEquals(input.getPhotos().get(0).getUrl(), output.getPhotos().get(0).getUrl());
+        assertEquals(input.getPhotos().get(1).getUrl(), output.getPhotos().get(1).getUrl());
     	assertNotNull(input.getId());
     }
 
