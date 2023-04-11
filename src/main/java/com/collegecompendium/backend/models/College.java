@@ -58,4 +58,18 @@ public class College {
 
 	@Embedded
 	private Location location;
+	
+	@OneToMany(mappedBy = "college")
+	@Builder.Default
+	private List<Photo> photos = new ArrayList<Photo>();
+	
+	@Size(max = 4096)
+	@Column(length = 4096)
+	private String description;
+
+	@Size(min = 12, max = 16)
+	@Column(length = 15)
+	private String phoneNumber;
+
+	private Integer popularity;
 }
