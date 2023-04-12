@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -58,4 +59,18 @@ public class College {
 
 	@Embedded
 	private Location location;
+	
+	@ElementCollection
+	@Builder.Default
+	private List<String> photos = new ArrayList<String>();
+	
+	@Size(max = 4096)
+	@Column(length = 4096)
+	private String description;
+
+	@Size(min = 12, max = 16)
+	@Column(length = 15)
+	private String phoneNumber;
+
+	private Integer popularity;
 }

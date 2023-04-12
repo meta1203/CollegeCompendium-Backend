@@ -38,11 +38,24 @@ public class CollegeTests {
     			.outStateCost(20000)
     			.location(new Location("34.066017", "-106.905613"))
     			.url("https://www.nmt.edu/")
+                .photos(List.of(
+                        "https://imgur.com/F7DlWnf",
+                        "https://imgur.com/funxCwh"
+                ))
+                .phoneNumber("555-123-4567")
+                .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                .popularity(69)
     			.build();
     	College output = collegeRepository.save(input);
     	
     	assertEquals(input.getLocation(), output.getLocation());
     	assertEquals(input.getUrl(), output.getUrl());
+    	assertEquals(input.getPhoneNumber(), output.getPhoneNumber());
+        assertEquals(input.getDescription(), output.getDescription());
+        assertEquals(input.getPopularity(), output.getPopularity());
+        assertEquals(input.getPhotos().size(), output.getPhotos().size());
+        assertEquals(input.getPhotos().get(0), output.getPhotos().get(0));
+        assertEquals(input.getPhotos().get(1), output.getPhotos().get(1));
     	assertNotNull(input.getId());
     }
 
