@@ -96,7 +96,29 @@ public class CollegeAdminController {
 		
 		return output;
 	}
+	@PostMapping("/collegeAdmin/approve/{email}")
+	public CollegeAdmin approveCollegeAdmin(
+	        @PathVariable String email,
+	        @AuthenticationPrincipal Jwt token,
+	        HttpServletResponse response) {
+	    CollegeAdmin callingCollegeAdmin = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
 
+	    if (callingCollegeAdmin == null || !callingCollegeAdmin.isApproved()) {
+	        response.setStatus(403);
+	        return null;
+	    }
+
+	    CollegeAdmin targetCollegeAdmin = collegeAdminRepository.findDistinctByEmail(email);
+
+	    if (targetCollegeAdmin == null || !callingCollegeAdmin.getCollege().getId().equals(targetCollegeAdmin.getCollege().getId())) {
+	        response.setStatus(403);
+	        return null;
+	    }
+
+	    targetCollegeAdmin.setApproved(true);
+	    collegeAdminRepository.save(targetCollegeAdmin);
+	    return null;
+	}
 	/**
 	 * Returns the college of the calling token
 	 * @param token - the token of the calling user

@@ -22,8 +22,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
+import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.models.College;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -100,5 +102,33 @@ class BackendApplicationTests {
 		log.warn("distance is " + abq.distanceFrom(denv));
 		assertEquals(4.981897434713003, abq.distanceFrom(denv));
 		assertEquals(0, abq.distanceFrom(abq));
+	}
+	
+	@Test
+	@Order(3)
+	void testApproveCollegeAdmin() {
+		String testEmail = "test@example.com";
+
+		College college = new College();
+		college.setName("Example College");
+		
+		CollegeAdmin callingCollegeAdmin = new CollegeAdmin();
+		callingCollegeAdmin.setEmail("calling@example.com");
+		callingCollegeAdmin.setApproved(true);
+		callingCollegeAdmin.setCollege(college);
+
+		CollegeAdmin targetCollegeAdmin = new CollegeAdmin();
+		targetCollegeAdmin.setEmail(testEmail);
+		targetCollegeAdmin.setCollege(college);
+		
+		//Just copy-pasta
+	    RequestEntity<Void> request = RequestEntity
+	            .post(URI.create("http://localhost:8080/collegeAdmin/approve/" + testEmail))
+	            .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+	            .build();
+
+	    ResponseEntity<Void> response = restTemplate.exchange(request, Void.class);
+
+	    assertEquals(HttpStatus.OK, response.getStatusCode());
 	}
 }

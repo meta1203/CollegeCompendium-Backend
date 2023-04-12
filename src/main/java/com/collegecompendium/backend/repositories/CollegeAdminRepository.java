@@ -28,4 +28,5 @@ public interface CollegeAdminRepository extends CrudRepository<CollegeAdmin, Str
 	List<CollegeAdmin> findByCollege(College college);
 	public CollegeAdmin findDistinctByUsername(String username);
 	public CollegeAdmin findDistinctByAuth0Id(String auth0Id);
+	public CollegeAdmin findDistinctByEmail(String email);
 }
