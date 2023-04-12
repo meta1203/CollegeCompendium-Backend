@@ -3,7 +3,10 @@ package com.collegecompendium.backend.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.validator.constraints.URL;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,9 +46,15 @@ public class College {
 	@NotNull
 	private String name;	
 	
+	/**
+	 * @URL will check that protocols: http, https, ftp, file, and jar exist. If we need different protocols
+	 * we can change the constraint mapping.
+	 * https://docs.jboss.org/hibernate/stable/validator/api/org/hibernate/validator/constraints/URL.html
+	 */
 	@NotNull
 	@Size(min = 12, max = 1024)
 	@Column(length = 1024)
+	@URL
 	private String url;
 	
 	@Min(100)
@@ -59,9 +68,10 @@ public class College {
 	@Embedded
 	private Location location;
 	
-	@OneToMany(mappedBy = "college")
+	@ElementCollection
+	@URL
 	@Builder.Default
-	private List<Photo> photos = new ArrayList<Photo>();
+	private List<String> photos = new ArrayList<String>();
 	
 	@Size(max = 4096)
 	@Column(length = 4096)
