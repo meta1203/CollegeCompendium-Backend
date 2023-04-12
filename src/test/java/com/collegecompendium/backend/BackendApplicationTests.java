@@ -25,6 +25,8 @@ import org.springframework.web.client.RestTemplate;
 import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.repositories.CollegeAdminRepository;
+import com.collegecompendium.backend.repositories.CollegeRepository;
 import com.collegecompendium.backend.models.College;
 
 import lombok.extern.log4j.Log4j2;
@@ -43,7 +45,11 @@ class BackendApplicationTests {
 	private Jwt injectedJwt;
 	@Autowired
 	private RestTemplate restTemplate;
-	
+	@Autowired
+	private CollegeRepository collegeRepository;
+
+	@Autowired
+	private CollegeAdminRepository collegeAdminRepository;
 	@Test
 	@Order(0)
 	void contextLoads() {}
@@ -111,15 +117,18 @@ class BackendApplicationTests {
 
 		College college = new College();
 		college.setName("Example College");
+		college = collegeRepository.save(college);
 		
 		CollegeAdmin callingCollegeAdmin = new CollegeAdmin();
 		callingCollegeAdmin.setEmail("calling@example.com");
 		callingCollegeAdmin.setApproved(true);
 		callingCollegeAdmin.setCollege(college);
+	    callingCollegeAdmin = collegeAdminRepository.save(callingCollegeAdmin);
 
 		CollegeAdmin targetCollegeAdmin = new CollegeAdmin();
 		targetCollegeAdmin.setEmail(testEmail);
 		targetCollegeAdmin.setCollege(college);
+	    targetCollegeAdmin = collegeAdminRepository.save(targetCollegeAdmin);
 		
 		//Just copy-pasta
 	    RequestEntity<Void> request = RequestEntity
@@ -127,8 +136,12 @@ class BackendApplicationTests {
 	            .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 	            .build();
 
-	    ResponseEntity<Void> response = restTemplate.exchange(request, Void.class);
+	    ResponseEntity<CollegeAdmin> resp = restTemplate.exchange(request, CollegeAdmin.class);
 
-	    assertEquals(HttpStatus.OK, response.getStatusCode());
+	    assertEquals(HttpStatus.OK, resp.getStatusCode());
+	    
+	    collegeAdminRepository.delete(callingCollegeAdmin);
+	    collegeAdminRepository.delete(targetCollegeAdmin);
+	    collegeRepository.delete(college);
 	}
 }
