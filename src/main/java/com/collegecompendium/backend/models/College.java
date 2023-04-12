@@ -73,4 +73,7 @@ public class College {
 	private String phoneNumber;
 
 	private Integer popularity;
+	
+	//NotNull and Column(nullable = false) not needed, will always be t/f
+	private boolean approved;
 }
