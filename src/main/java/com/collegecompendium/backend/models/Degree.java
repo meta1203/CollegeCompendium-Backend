@@ -33,7 +33,7 @@ public class Degree {
 
     @NotEmpty
     @NotNull
-    @OneToMany
+    @ManyToOne
     private Major major;
 
     // These actually can be empty/null, if the school doesn't provide enough data
