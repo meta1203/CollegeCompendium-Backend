@@ -40,7 +40,7 @@ public class MajorController {
         List<Major> result = majorRepository.findByPartialMajorName(PartialName);
 
         if (result == null) {
-            response.setStatus(4004);
+            response.setStatus(404);
             return null;
         }
         else {
