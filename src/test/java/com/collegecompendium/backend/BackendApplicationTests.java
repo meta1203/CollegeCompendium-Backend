@@ -20,6 +20,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.collegecompendium.backend.models.CollegeAdmin;
@@ -110,6 +111,7 @@ class BackendApplicationTests {
 		assertEquals(0, abq.distanceFrom(abq));
 	}
 	
+	@Transactional
 	@Test
 	@Order(3)
 	void testApproveCollegeAdmin() {
@@ -122,13 +124,23 @@ class BackendApplicationTests {
 	    college = collegeRepository.save(college);
 
 	    CollegeAdmin callingCollegeAdmin = CollegeAdmin.builder()
-	            .email("420BlazeIt@hotmale.com")
+				.firstName("Erik")
+				.lastName("Noll")
+				.middleInitial("E")
+				.username("mountainDewYoloSwag420")
+				.auth0Id("test|1234")
+	    		.email("420BlazeIt@hotmale.com")
 	            .approved(true)
 	            .college(college)
 	            .build();
 	    callingCollegeAdmin = collegeAdminRepository.save(callingCollegeAdmin);
 
 	    CollegeAdmin targetCollegeAdmin = CollegeAdmin.builder()
+				.firstName("Korbin")
+				.lastName("Dallas")
+				.middleInitial("L")
+				.username("Mul ti pass")
+				.auth0Id("timeNoLifeYes")
 	            .email(testEmail)
 	            .college(college)
 	            .build();
