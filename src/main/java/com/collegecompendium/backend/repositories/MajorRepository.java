@@ -8,5 +8,5 @@ import java.util.List;
 public interface MajorRepository extends CrudRepository<Major, String> {
     public Major findByMajorName(String name);
 
-    public List<Major> findByPartialMajorName(String name);
+    public List<Major> findByMajorNameContains(String name);
 }
