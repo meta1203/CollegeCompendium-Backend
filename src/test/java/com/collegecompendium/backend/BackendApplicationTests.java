@@ -117,6 +117,13 @@ class BackendApplicationTests {
 
 		College college = new College();
 		college.setName("Example College");
+		college = College.builder()
+				.name("Example College")
+				.url("https://example.com")
+				.inStateCost(300000)
+				.outStateCost(40000)
+				.location(new Location("", "0.0", "0.0"))
+				.build();
 		college = collegeRepository.save(college);
 		
 		CollegeAdmin callingCollegeAdmin = new CollegeAdmin();
