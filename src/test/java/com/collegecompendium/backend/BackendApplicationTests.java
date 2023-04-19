@@ -111,15 +111,17 @@ class BackendApplicationTests {
 		assertEquals(0, abq.distanceFrom(abq));
 	}
 	
-	@Transactional
 	@Test
 	@Order(3)
 	void testApproveCollegeAdmin() {
 	    String testEmail = "ElonMusk@bitch.com";
-	    
 	    //Lombok Builduuuuuhr
 	    College college = College.builder()
+	    		.url("bruhWeMadeIt.com")
+	    		.inStateCost(1111)
+	    		.outStateCost(2222)
 	            .name("New Mexico Tech")
+	    		.location(new Location("801 Leroy Pl, Socorro, NM 87801", "34.063226", "-106.905866"))
 	            .build();
 	    college = collegeRepository.save(college);
 
@@ -127,8 +129,8 @@ class BackendApplicationTests {
 				.firstName("Erik")
 				.lastName("Noll")
 				.middleInitial("E")
-				.username("mountainDewYoloSwag420")
-				.auth0Id("test|1234")
+				.username("testAdmin1")
+				.auth0Id("ETestAuth0")
 	    		.email("420BlazeIt@hotmale.com")
 	            .approved(true)
 	            .college(college)

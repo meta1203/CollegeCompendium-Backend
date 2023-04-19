@@ -101,11 +101,8 @@ public class CollegeAdminController {
 	        @PathVariable String email,
 	        @AuthenticationPrincipal Jwt token,
 	        HttpServletResponse response) {
-		//Test
-	    System.out.println("Token subject: " + token.getSubject());
-	    CollegeAdmin callingCollegeAdmin = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
-	    //Test
-	    System.out.println("Calling CollegeAdmin: " + callingCollegeAdmin);
+
+		CollegeAdmin callingCollegeAdmin = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
 
 	    if (callingCollegeAdmin == null || !callingCollegeAdmin.isApproved()) {
 	        response.setStatus(403);
@@ -113,8 +110,6 @@ public class CollegeAdminController {
 	    }
 
 	    CollegeAdmin targetCollegeAdmin = collegeAdminRepository.findDistinctByEmail(email);
-	    //Test
-	    System.out.println("Target CollegeAdmin: " + targetCollegeAdmin);
 
 	    if (targetCollegeAdmin == null || !callingCollegeAdmin.getCollege().getId().equals(targetCollegeAdmin.getCollege().getId())) {
 	        response.setStatus(403);
