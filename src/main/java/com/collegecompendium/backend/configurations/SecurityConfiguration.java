@@ -76,12 +76,14 @@ public class SecurityConfiguration {
 		// enforce permissions
 		// changed /college to /collegeAdmin
 		http.authorizeHttpRequests()
-			.requestMatchers("/**")
-				.hasAuthority("PERM_superAdmin")
 			.requestMatchers("/student", "/student/**")
 				.hasAuthority("PERM_student")
 			.requestMatchers("/collegeAdmin", "/collegeAdmin/**")
 				.hasAuthority("PERM_collegeAdmin")
+			.requestMatchers("/search/**")
+				.authenticated()
+			.requestMatchers("/superAdmin/**", "/student", "/student/**", "/collegeAdmin", "/collegeAdmin/**")
+				.hasAuthority("PERM_superAdmin")
 			.anyRequest()
 				.authenticated();
 
