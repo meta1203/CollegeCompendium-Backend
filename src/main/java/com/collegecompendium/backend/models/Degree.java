@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -17,22 +17,24 @@ import lombok.Data;
 @Data
 @Entity
 public class Degree {
-    private enum DegreeType {
-        ASSOCIATE,
-        BACHELOR,
-        MASTER,
-        DOCTORATE
-    }
+	private enum DegreeType {
+		ASSOCIATE,
+		BACHELOR,
+		MASTER,
+		DOCTORATE
+	}
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private String id;
 
-    @NotEmpty
-    @NotNull
-    private String name;
+	@NotNull
+	@ManyToOne
+	private Major major;
 
-    // These actually can be empty/null, if the school doesn't provide enough data
-    private DegreeType degreeType;
-    private int creditsRequired;
+	// These actually can be empty/null, if the school doesn't provide enough data
+	private DegreeType degreeType;
+	private int creditsRequired;
+
 }
+

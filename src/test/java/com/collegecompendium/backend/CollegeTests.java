@@ -83,6 +83,6 @@ public class CollegeTests {
     	assertNotNull(nearbyColleges);
     	assertFalse(nearbyColleges.isEmpty());
     	log.warn(nearbyColleges.stream().map(c -> c.getName()).collect(Collectors.joining("[ ", ", ", " ]")));
-    	log.warn(nearbyColleges.stream().flatMap(c -> c.getDegrees().stream()).map(deg -> deg.getName()).collect(Collectors.joining(", ")));
+    	// log.warn(nearbyColleges.stream().flatMap(c -> c.getDegrees().stream()).map(deg -> deg.getName()).collect(Collectors.joining(", ")));
     }
 }
