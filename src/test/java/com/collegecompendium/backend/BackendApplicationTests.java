@@ -113,24 +113,27 @@ class BackendApplicationTests {
 	@Test
 	@Order(3)
 	void testApproveCollegeAdmin() {
-		String testEmail = "test@example.com";
+	    String testEmail = "ElonMusk@bitch.com";
+	    
+	    //Lombok Builduuuuuhr
+	    College college = College.builder()
+	            .name("New Mexico Tech")
+	            .build();
+	    college = collegeRepository.save(college);
 
-		College college = new College();
-		college.setName("Example College");
-		college = collegeRepository.save(college);
-		
-		CollegeAdmin callingCollegeAdmin = new CollegeAdmin();
-		callingCollegeAdmin.setEmail("calling@example.com");
-		callingCollegeAdmin.setApproved(true);
-		callingCollegeAdmin.setCollege(college);
+	    CollegeAdmin callingCollegeAdmin = CollegeAdmin.builder()
+	            .email("420BlazeIt@hotmale.com")
+	            .approved(true)
+	            .college(college)
+	            .build();
 	    callingCollegeAdmin = collegeAdminRepository.save(callingCollegeAdmin);
 
-		CollegeAdmin targetCollegeAdmin = new CollegeAdmin();
-		targetCollegeAdmin.setEmail(testEmail);
-		targetCollegeAdmin.setCollege(college);
+	    CollegeAdmin targetCollegeAdmin = CollegeAdmin.builder()
+	            .email(testEmail)
+	            .college(college)
+	            .build();
 	    targetCollegeAdmin = collegeAdminRepository.save(targetCollegeAdmin);
-		
-		//Just copy-pasta
+
 	    RequestEntity<Void> request = RequestEntity
 	            .post(URI.create("http://localhost:8080/collegeAdmin/approve/" + testEmail))
 	            .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
@@ -140,6 +143,7 @@ class BackendApplicationTests {
 
 	    assertEquals(HttpStatus.OK, resp.getStatusCode());
 	    
+	    //Delete
 	    collegeAdminRepository.delete(callingCollegeAdmin);
 	    collegeAdminRepository.delete(targetCollegeAdmin);
 	    collegeRepository.delete(college);
