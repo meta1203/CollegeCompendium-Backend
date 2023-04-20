@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
+import com.collegecompendium.backend.configurations.LocationProvider;
 import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
 
@@ -41,6 +42,8 @@ class BackendApplicationTests {
 	private Jwt injectedJwt;
 	@Autowired
 	private RestTemplate restTemplate;
+	@Autowired
+	private LocationProvider locationProvider;
 	
 	@Test
 	@Order(0)
@@ -77,6 +80,7 @@ class BackendApplicationTests {
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.body(student);
+		
 		resp = restTemplate.exchange(req2, Student.class);
 		assertEquals(HttpStatus.OK, resp.getStatusCode());
 		student = resp.getBody();
@@ -91,14 +95,16 @@ class BackendApplicationTests {
 	
 	@Test
 	@Order(2)
-	void testLocation() {
-		Location abq = new Location("35.1054", "-106.6465");
-		Location denv = new Location("39.762", "-104.8758");
-		log.warn(abq.getLatitude() + " | " + abq.getLongitude());
-		assertEquals("35.105400", abq.getLatitude());
-		assertEquals("-104.875800", denv.getLongitude());
+	void testLocation() throws InterruptedException {
+		Location abq = locationProvider.findLocation("Albuquerque, New Mexico");
+		Thread.sleep(1100);
+		Location denv = locationProvider.findLocation("Denver, Colorado");
+		log.warn("ABQ: " + abq.getLatitude() + " | " + abq.getLongitude());
+		log.warn("Denver: " + denv.getLatitude() + " | " + denv.getLongitude());
+		assertEquals("35.212870", abq.getLatitude());
+		assertEquals("-104.984862", denv.getLongitude());
 		log.warn("distance is " + abq.distanceFrom(denv));
-		assertEquals(4.981897434713003, abq.distanceFrom(denv));
+		assertEquals(4.845132333688317, abq.distanceFrom(denv));
 		assertEquals(0, abq.distanceFrom(abq));
 	}
 }
