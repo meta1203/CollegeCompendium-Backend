@@ -1,22 +1,24 @@
 package com.collegecompendium.backend.controllers;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.collegecompendium.backend.configurations.Auth0Provider;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.repositories.CollegeRepository;
-import com.collegecompendium.backend.repositories.CollegeRepositoryCustom;
-import com.collegecompendium.backend.repositories.CollegeRepositoryCustomImpl;
 import com.collegecompendium.backend.repositories.StudentRepository;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 // Web browser visibility
