@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.collegecompendium.backend.configurations.Auth0Provider;
+import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.repositories.StudentRepository;
 
@@ -28,14 +28,12 @@ public class StudentController {
 	private StudentRepository studentRepository;
 	
 	@Autowired
-	private Auth0Provider auth0Provider;
+	private UserProvider userProvider;
 	
 	@PostMapping("/student")
 	public Student createNewStudent(@RequestBody Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
-		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
-
-		// Checking if it already exists, if so then do not let them create a new one.
-		if(result != null) {
+		// Checking if user already exists, if so then do not let them create a new one.
+		if(userProvider.getUserForToken(token) != null) {
 			response.setStatus(400);
 			return null;
 		}
@@ -50,20 +48,31 @@ public class StudentController {
 		Student output = studentRepository.save(input);
 		
 		// add student permission to auth0
-		auth0Provider.addPermissionToUser(output, "student");
+		userProvider.addPermissionToUser(output, "student");
 		return output;
 	}
 
 	
 	@GetMapping("/student/{id}")
-	public Student getStudentById(@PathVariable String id, HttpServletResponse response) {
+	public Student getStudentById(
+			@PathVariable String id,
+			@AuthenticationPrincipal Jwt token,
+			HttpServletResponse response
+			) {
 		Optional<Student> query = studentRepository.findById(id);
 		
 		if(query.isEmpty()) {
 			response.setStatus(404);
 			return null;
 		}
-		return query.get();
+		
+		Student ret = query.get();
+		if (! ret.getAuth0Id().equals(token.getSubject())) {
+			response.setStatus(403);
+			return null;
+		}
+		
+		return ret;
 	}
 	
 	@GetMapping("/student")
@@ -117,13 +126,24 @@ public class StudentController {
 	}
 	
 	@DeleteMapping("/student/{id}")
-	public boolean deleteStudent(@PathVariable String id, HttpServletResponse response) {
+	public boolean deleteStudent(
+			@PathVariable String id,
+			@AuthenticationPrincipal Jwt token,
+			HttpServletResponse response
+			) {
 		Optional<Student> query = studentRepository.findById(id);
 		if(query.isEmpty()) {
 			response.setStatus(404);
 			return false;
 		}
-		studentRepository.delete(query.get());
+		
+		Student ret = query.get();
+		if (! ret.getAuth0Id().equals(token.getSubject())) {
+			response.setStatus(403);
+			return false;
+		}
+		
+		studentRepository.delete(ret);
 		return true;
 	}
 	
