@@ -45,10 +45,10 @@ public class CollegeRepositoryCustomImpl implements CollegeRepositoryCustom {
 		TypedQuery<College> tq = entityManager.createQuery(
 			"SELECT c FROM College c " +
 			"WHERE " +
-			":major IN c.degrees.major.id",
+			":major IN c.degrees.major.name",
 			College.class
 		)
-		.setParameter("major", major.getId());
+		.setParameter("major", major.getName());
 
 		return tq.getResultList();
 	}

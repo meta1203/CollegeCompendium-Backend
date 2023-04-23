@@ -39,6 +39,8 @@ public class SearchTests {
 	@Autowired
 	private StudentRepository studentRepository;
 	@Autowired
+	private MajorRepository majorRepository;
+	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
 
 	College c1;
@@ -165,6 +167,10 @@ public class SearchTests {
 	@Test
 	@Order(3)
 	public void findCollegeByMajorTest(){
+		Major major = Major.builder()
+				.name("Computer Science")
+				.build();
+		majorRepository.save(major);
 		// Will build later
 		assertTrue(false);
 	}
