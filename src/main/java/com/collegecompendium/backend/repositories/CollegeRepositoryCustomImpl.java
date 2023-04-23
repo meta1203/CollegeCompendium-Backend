@@ -5,6 +5,7 @@ import java.util.List;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Location;
 
+import com.collegecompendium.backend.models.Major;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceContextType;
@@ -39,4 +40,16 @@ public class CollegeRepositoryCustomImpl implements CollegeRepositoryCustom {
 		return tq.getResultList();
 	}
 
+	@Override
+	public List<College> findAllCollegesByMajor(Major major) {
+		TypedQuery<College> tq = entityManager.createQuery(
+			"SELECT c FROM College c " +
+			"WHERE " +
+			":major IN c.degrees.major.id",
+			College.class
+		)
+		.setParameter("major", major.getId());
+
+		return tq.getResultList();
+	}
 }

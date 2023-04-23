@@ -1,9 +1,5 @@
 package com.collegecompendium.backend;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,14 +17,12 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
-import com.collegecompendium.backend.models.College;
-import com.collegecompendium.backend.models.Location;
-import com.collegecompendium.backend.models.Student;
-import com.collegecompendium.backend.repositories.CollegeAdminRepository;
-import com.collegecompendium.backend.repositories.CollegeRepository;
-import com.collegecompendium.backend.repositories.StudentRepository;
+import com.collegecompendium.backend.models.*;
+import com.collegecompendium.backend.repositories.*;
 
 import lombok.extern.log4j.Log4j2;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
@@ -46,6 +40,8 @@ public class SearchTests {
 	private StudentRepository studentRepository;
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
+
+	College c1;
 	
 	@BeforeEach
 	public void setup() {
@@ -74,7 +70,7 @@ public class SearchTests {
 		collegeRepository.findAll().forEach(c -> collegeRepository.delete(c));
 		
 		// prepopulate colleges
-		College c1 = College.builder()
+		c1 = College.builder()
 				.name("New Mexico Tech")
 				.inStateCost(30000)
 				.outStateCost(40000)
@@ -141,5 +137,35 @@ public class SearchTests {
 		assertFalse(colleges.isEmpty());
 		
 		colleges.forEach(c -> log.warn(c));
+	}
+
+	@Test
+	@Order(2)
+	public void findCollegeByIDTest(){
+		String id = c1.getId(); // Get the ID of C1
+
+		// Query the API for the college with the ID
+		RequestEntity<Void> re = RequestEntity
+				.get("http://localhost:8080/search/college/id/{id}", id)
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.build();
+		ResponseEntity<College> resp = restTemplate.exchange(re,
+				new ParameterizedTypeReference<College>(){});
+		assertTrue(resp.getStatusCode().is2xxSuccessful());
+		log.warn(resp.getBody());
+
+		College college = resp.getBody();
+		assertNotNull(college);
+
+		// Ensure the response the same as the college expected
+		assertEquals(college.getId(), id);
+		assertEquals(college.getName(), c1.getName());
+	}
+
+	@Test
+	@Order(3)
+	public void findCollegeByMajorTest(){
+		// Will build later
+		assertTrue(false);
 	}
 }
