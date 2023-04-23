@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.collegecompendium.backend.configurations.Auth0Provider;
+import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.repositories.CollegeAdminRepository;
@@ -40,7 +40,7 @@ public class CollegeAdminController {
 	private CollegeRepository collegeRepository;
 	
 	@Autowired
-	private Auth0Provider auth0Provider;
+	private UserProvider userProvider;
 	
 	// Spring annotation - defines a REST endpoint to be handled by
 	// the annotated function. function arguments can be annotated
@@ -79,7 +79,7 @@ public class CollegeAdminController {
 			HttpServletResponse response 
 			) {
 		// If Auth0 ID already exists, return.
-		if(collegeAdminRepository.findDistinctByAuth0Id(token.getSubject()) != null){
+		if(userProvider.getUserForToken(token) != null){
 			response.setStatus(400);
 			return null;
 		}
@@ -92,7 +92,7 @@ public class CollegeAdminController {
 		CollegeAdmin output = collegeAdminRepository.save(input);
 		
 		// add collegeAdmin permission to auth0
-		auth0Provider.addPermissionToUser(input, "collegeAdmin");
+		userProvider.addPermissionToUser(input, "collegeAdmin");
 		
 		return output;
 	}
@@ -176,9 +176,6 @@ public class CollegeAdminController {
 		// update database w/ new collegeAdmin and return college
 		input = collegeAdminRepository.save(input);
 		return input;
-
-
-
 	}
 
 	@DeleteMapping("/collegeAdmin/{id}")

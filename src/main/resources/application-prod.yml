@@ -1,6 +1,12 @@
 spring:
-   thymeleaf:
-      cache: false
+  jpa:
+    generate-ddl: true
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+  thymeleaf:
+    cache: false
+
 server:
   port: 8080
   ssl:
