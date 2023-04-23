@@ -34,7 +34,6 @@ public class SearchController {
     @Autowired
     StudentRepository studentRepository;
 
-
     // /search/college/distance/{miles}
     @GetMapping("/search/college/distance/{miles}")
     public List<College> listWithinRadiusCollege(@PathVariable int miles, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
@@ -61,9 +60,15 @@ public class SearchController {
         List<College> result = collegeRepository.findAllCollegesNear(studentLocation, miles);
 
 
+        // sort results by distance
         result.sort((a, b) ->
                 (int)(studentLocation.distanceFrom(a.getLocation()) -
                         studentLocation.distanceFrom(b.getLocation())));
+        
+        // remove CollegeAdmins from list to preserve privacy 
+        result.parallelStream().forEach(c -> {
+        	c.setCollegeAdmins(null);
+        });
         return result;
     }
 
