@@ -1,3 +1,10 @@
+logging:
+  file:
+    name: college_compendium.log
+    path: logs
+  level:
+    root: INFO
+    '[com.collegecompendium]': TRACE
 spring:
   profiles:
     active:

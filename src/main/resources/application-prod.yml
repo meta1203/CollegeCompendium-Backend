@@ -1,6 +1,3 @@
-logging:
-  file:
-    name: "college_compendium.log"
 spring:
   thymeleaf:
     cache: false
