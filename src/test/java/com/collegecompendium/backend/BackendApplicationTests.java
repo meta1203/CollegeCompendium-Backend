@@ -95,10 +95,10 @@ class BackendApplicationTests {
 		Location abq = new Location("35.1054", "-106.6465");
 		Location denv = new Location("39.762", "-104.8758");
 		log.warn(abq.getLatitude() + " | " + abq.getLongitude());
-		assertEquals("35.105400", abq.getLatitude());
-		assertEquals("-104.875800", denv.getLongitude());
+		assertEquals(35.1054d, abq.getLatitude());
+		assertEquals(-104.8758d, denv.getLongitude());
 		log.warn("distance is " + abq.distanceFrom(denv));
-		assertEquals(4.981897434713003, abq.distanceFrom(denv));
+		assertEquals(4.9818974347130025d, abq.distanceFrom(denv));
 		assertEquals(0, abq.distanceFrom(abq));
 	}
 }

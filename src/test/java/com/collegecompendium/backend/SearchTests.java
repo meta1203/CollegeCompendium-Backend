@@ -47,9 +47,7 @@ public class SearchTests {
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
 	
-	// @BeforeEach
-	@Test
-	@Order(0)
+	@BeforeEach
 	public void setup() {
 		// TODO: replace with UserProvider
 		Student me = Student.builder()
@@ -86,23 +84,23 @@ public class SearchTests {
 						"-106.9056496898088"
 				))
 				.description("The first test college")
-				.phoneNumber("+1 (575) 835-5133")
+				// .phoneNumber("5758355133")
 				.popularity(69)
 				.url("https://www.nmt.edu/")
 				.build();
 		c1 = collegeRepository.save(c1);
 		
 		College c2 = College.builder()
-				.name("Craig's Back Alley Diplomas")
-				.inStateCost(20)
-				.outStateCost(25)
+				.name("Dirty Dave's Degrees and Dissertations")
+				.inStateCost(100)
+				.outStateCost(125)
 				.location(new Location(
 						"104 Neel St, Socorro, NM 87801",
 						"34.059078845885246", 
 						"-106.89836091130815"
 				))
 				.description("The second test college")
-				.phoneNumber("+1 (505) 980-0370")
+				// .phoneNumber("5059800370")
 				.popularity(1)
 				.url("http://cgnuonline-eniversity.edu")
 				.build();
@@ -118,7 +116,7 @@ public class SearchTests {
 						"-106.61977049166329"
 				))
 				.description("The third test college")
-				.phoneNumber("+1 (505) 277-8900")
+				//.phoneNumber("5052778900")
 				.popularity(420)
 				.url("https://unm.edu")
 				.build();
@@ -130,7 +128,7 @@ public class SearchTests {
 	@Order(1)
 	public void locationSearch() {
 		RequestEntity<Void> re = RequestEntity
-				.get("/search/college/distance/{miles}", Integer.valueOf(10))
+				.get("http://localhost:8080/search/college/distance/{miles}", Integer.valueOf(10))
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.build();
 		ResponseEntity<List<College>> resp = restTemplate.exchange(re, 
