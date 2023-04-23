@@ -18,7 +18,7 @@ import com.collegecompendium.backend.models.User;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
 @RestController
 public class UserController {
 	@Autowired
