@@ -1,6 +1,8 @@
+logging:
+  file: college_compendium.log
 spring:
-   thymeleaf:
-      cache: false
+  thymeleaf:
+    cache: false
 server:
   port: 8080
   ssl:
