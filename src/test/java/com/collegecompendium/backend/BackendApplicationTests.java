@@ -23,8 +23,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 import com.collegecompendium.backend.configurations.LocationProvider;
+import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.models.User;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -44,6 +46,8 @@ class BackendApplicationTests {
 	private RestTemplate restTemplate;
 	@Autowired
 	private LocationProvider locationProvider;
+	@Autowired
+	private UserProvider userProvider;
 	
 	@Test
 	@Order(0)
@@ -53,6 +57,11 @@ class BackendApplicationTests {
 	@Order(1)
 	// test New User Experience endpoints
 	void testNewUser() {
+		// clear existing user, if it exists
+		User u = userProvider.getUserForToken(injectedJwt);
+		if (u != null)
+			userProvider.deleteUser(u);
+		
 		// validate we can get an incomplete user object
 		RequestEntity<Void> req1 = RequestEntity
 				.get(URI.create("http://localhost:8080/user"))
@@ -99,12 +108,11 @@ class BackendApplicationTests {
 		Location abq = locationProvider.findLocation("Albuquerque, New Mexico");
 		Thread.sleep(1100);
 		Location denv = locationProvider.findLocation("Denver, Colorado");
-		log.warn("ABQ: " + abq.getLatitude() + " | " + abq.getLongitude());
-		log.warn("Denver: " + denv.getLatitude() + " | " + denv.getLongitude());
-		assertEquals("35.212870", abq.getLatitude());
-		assertEquals("-104.984862", denv.getLongitude());
+		log.warn(abq.getLatitude() + " | " + abq.getLongitude());
+		assertEquals("35.212871", abq.getLatitudeFixedPrecision());
+		assertEquals("-104.984862", denv.getLongitudeFixedPrecision());
 		log.warn("distance is " + abq.distanceFrom(denv));
-		assertEquals(4.845132333688317, abq.distanceFrom(denv));
+		assertEquals(4.845131996719168d, abq.distanceFrom(denv));
 		assertEquals(0, abq.distanceFrom(abq));
 	}
 }
