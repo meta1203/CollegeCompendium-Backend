@@ -20,8 +20,8 @@ public class CollegeRepositoryCustomImpl implements CollegeRepositoryCustom {
 		// convert range from miles to degrees
 		range = range * 1000000 / 69;
 		
-		Integer lat = Location.strToFixedPrecision(location.getLatitude());
-		Integer lng = Location.strToFixedPrecision(location.getLongitude());
+		double lat = location.getLatitude();
+		double lng = location.getLongitude();
 		
 		TypedQuery<College> tq = entityManager.createQuery(
 			"SELECT c FROM College c " +

@@ -54,7 +54,8 @@ public class UserController {
     			.lastName(auth0Data.get("family_name"))
     			.username(auth0Data.get("nickname"))
     			.id(null)
-    			.location(new Location("0.0", "0.0"))
+    			.location(new Location(0.0, 0.0))
+    			.location(null)
     			.build();
     	
     	response.setStatus(404);
