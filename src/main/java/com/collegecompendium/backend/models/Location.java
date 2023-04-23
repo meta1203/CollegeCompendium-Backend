@@ -31,6 +31,7 @@ public class Location {
 			@JsonProperty("longitude") String longitude) {
 		this.latitude = strToFixedPrecision(latitude);
 		this.longitude = strToFixedPrecision(longitude);
+		this.address = address;
 	}
 	
 	public Location(String latitude, String longitude) {
