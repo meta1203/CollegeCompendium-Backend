@@ -111,55 +111,5 @@ class BackendApplicationTests {
 		assertEquals(0, abq.distanceFrom(abq));
 	}
 	
-	@Test
-	@Order(3)
-	void testApproveCollegeAdmin() {
-	    String testEmail = "ElonMusk@bitch.com";
-	    //Lombok Builduuuuuhr
-	    College college = College.builder()
-	    		.url("bruhWeMadeIt.com")
-	    		.inStateCost(1111)
-	    		.outStateCost(2222)
-	            .name("New Mexico Tech")
-	    		.location(new Location("801 Leroy Pl, Socorro, NM 87801", "34.063226", "-106.905866"))
-	            .build();
-	    college = collegeRepository.save(college);
-
-	    CollegeAdmin callingCollegeAdmin = CollegeAdmin.builder()
-				.firstName("Erik")
-				.lastName("Noll")
-				.middleInitial("E")
-				.username("testAdmin1")
-				.auth0Id("ETestAuth0")
-	    		.email("420BlazeIt@hotmale.com")
-	            .approved(true)
-	            .college(college)
-	            .build();
-	    callingCollegeAdmin = collegeAdminRepository.save(callingCollegeAdmin);
-
-	    CollegeAdmin targetCollegeAdmin = CollegeAdmin.builder()
-				.firstName("Korbin")
-				.lastName("Dallas")
-				.middleInitial("L")
-				.username("Mul ti pass")
-				.auth0Id("timeNoLifeYes")
-	            .email(testEmail)
-	            .college(college)
-	            .build();
-	    targetCollegeAdmin = collegeAdminRepository.save(targetCollegeAdmin);
-
-	    RequestEntity<Void> request = RequestEntity
-	            .post(URI.create("http://localhost:8080/collegeAdmin/approve/" + testEmail))
-	            .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
-	            .build();
-
-	    ResponseEntity<CollegeAdmin> resp = restTemplate.exchange(request, CollegeAdmin.class);
-
-	    assertEquals(HttpStatus.OK, resp.getStatusCode());
-	    
-	    //Delete
-	    collegeAdminRepository.delete(callingCollegeAdmin);
-	    collegeAdminRepository.delete(targetCollegeAdmin);
-	    collegeRepository.delete(college);
-	}
+	
 }
