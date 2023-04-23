@@ -17,13 +17,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriUtils;
 
+import com.collegecompendium.backend.models.CollegeAdmin;
+import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.models.User;
+import com.collegecompendium.backend.repositories.CollegeAdminRepository;
+import com.collegecompendium.backend.repositories.StudentRepository;
 
 import lombok.extern.log4j.Log4j2;
 
 @Service
 @Log4j2
-public class Auth0Provider {
+public class UserProvider {
+	@Autowired
+	private StudentRepository studentRepository;
+	@Autowired
+	private CollegeAdminRepository collegeAdminRepository;
 	@Autowired
 	private RestTemplate restTemplate;
 	@Autowired
@@ -116,5 +124,23 @@ public class Auth0Provider {
 		// log.info("Auth0 token permissions: " + body.get("scope"));
 
 		return this.token;
+	}
+	
+	public User getUserForToken(Jwt token) {
+		Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
+		if (student != null) return student;
+		CollegeAdmin collegeAdmin = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
+		return collegeAdmin;
+	}
+	
+	public boolean deleteUser(User user) {
+		if (user instanceof CollegeAdmin) {
+			collegeAdminRepository.delete((CollegeAdmin)user);
+			return true;
+		} else if (user instanceof Student) {
+			studentRepository.delete((Student)user);
+			return true;
+		}
+		return false;
 	}
 }

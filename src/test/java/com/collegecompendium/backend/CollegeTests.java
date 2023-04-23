@@ -7,16 +7,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.College;
+import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Location;
+import com.collegecompendium.backend.models.User;
+import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 import com.collegecompendium.backend.repositories.CollegeRepository;
 
 import lombok.extern.log4j.Log4j2;
@@ -28,10 +34,35 @@ import lombok.extern.log4j.Log4j2;
 public class CollegeTests {
     @Autowired
     private CollegeRepository collegeRepository; // CRUD repo for database
+    @Autowired
+    private CollegeAdminRepository collegeAdminRepository;
+    @Autowired
+    private Jwt injectedJwt;
+    @Autowired
+    private UserProvider userProvider;
+    
+    // reset the user before each test to ensure we have a
+    // common set of data between tests
+    @BeforeEach
+    void setup() {
+    	User user = userProvider.getUserForToken(injectedJwt);
+    	if (user != null) userProvider.deleteUser(user);
+    	
+    	CollegeAdmin me = CollegeAdmin.builder()
+    			.auth0Id(injectedJwt.getSubject())
+    			.college(null)
+    			.email("test@example.com")
+    			.firstName("T")
+    			.lastName("St")
+    			.middleInitial("E")
+    			.username("test")
+    			.build();
+    	me = collegeAdminRepository.save(me);
+    }
 
     @Test
     @Order(3)
-    void testCollegeRepo(){
+    void testCollegeRepo() {
     	College input = College.builder()
     			.name("New Mexico Tech")
     			.inStateCost(10000)
@@ -83,6 +114,6 @@ public class CollegeTests {
     	assertNotNull(nearbyColleges);
     	assertFalse(nearbyColleges.isEmpty());
     	log.warn(nearbyColleges.stream().map(c -> c.getName()).collect(Collectors.joining("[ ", ", ", " ]")));
-    	log.warn(nearbyColleges.stream().flatMap(c -> c.getDegrees().stream()).map(deg -> deg.getName()).collect(Collectors.joining(", ")));
+    	// log.warn(nearbyColleges.stream().flatMap(c -> c.getDegrees().stream()).map(deg -> deg.getName()).collect(Collectors.joining(", ")));
     }
 }

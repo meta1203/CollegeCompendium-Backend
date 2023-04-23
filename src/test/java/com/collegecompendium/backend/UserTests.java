@@ -8,11 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.models.User;
 import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 import com.collegecompendium.backend.repositories.StudentRepository;
 
@@ -23,14 +26,17 @@ public class UserTests {
 	private StudentRepository studentRepository;
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
-//	@Autowired
-//	private Jwt injectedJwt;
-//	@Autowired
-//	private RestTemplate restTemplate;
+	@Autowired
+	private Jwt injectedJwt;
+	@Autowired
+	private UserProvider userProvider;
 	
 	//Need to add find by CollegeId test when we create College objects
 	@Test
 	void testStudentRepo() {
+		User user = userProvider.getUserForToken(injectedJwt);
+    	if (user != null) userProvider.deleteUser(user);
+    	
 		final String EMAIL_ADDRESS = "hancock.hunter@gmail.com";
 		// create
 		Student student = Student.builder()
@@ -40,7 +46,7 @@ public class UserTests {
 				.middleInitial("A")
 				.location(new Location("Neel Dr, Socorro, NM 87801", "34.063226", "-106.905866"))
 				.username("meta1203")
-				.auth0Id("an auth0 id")
+				.auth0Id(injectedJwt.getSubject())
 				.build();
 		
 		student = studentRepository.save(student);
@@ -71,6 +77,9 @@ public class UserTests {
 	
 	@Test
 	void testCollegeAdminRepo() {
+		User user = userProvider.getUserForToken(injectedJwt);
+    	if (user != null) userProvider.deleteUser(user);
+    	
 		final String EMAIL_ADDRESS = "Vote.Hamdy@gmail.com";
 		// C
 		CollegeAdmin collegeAdmin = CollegeAdmin.builder()
@@ -79,7 +88,7 @@ public class UserTests {
 				.lastName("Noll")
 				.middleInitial("E")
 				.username("mountainDewYoloSwag420")
-				.auth0Id("weRnotAlone")
+				.auth0Id(injectedJwt.getSubject())
 				.build();
 		
 		collegeAdmin = collegeAdminRepository.save(collegeAdmin);
