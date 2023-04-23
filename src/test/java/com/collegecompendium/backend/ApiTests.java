@@ -10,16 +10,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.collegecompendium.backend.configurations.Auth0Provider;
+import com.collegecompendium.backend.configurations.UserProvider;
 
 import lombok.extern.log4j.Log4j2;
 
 @SpringBootTest
 @ActiveProfiles("dev")
 @Log4j2
-public class Auth0Tests {
+public class ApiTests {
 	@Autowired
-	private Auth0Provider auth0Provider;
+	private UserProvider auth0Provider;
 	
 	@Value("${AUTH0_CLIENT:}")
 	private String client;
@@ -27,7 +27,7 @@ public class Auth0Tests {
 	private String secret;
 	
 	@Test
-	public void testTokenFetch() {
+	public void testAuth0TokenFetch() {
 		log.info(client +  " | " + secret);
 		
 		// skip test if the auth0 environment variables aren't set 
