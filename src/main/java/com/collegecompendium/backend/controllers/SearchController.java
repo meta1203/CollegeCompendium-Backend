@@ -1,6 +1,5 @@
 package com.collegecompendium.backend.controllers;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,18 +45,14 @@ public class SearchController {
         // when getColleges < 7  miles away.
 
         if(student == null) {
-//            student newStudent =
-            response.setStatus(404);
-            List<College> collegeList = new LinkedList<College>();
-            return collegeList;
+            response.setStatus(400);
+            return null;
         }
-
 
         // Location object for student
         Location studentLocation = student.getLocation();
 
         List<College> result = collegeRepository.findAllCollegesNear(studentLocation, miles);
-
 
         // sort results by distance
         result.sort((a, b) ->
@@ -68,6 +63,7 @@ public class SearchController {
         result.parallelStream().forEach(c -> {
         	c.setCollegeAdmins(null);
         });
+        
         return result;
     }
 }
