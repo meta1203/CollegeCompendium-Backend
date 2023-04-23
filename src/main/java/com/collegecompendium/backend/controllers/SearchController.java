@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.collegecompendium.backend.configurations.Auth0Provider;
+import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
@@ -29,7 +29,7 @@ public class SearchController {
     private CollegeRepository collegeRepository;
 
     @Autowired
-    private Auth0Provider auth0Provider;
+    private UserProvider userProvider;
 
     @Autowired
     StudentRepository studentRepository;
@@ -44,7 +44,6 @@ public class SearchController {
             // 2. is 5 miles away
             // 3. is 10 miles away
         // when getColleges < 7  miles away.
-
 
         if(student == null) {
 //            student newStudent =
@@ -71,5 +70,4 @@ public class SearchController {
         });
         return result;
     }
-
 }

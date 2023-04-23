@@ -95,8 +95,8 @@ class BackendApplicationTests {
 	
 	@Test
 	@Order(2)
-	void testLocation() {
-    Location abq = locationProvider.findLocation("Albuquerque, New Mexico");
+	void testLocation() throws InterruptedException {
+		Location abq = locationProvider.findLocation("Albuquerque, New Mexico");
 		Thread.sleep(1100);
 		Location denv = locationProvider.findLocation("Denver, Colorado");
 		log.warn(abq.getLatitude() + " | " + abq.getLongitude());
