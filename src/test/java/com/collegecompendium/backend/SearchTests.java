@@ -128,12 +128,13 @@ public class SearchTests {
 	@Order(1)
 	public void locationSearch() {
 		RequestEntity<Void> re = RequestEntity
-				.get("http://localhost:8080/search/college/distance/{miles}", Integer.valueOf(10))
+				.get("http://localhost:8080/search/colleges/distance/{miles}", Integer.valueOf(10))
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.build();
 		ResponseEntity<List<College>> resp = restTemplate.exchange(re, 
 				new ParameterizedTypeReference<List<College>>(){});
 		assertTrue(resp.getStatusCode().is2xxSuccessful());
+		log.warn(resp.getBody());
 		
 		List<College> colleges = resp.getBody();
 		assertNotNull(colleges);

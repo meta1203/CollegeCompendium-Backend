@@ -67,7 +67,7 @@ public class CollegeTests {
     			.name("New Mexico Tech")
     			.inStateCost(10000)
     			.outStateCost(20000)
-    			.location(new Location("34.066017", "-106.905613"))
+    			.location(new Location(34.066017d, -106.905613d))
     			.url("https://www.nmt.edu/")
                 .photos(List.of(
                         "https://imgur.com/F7DlWnf",
@@ -103,7 +103,7 @@ public class CollegeTests {
     			.name("University of New Mexico")
     			.inStateCost(20000)
     			.outStateCost(40000)
-    			.location(new Location("35.084508", "-106.619423"))
+    			.location(new Location(35.084508d, -106.619423d))
     			.url("https://www.unm.edu/")
     			.build();
     	unm = collegeRepository.save(unm);

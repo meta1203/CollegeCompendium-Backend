@@ -10,12 +10,15 @@ import org.springframework.stereotype.Service;
 
 import com.collegecompendium.backend.models.Location;
 
+import lombok.extern.log4j.Log4j2;
+
 /**
  * This class is responsible for finding the longitude and latitude of a location.
  * It uses the OpenStreetMap API to find the location.
  *
  */
 @Service
+@Log4j2
 public class LocationProvider {
 	private static LocationProvider instance = null;
 
@@ -42,9 +45,9 @@ public class LocationProvider {
 			BufferedReader response = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String line;
 			StringBuilder msg = new StringBuilder();
-			System.out.println("Response from server:");
+			log.trace("Response from server:");
 			while ((line = response.readLine()) != null) {
-				System.out.println(line);
+				log.trace(line);
 				msg.append(line);
 			}
 			response.close();
@@ -68,10 +71,10 @@ public class LocationProvider {
 		String queryURL = "https://nominatim.openstreetmap.org/search?q=" + query + "&format=json" ; //+ "&format=json&polygon=1&addressdetails=1";
 		String result;
 
-		System.out.println(queryURL);
+		log.debug("Location query: " + queryURL);
 		result = getResponse(queryURL);
 
-		System.out.println(result);
+		log.trace(result);
 
 		String[] split = result.split(",");
 		String lat = "";
@@ -95,8 +98,8 @@ public class LocationProvider {
 		lat = lat.substring(7, lat.length() - 1);
 		lon = lon.substring(7, lon.length() - 1);
 
-		System.out.println("Lat: " + lat);
-		System.out.println("Lon: " + lon);
+		log.debug("Lat: " + lat);
+		log.debug("Lon: " + lon);
 
 		return new Location(query, lat, lon);
 	}

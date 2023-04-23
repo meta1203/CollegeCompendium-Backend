@@ -29,16 +29,27 @@ public class Location {
 	@JsonCreator
 	public Location(
 			@JsonProperty("address") String address,
-			@JsonProperty("latitude") String latitude,
-			@JsonProperty("longitude") String longitude) {
-		this.latitude = Double.parseDouble(latitude);
-		this.longitude = Double.parseDouble(longitude);
-
+			@JsonProperty("latitude") double latitude,
+			@JsonProperty("longitude") double longitude) {
+		this.latitude = latitude;
+		this.longitude = longitude;
 	}
 	
-	public Location(String latitude, String longitude) {
+	public Location(double latitude, double longitude) {
 		this("", latitude, longitude);
 	}
+	
+	public Location(
+			String address,
+			String latitude,
+			String longitude) {
+		this.latitude = Double.parseDouble(latitude);
+		this.longitude = Double.parseDouble(longitude);
+	}
+//	
+//	public Location(String latitude, String longitude) {
+//		this("", latitude, longitude);
+//	}
 	
 	// JPA needs a default constructor, even if
 	// we really don't want one. Thankfully, using
@@ -72,5 +83,19 @@ public class Location {
 		return Objects.equals(this.address, o2.address) &&
 				this.latitude == o2.latitude &&
 				this.longitude == o2.longitude;
+	}
+	
+	public String getLatitudeFixedPrecision() {
+		long r = (long)Math.round(latitude * 1000000);
+		StringBuilder ret = new StringBuilder(String.valueOf(r));
+		ret.insert(ret.length() - 6, '.');
+		return ret.toString();
+	}
+	
+	public String getLongitudeFixedPrecision() {
+		long r = (long)Math.round(longitude * 1000000);
+		StringBuilder ret = new StringBuilder(String.valueOf(r));
+		ret.insert(ret.length() - 6, '.');
+		return ret.toString();
 	}
 }

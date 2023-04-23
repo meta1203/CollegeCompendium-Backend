@@ -4,7 +4,7 @@ logging:
     path: logs
   level:
     root: INFO
-    '[com.collegecompendium]': TRACE
+    '[com.collegecompendium]': INFO
 spring:
   profiles:
     active:
