@@ -84,6 +84,13 @@ public class CollegeAdminController {
 			return null;
 		}
 
+		// check if the caller admin is approved
+		CollegeAdmin callingAdmin = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
+		if (callingAdmin == null || !callingAdmin.isApproved()) {
+			response.setStatus(403);
+			return null;
+		}
+		
 		// Set Auth0 ID of the new college. Must be used for verification later!!!
 		input.setAuth0Id(token.getSubject());
 		
@@ -139,6 +146,13 @@ public class CollegeAdminController {
 			response.setStatus(404);
 			return null;
 		}
+		
+		// check if admin is approved
+		if (! result.isApproved()) { 
+			response.setStatus(403);
+			return null;
+		}
+		
 		// if the token doesn't belong to the result, then send back 403
 		if (! token.getSubject().equals(result.getAuth0Id())) {
 			response.setStatus(403);
@@ -163,9 +177,16 @@ public class CollegeAdminController {
 			response.setStatus(404);
 			return null;
 		}
+		
+		// check if caller admin is approved
+		CollegeAdmin result = query.get();
+		if (!result.isApproved()) { 
+			response.setStatus(403);
+			return null;
+		}
 		// HttpServletResponse defaults to 200 okay,
 		// so just return the object we got
-		return query.get();
+		return result;
 	}
 
 
@@ -177,7 +198,7 @@ public class CollegeAdminController {
 			HttpServletResponse response) {
 		CollegeAdmin result = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
 		// if the college doesn't exist then send back a 403
-		if (result == null) {
+		if (result == null || ! result.isApproved() ) {
 			response.setStatus(403);
 			return null;
 		}
@@ -212,6 +233,13 @@ public class CollegeAdminController {
 			response.setStatus(404);
 			return false;
 		}
+		
+		// check if caller admin is approved
+		CollegeAdmin result = query.get();
+		if (!result.isApproved()) { 
+			response.setStatus(403);
+			return false;
+		}
 		collegeAdminRepository.delete(query.get());
 		return true;
 	}
@@ -227,7 +255,7 @@ public class CollegeAdminController {
 	public List<CollegeAdmin> getCollegeAdminsByCollegeId(@PathVariable String collegeId, HttpServletResponse response) {
 		// TODO: modify this function to use the CollegeAdminRepository's
 		// findByDegreeIn function
-
+		
 	    Optional<College> collegeQuery = collegeRepository.findById(collegeId);
         if (collegeQuery.isEmpty()) {
         	response.setStatus(404);

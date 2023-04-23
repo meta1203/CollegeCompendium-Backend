@@ -90,6 +90,17 @@ public class CollegeTests {
 				.approved(true)
 				.build();
 		me = collegeAdminRepository.save(me);
+		
+		CollegeAdmin unapprovedAdmin = CollegeAdmin.builder()
+			    .college(testCollege)
+			    .auth0Id("herpderp")
+			    .email("unapprovedadmin@example.com")
+			    .firstName("John")
+			    .lastName("Madden")
+			    .username("johnmadden")
+			    .build();
+
+			collegeAdminRepository.save(unapprovedAdmin);
 	}
 
 	@Test

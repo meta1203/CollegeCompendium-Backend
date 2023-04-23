@@ -46,11 +46,7 @@ class BackendApplicationTests {
 	private Jwt injectedJwt;
 	@Autowired
 	private RestTemplate restTemplate;
-	@Autowired
-	private CollegeRepository collegeRepository;
 
-	@Autowired
-	private CollegeAdminRepository collegeAdminRepository;
 	@Test
 	@Order(0)
 	void contextLoads() {}
