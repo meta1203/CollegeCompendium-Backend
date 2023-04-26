@@ -66,7 +66,7 @@ public class CollegeAdminController {
 	 */
 
 	/**
-	 * Creates a new college object and adds to the database.
+	 * Creates a new college admin object and adds to the database.
 	 * @param input The college object to be created
 	 * @param token Auth0 token (idk if this works)
 	 * @param response Http response object.

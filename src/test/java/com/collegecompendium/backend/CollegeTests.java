@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -48,14 +49,18 @@ public class CollegeTests {
 	private Jwt injectedJwt;
 	@Autowired
 	private UserProvider userProvider;
-	
+
 	private College testCollege = null;
 	private CollegeAdmin unApprovedAdmin = null;
 	// reset the user before each test to ensure we have a
 	// common set of data between tests
 	@BeforeEach
 	void setup() {
-		
+		if (testCollege != null) {
+			Optional<College> oc = collegeRepository.findById(testCollege.getId());
+			if (oc.isPresent()) collegeRepository.delete(oc.get());
+		}
+
 		// prepopulate college
 		testCollege = College.builder()
 				.name("New Mexico Tech")
@@ -126,7 +131,7 @@ public class CollegeTests {
 	@Order(4)
 	void testApproveCollegeAdmin() {
 		String testEmail = "ElonMusk@bitch.com";
-	
+
 		CollegeAdmin target = CollegeAdmin.builder()
 				.college(testCollege)
 				.auth0Id("asdf")
@@ -146,28 +151,19 @@ public class CollegeTests {
 		ResponseEntity<CollegeAdmin> resp = restTemplate.exchange(request, CollegeAdmin.class);
 
 		assertEquals(HttpStatus.OK, resp.getStatusCode());
-		
-		// Delete
-	    collegeAdminRepository.delete(target);
 
+		// Delete
+		collegeAdminRepository.delete(target);
 	}
 
 	@Test
 	@Order(5)
 	void testUnapprovedAdminAccess() {
 
-	    // Create a new unapproved college admin
-	    CollegeAdmin unapprovedAdmin = CollegeAdmin.builder()
-	            .college(testCollege)
-	            .auth0Id("unapproved_auth0_id")
-	            .email("unapproved_admin@example.com")
-	            .firstName("Unapproved")
-	            .lastName("Admin")
-	            .username("unapproved_admin")
-	            .college(testCollege)
-	            .build();
-	    collegeAdminRepository.save(unapprovedAdmin);
-	    
+		CollegeAdmin me = (CollegeAdmin)userProvider.getUserForToken(injectedJwt);
+		me.setApproved(false);
+		collegeAdminRepository.save(me);
+
 		CollegeAdmin target = CollegeAdmin.builder()
 				.college(testCollege)
 				.auth0Id("asdf")
@@ -175,41 +171,86 @@ public class CollegeTests {
 				.email("check@gmail.com")
 				.firstName("Eeby")
 				.lastName("Deeby")
-				.username("asdf")
+				.username("Monty")
 				.build();
 		collegeAdminRepository.save(target);
 
-	    // attempt to approve a college admin with the unapproved college admin user
-	    RequestEntity<Void> approveAdminRequest = RequestEntity
-	            .post(URI.create("http://localhost:8080/collegeAdmin/approve/elonmusk@example.com"))
-	            .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
-	            .build();
-	    ResponseEntity<Void> approveAdminResponse = restTemplate
-	    		.exchange(approveAdminRequest, Void.class);
-    
-		
-		 RequestEntity<Void> createAdminRequest = RequestEntity
-				.post(URI.create("http://localhost:8080/collegeAdmin"))
+		// attempt to approve a college admin with the unapproved college admin user
+		RequestEntity<Void> approveAdminRequest = RequestEntity
+				.post(URI.create("http://localhost:8080/collegeAdmin/approve/elonmusk@example.com"))
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.build();
-		 ResponseEntity<Void> createAdminResponse = restTemplate
+		ResponseEntity<Void> approveAdminResponse = restTemplate
+				.exchange(approveAdminRequest, Void.class);
+
+
+		// verify that a response returns a 403 Forbidden status code
+		assertEquals(HttpStatus.FORBIDDEN, approveAdminResponse.getStatusCode());
+
+		//Delete stuff
+		collegeAdminRepository.delete(target);
+		//  collegeAdminRepository.delete(unapprovedAdmin);
+	}
+
+	@Test
+	@Order(6) void testUnapprovedcreateAdmin() {
+
+		CollegeAdmin me = (CollegeAdmin)userProvider.getUserForToken(injectedJwt);
+		me.setApproved(false);
+		collegeAdminRepository.save(me);
+
+		CollegeAdmin target = CollegeAdmin.builder()
+				.college(testCollege)
+				.auth0Id("asdf")
+				.approved(false)
+				.email("check@gmail.com")
+				.firstName("Eeby")
+				.lastName("Deeby")
+				.username("Monty")
+				.build();
+		collegeAdminRepository.save(target);
+
+		RequestEntity<CollegeAdmin> createAdminRequest = RequestEntity
+				.post(URI.create("http://localhost:8080/collegeAdmin"))
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.body(target);
+
+		ResponseEntity<Void> createAdminResponse = restTemplate
 				.exchange(createAdminRequest, Void.class);
-	    
-	    RequestEntity<Void> deleteAdminRequest = RequestEntity
-	    	    .delete(URI.create("http://localhost:8080/collegeAdmin/" + target.getId() ))
-	    	    .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
-	    	    .build();
-	    ResponseEntity<Void> deleteAdminResponse = restTemplate
-	    		.exchange(deleteAdminRequest, Void.class);
-	    
-	    // verify that a response returns a 403 Forbidden status code
-	    assertEquals(HttpStatus.FORBIDDEN, approveAdminResponse.getStatusCode());
-	    assertEquals(HttpStatus.FORBIDDEN, createAdminResponse.getStatusCode());
-	    assertEquals(HttpStatus.FORBIDDEN, deleteAdminResponse.getStatusCode());
-	    
-	    //Delete stuff
-	    collegeAdminRepository.delete(target);
-	    collegeAdminRepository.delete(unapprovedAdmin);
+
+		assertEquals(HttpStatus.FORBIDDEN, createAdminResponse.getStatusCode());
+
+		//Delete stuff 
+		collegeAdminRepository.delete(target); 
+	}
+
+
+	@Test
+	@Order(7)
+	void testUnapprovedDeleteAdmin() {
+
+		CollegeAdmin targetDelete = CollegeAdmin.builder()
+				.college(testCollege)
+				.auth0Id("deleteAuth0Id")
+				.approved(false)
+				.email("DeleteMe@gmail.com")
+				.firstName("Eeby")
+				.lastName("Deeby")
+				.username("Monty")
+				.build();
+		collegeAdminRepository.save(targetDelete);
+
+		RequestEntity<Void> deleteAdminRequest = RequestEntity
+				.delete(URI.create("http://localhost:8080/collegeAdmin/" + targetDelete.getId()))
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.build();
+		ResponseEntity<Void> deleteAdminResponse = restTemplate
+				.exchange(deleteAdminRequest, Void.class);
+
+		assertEquals(HttpStatus.FORBIDDEN, deleteAdminResponse.getStatusCode());
+
+		// Delete stuff
+		collegeAdminRepository.delete(targetDelete);
 	}
 
 	@Test
