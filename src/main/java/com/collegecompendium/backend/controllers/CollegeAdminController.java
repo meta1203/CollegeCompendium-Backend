@@ -189,8 +189,6 @@ public class CollegeAdminController {
 		return result;
 	}
 
-
-
 	@PutMapping("/collegeAdmin")
 	public CollegeAdmin modifyCollegeAdmin(
 			@RequestBody CollegeAdmin input,
