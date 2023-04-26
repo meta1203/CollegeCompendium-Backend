@@ -50,7 +50,7 @@ public class CollegeTests {
 	private UserProvider userProvider;
 	
 	private College testCollege = null;
-
+	private CollegeAdmin unApprovedAdmin = null;
 	// reset the user before each test to ensure we have a
 	// common set of data between tests
 	@BeforeEach
@@ -90,17 +90,7 @@ public class CollegeTests {
 				.approved(true)
 				.build();
 		me = collegeAdminRepository.save(me);
-		
-		CollegeAdmin unapprovedAdmin = CollegeAdmin.builder()
-			    .college(testCollege)
-			    .auth0Id("herpderp")
-			    .email("unapprovedadmin@example.com")
-			    .firstName("John")
-			    .lastName("Madden")
-			    .username("johnmadden")
-			    .build();
 
-			collegeAdminRepository.save(unapprovedAdmin);
 	}
 
 	@Test
@@ -137,8 +127,7 @@ public class CollegeTests {
 	@Order(3)
 	void testApproveCollegeAdmin() {
 		String testEmail = "ElonMusk@bitch.com";
-		//Lombok Builduuuuuhr
-		
+	
 		CollegeAdmin target = CollegeAdmin.builder()
 				.college(testCollege)
 				.auth0Id("asdf")
@@ -162,8 +151,34 @@ public class CollegeTests {
 
 	@Test
 	@Order(4)
-	void testCollegeController() {
+	void testCreateNewCollegeAdmin() {
+	    CollegeAdmin unApprovedAdmin = CollegeAdmin.builder()
+	            .college(testCollege)
+	            .auth0Id("Check")
+	            .email("MikeJones@gmail.com")
+	            .firstName("Mike")
+	            .lastName("Jones")
+	            .username("WhoIsMikeJones")
+	            .build();
+	    unApprovedAdmin = collegeAdminRepository.save(unApprovedAdmin);
 
+	    CollegeAdmin newAdmin = CollegeAdmin.builder()
+	            .college(testCollege)
+	            .auth0Id("newAdminAuth0Id")
+	            .email("newAdminEmail@gmail.com")
+	            .firstName("newAdminFirstName")
+	            .lastName("newAdminLastName")
+	            .username("newAdminUsername")
+	            .build();
+
+	    RequestEntity<CollegeAdmin> request = RequestEntity
+	            .post(URI.create("http://localhost:8080/collegeAdmin"))
+	            .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+	            .body(newAdmin);
+
+	    ResponseEntity<Void> response = restTemplate.exchange(request, Void.class);
+
+	    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
 	}
 
 	@Test
