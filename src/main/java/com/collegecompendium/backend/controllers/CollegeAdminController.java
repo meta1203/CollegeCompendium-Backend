@@ -198,7 +198,7 @@ public class CollegeAdminController {
 			HttpServletResponse response) {
 		CollegeAdmin result = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
 		// if the college doesn't exist then send back a 403
-		if (result == null || ! result.isApproved() ) {
+		if (result == null) {
 			response.setStatus(403);
 			return null;
 		}
