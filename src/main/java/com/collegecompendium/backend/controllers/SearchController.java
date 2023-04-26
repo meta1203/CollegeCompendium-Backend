@@ -18,6 +18,8 @@ import com.collegecompendium.backend.configurations.UserProvider;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import static java.lang.Thread.sleep;
+
 @RestController
 // Web browser visibility
 @CrossOrigin(origins = "http://localhost:3000")
@@ -83,8 +85,14 @@ public class SearchController {
         College output = result.get();
 
         if (!output.getId().equals(collegeID)) {
+            try {
+                System.out.printf("ID IN:\t %s \nID OUT:\t %s\n", collegeID, output.getId());
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             // If for some reason our fetch doesn't have the right ID, send an error response + the output
-            response.setStatus(500);
+            response.setStatus(505);
             return output;
         }
 

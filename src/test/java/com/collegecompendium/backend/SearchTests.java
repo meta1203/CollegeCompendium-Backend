@@ -2,6 +2,7 @@ package com.collegecompendium.backend;
 
 import java.util.List;
 
+import com.collegecompendium.backend.configurations.UserProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -42,12 +43,15 @@ public class SearchTests {
 	private MajorRepository majorRepository;
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
+	@Autowired
+	private UserProvider userProvider;
 
 	College c1;
 	
 	@BeforeEach
 	public void setup() {
 		// TODO: replace with UserProvider
+		userProvider.deleteUser(userProvider.getUserForToken(injectedJwt));
 		Student me = Student.builder()
 				.actScore(30)
 				.college("")
@@ -148,16 +152,18 @@ public class SearchTests {
 
 		// Query the API for the college with the ID
 		RequestEntity<Void> re = RequestEntity
-				.get("http://localhost:8080/search/college/id/{id}", id)
+				.get("http://localhost:8080/search/college/{id}", id)
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.build();
 		ResponseEntity<College> resp = restTemplate.exchange(re,
 				new ParameterizedTypeReference<College>(){});
+		assertEquals(200, resp.getStatusCode().value());
 		assertTrue(resp.getStatusCode().is2xxSuccessful());
 		log.warn(resp.getBody());
 
 		College college = resp.getBody();
 		assertNotNull(college);
+		System.out.printf("\n\n\n\n\nID in\t%s \nID out\t%s\n\n\n\n\n\n\n", id, resp.getBody().getId());
 
 		// Ensure the response the same as the college expected
 		assertEquals(college.getId(), id);
@@ -167,11 +173,39 @@ public class SearchTests {
 	@Test
 	@Order(3)
 	public void findCollegeByMajorTest(){
-		Major major = Major.builder()
+		Major majorCS = Major.builder()
 				.name("Computer Science")
+				.majorType(Major.MajorType.SCIENCE)
 				.build();
-		majorRepository.save(major);
+		majorRepository.save(majorCS);
+
+		Degree degree = Degree.builder()
+				.major(majorCS)
+				.degreeType(Degree.DegreeType.BACHELOR)
+				.creditsRequired(42)
+				.build();
+		c1.addDegree(degree);
+		collegeRepository.save(c1);
+
 		// Will build later
-		assertTrue(false);
+
+		// Query the API for the college with the major
+		RequestEntity<Void> re = RequestEntity
+				.get("http://localhost:8080/search/colleges/major?id={major}", majorCS.getId())
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.build();
+		ResponseEntity<List<College>> resp = restTemplate.exchange(re,
+				new ParameterizedTypeReference<List<College>>(){});
+		assertTrue(resp.getStatusCode().is2xxSuccessful());
+		log.warn(resp.getBody());
+
+		List<College> colleges = resp.getBody();
+		assertNotNull(colleges);
+
+		// Ensure the response contains the college expected
+		for (College college : colleges) {
+			assertEquals(college.getId(), c1.getId());
+			assertEquals(college.getName(), c1.getName());
+		}
 	}
 }

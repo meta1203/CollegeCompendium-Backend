@@ -15,7 +15,7 @@ import lombok.Data;
 @Entity
 @Builder
 public class Major {
-    private enum MajorType {
+    public enum MajorType {
         ARTS, SCIENCE, BUSINESS, PUBLIC,
     }
     

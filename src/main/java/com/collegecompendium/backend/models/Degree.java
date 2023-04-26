@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -16,8 +17,9 @@ import lombok.Data;
  */
 @Data
 @Entity
+@Builder
 public class Degree {
-	private enum DegreeType {
+	public enum DegreeType {
 		ASSOCIATE,
 		BACHELOR,
 		MASTER,
