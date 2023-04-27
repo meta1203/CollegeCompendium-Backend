@@ -1,5 +1,6 @@
 package com.collegecompendium.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -18,6 +19,7 @@ import lombok.experimental.SuperBuilder;
 public class CollegeAdmin extends User {
 	
 	@ManyToOne
+	@JsonBackReference
 	private College college;
 	
 	//NotNull and Column(nullable = false) not needed, will always be t/f

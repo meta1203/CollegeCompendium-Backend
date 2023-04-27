@@ -3,6 +3,8 @@ package com.collegecompendium.backend.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
@@ -34,6 +36,7 @@ public class College {
 	
 	@OneToMany(mappedBy = "college")
 	@Builder.Default
+	@JsonManagedReference
 	private List<CollegeAdmin> collegeAdmins = new ArrayList<CollegeAdmin>();
 	
 	@ManyToMany
