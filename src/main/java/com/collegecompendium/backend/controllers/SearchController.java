@@ -99,7 +99,7 @@ public class SearchController {
     		@RequestParam String name,
     		HttpServletResponse response
     		) {
-    	List<College> ret = collegeRepository.findByNameContains(name);
+    	List<College> ret = collegeRepository.findByNameContainsIgnoreCase(name);
     	
     	if (ret == null || ret.isEmpty()) {
     		response.setStatus(404);
