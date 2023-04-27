@@ -237,6 +237,34 @@ public class CollegeAdminController {
 		return true;
 	}
 
+	@PutMapping("/collegeAdmin/college")
+	public College updateCollegeAdmin(
+			@RequestBody College incoming,
+			@AuthenticationPrincipal Jwt jwt,
+			HttpServletResponse response
+			) {
+		
+		CollegeAdmin caller = collegeAdminRepository.findDistinctByAuth0Id(jwt.getSubject());
+		if (caller == null || !caller.isApproved()) {
+			response.setStatus(403);
+			return null;
+		}
+		
+		College original = caller.getCollege();
+		if (original == null || !incoming.getId().equals(original.getId())) {
+			response.setStatus(400);
+			return null;
+		}
+		
+		// override values we do not want the user to be able to change
+		incoming.setCollegeAdmins(original.getCollegeAdmins());
+		incoming.setPopularity(original.getPopularity());
+		incoming.setDegrees(original.getDegrees());
+		
+		incoming = collegeRepository.save(incoming);
+		
+		return incoming;
+	}
 
 	/**
 	 * Gets colleges offering a certain degree name.
