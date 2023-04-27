@@ -3,6 +3,7 @@ package com.collegecompendium.backend.controllers;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.collegecompendium.backend.configurations.UserProvider;
+import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.repositories.CollegeRepository;
 import com.collegecompendium.backend.repositories.StudentRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +29,9 @@ public class StudentController {
 	
 	@Autowired
 	private StudentRepository studentRepository;
+	
+	@Autowired
+	private CollegeRepository collegeRepository;
 	
 	@Autowired
 	private UserProvider userProvider;
@@ -124,12 +130,36 @@ public class StudentController {
 		input = studentRepository.save(input);
 		return input;
 	}
+	
 	@PutMapping("/student/favorite/{collegeId}")
-	public ResponseEntity<Void> addFavoriteCollege(
+	public boolean addFavoriteCollege(
 	        @PathVariable String collegeId,
 	        @AuthenticationPrincipal Jwt token,
 	        HttpServletResponse response) {
 		
+		
+		Optional<Student> studentQuery = studentRepository.findById(token.getSubject());
+		Optional<College> collegeQuery = collegeRepository.findById(collegeId);
+		
+		if (studentQuery.isEmpty() || collegeQuery.isEmpty()) {
+			response.setStatus(404);
+			return false;
+		}
+		
+		Student student = studentQuery.get();
+		College college = collegeQuery.get();
+		
+		boolean added = student.setFavoriteColleges(college);
+		
+		if (!added) {
+			// college already exists
+			response.setStatus(200);
+		} else {
+			studentRepository.save(student);
+			response.setStatus(200);
+		}
+		
+		return true;
 	}
 	
 	@DeleteMapping("/student/{id}")
