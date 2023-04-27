@@ -1,21 +1,28 @@
 package com.collegecompendium.backend.controllers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.collegecompendium.backend.models.*;
-import com.collegecompendium.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.collegecompendium.backend.configurations.UserProvider;
+import com.collegecompendium.backend.models.College;
+import com.collegecompendium.backend.models.Location;
+import com.collegecompendium.backend.models.Major;
+import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.repositories.CollegeRepository;
+import com.collegecompendium.backend.repositories.MajorRepository;
+import com.collegecompendium.backend.repositories.StudentRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
-
-import static java.lang.Thread.sleep;
 
 @RestController
 // Web browser visibility
@@ -27,9 +34,6 @@ public class SearchController {
 
     @Autowired
     private MajorRepository majorRepository;
-
-    @Autowired
-    private UserProvider userProvider;
 
     @Autowired
     StudentRepository studentRepository;
@@ -88,6 +92,23 @@ public class SearchController {
         }
 
         return output;
+    }
+    
+    @GetMapping("/search/colleges")
+    public List<College> findCollegesByName(
+    		@RequestParam String name,
+    		HttpServletResponse response
+    		) {
+    	List<College> ret = collegeRepository.findByNameContains(name);
+    	
+    	if (ret == null || ret.isEmpty()) {
+    		response.setStatus(404);
+    		return Collections.emptyList();
+    	}
+    	
+    	// remove CollegeAdmins to preserve privacy
+    	ret.parallelStream().forEach(c -> c.setCollegeAdmins(Collections.emptyList()));
+    	return ret;
     }
 
     @GetMapping("/search/colleges/major")

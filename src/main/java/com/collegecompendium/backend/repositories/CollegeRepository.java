@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 @Transactional
 public interface CollegeRepository extends CrudRepository<College, String>, CollegeRepositoryCustom {
 	Optional<College> findById(String id);
+	List<College> findByNameContains(String name);
 	List<College> findByDegreesIn(Degree... degrees);
 	List<College> findByDegreesIn(List<Degree> degrees);
 	
