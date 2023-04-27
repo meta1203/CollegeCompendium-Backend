@@ -124,6 +124,13 @@ public class StudentController {
 		input = studentRepository.save(input);
 		return input;
 	}
+	@PutMapping("/student/favorite/{collegeId}")
+	public ResponseEntity<Void> addFavoriteCollege(
+	        @PathVariable String collegeId,
+	        @AuthenticationPrincipal Jwt token,
+	        HttpServletResponse response) {
+		
+	}
 	
 	@DeleteMapping("/student/{id}")
 	public boolean deleteStudent(
