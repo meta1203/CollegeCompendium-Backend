@@ -39,17 +39,4 @@ public class CollegeRepositoryCustomImpl implements CollegeRepositoryCustom {
 		
 		return tq.getResultList();
 	}
-
-	@Override
-	public List<College> findAllCollegesByMajor(Major major) {
-		TypedQuery<College> tq = entityManager.createQuery(
-			"SELECT c FROM College c " +
-			"WHERE " +
-			":major IN c.degrees.major.name",
-			College.class
-		)
-		.setParameter("major", major.getName());
-
-		return tq.getResultList();
-	}
 }
