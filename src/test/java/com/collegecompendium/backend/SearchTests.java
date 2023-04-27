@@ -49,7 +49,7 @@ public class SearchTests {
 	private DegreeRepository degreeRepository;
 
 	College c1;
-	
+
 	@BeforeEach
 	public void setup() {
 		// TODO: replace with UserProvider
@@ -65,18 +65,18 @@ public class SearchTests {
 				.lastName("Test")
 				.location(new Location(
 						"700 6th St, Socorro, NM 87801",
-						"34.06536747225995", 
+						"34.06536747225995",
 						"-106.88995469901924"
 				))
 				.satScore(0)
 				.username("j.q.test")
 				.build();
-		
+
 		me = studentRepository.save(me);
-		
+
 		// delete all colleges in db
 		collegeRepository.findAll().forEach(c -> collegeRepository.delete(c));
-		
+
 		// prepopulate colleges
 		c1 = College.builder()
 				.name("New Mexico Tech")
@@ -93,14 +93,14 @@ public class SearchTests {
 				.url("https://www.nmt.edu/")
 				.build();
 		c1 = collegeRepository.save(c1);
-		
+
 		College c2 = College.builder()
 				.name("Dirty Dave's Degrees and Dissertations")
 				.inStateCost(100)
 				.outStateCost(125)
 				.location(new Location(
 						"104 Neel St, Socorro, NM 87801",
-						"34.059078845885246", 
+						"34.059078845885246",
 						"-106.89836091130815"
 				))
 				.description("The second test college")
@@ -109,14 +109,14 @@ public class SearchTests {
 				.url("http://cgnuonline-eniversity.edu")
 				.build();
 		c2 = collegeRepository.save(c2);
-		
+
 		College c3 = College.builder()
 				.name("University of New Mexico")
 				.inStateCost(900000)
 				.outStateCost(100000000)
 				.location(new Location(
 						"1 University of New Mexico, Albuquerque NM 87131",
-						"35.084397617922576", 
+						"35.084397617922576",
 						"-106.61977049166329"
 				))
 				.description("The third test college")
@@ -125,9 +125,9 @@ public class SearchTests {
 				.url("https://unm.edu")
 				.build();
 		c3 = collegeRepository.save(c3);
-		
+
 	}
-	
+
 	@Test
 	@Order(1)
 	public void locationSearch() {
@@ -135,15 +135,15 @@ public class SearchTests {
 				.get("http://localhost:8080/search/colleges/distance/{miles}", Integer.valueOf(10))
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.build();
-		ResponseEntity<List<College>> resp = restTemplate.exchange(re, 
+		ResponseEntity<List<College>> resp = restTemplate.exchange(re,
 				new ParameterizedTypeReference<List<College>>(){});
 		assertTrue(resp.getStatusCode().is2xxSuccessful());
 		log.warn(resp.getBody());
-		
+
 		List<College> colleges = resp.getBody();
 		assertNotNull(colleges);
 		assertFalse(colleges.isEmpty());
-		
+
 		colleges.forEach(c -> log.warn(c));
 	}
 
@@ -173,12 +173,13 @@ public class SearchTests {
 	@Test
 	@Order(3)
 	public void findCollegeByMajorTest(){
+
+		// Create a major and degree for the college
 		Major majorCS = Major.builder()
 				.name("Computer Science")
 				.majorType(Major.MajorType.SCIENCE)
 				.build();
 		majorRepository.save(majorCS);
-
 		Degree degree = Degree.builder()
 				.major(majorCS)
 				.degreeType(Degree.DegreeType.BACHELOR)
@@ -188,28 +189,50 @@ public class SearchTests {
 		degreeRepository.save(degree);
 		collegeRepository.save(c1);
 
-		// Will build later
-
-		// Query the API for the college with the major
+		// Query the API for the college with the major using ID
 		RequestEntity<Void> re = RequestEntity
 				.get("http://localhost:8080/search/colleges/major?id={major}", majorCS.getId())
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.build();
-//		ResponseEntity<List<College>> resp = restTemplate.exchange(re,
-//				new ParameterizedTypeReference<List<College>>(){});
-		ResponseEntity<String> resp = restTemplate.exchange(re,
-				new ParameterizedTypeReference<String>(){});
+		ResponseEntity<List<College>> resp = restTemplate.exchange(re,
+				new ParameterizedTypeReference<List<College>>(){});
 		log.warn(resp.getBody());
-		log.warn(resp.getStatusCode());
 		assertTrue(resp.getStatusCode().is2xxSuccessful());
 
-//		List<College> colleges = resp.getBody();
-//		assertNotNull(colleges);
+		List<College> colleges = resp.getBody();
+		assertNotNull(colleges);
 
 		// Ensure the response contains the college expected
-//		for (College college : colleges) {
-//			assertEquals(college.getId(), c1.getId());
-//			assertEquals(college.getName(), c1.getName());
-//		}
+		for (College college : colleges) {
+			if(college.getId().equals(c1.getId())) {
+				assertEquals(c1.getName(), college.getName());
+			}
+			if(college.getName().equals(c1.getName())) {
+				assertEquals(c1.getId(), college.getId());
+			}
+		}
+
+		// Query the API for the college with the major using name
+		re = RequestEntity
+				.get("http://localhost:8080/search/colleges/major?name={major}", majorCS.getName())
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.build();
+		resp = restTemplate.exchange(re,
+				new ParameterizedTypeReference<List<College>>(){});
+		log.warn(resp.getBody());
+		assertTrue(resp.getStatusCode().is2xxSuccessful());
+
+		colleges = resp.getBody();
+		assertNotNull(colleges);
+
+		// Ensure the response contains the college expected
+		for (College college : colleges) {
+			if(college.getId().equals(c1.getId())) {
+				assertEquals(c1.getName(), college.getName());
+			}
+			if(college.getName().equals(c1.getName())) {
+				assertEquals(c1.getId(), college.getId());
+			}
+		}
 	}
 }
