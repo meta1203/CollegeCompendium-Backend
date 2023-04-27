@@ -119,7 +119,7 @@ public class SearchController {
         List<College> result = new ArrayList<>();
 
         for (Major major : majors) {
-            List<College> colleges = collegeRepository.findAllCollegesByMajor(major);
+            List<College> colleges = collegeRepository.findByDegreesMajorId(major.getId());
             for (College college : colleges) {
                 if (!result.contains(college)) {
                     result.add(college);

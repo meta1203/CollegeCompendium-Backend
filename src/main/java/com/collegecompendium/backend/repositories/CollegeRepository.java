@@ -15,4 +15,11 @@ public interface CollegeRepository extends CrudRepository<College, String>, Coll
 	Optional<College> findById(String id);
 	List<College> findByDegreesIn(Degree... degrees);
 	List<College> findByDegreesIn(List<Degree> degrees);
+	
+	/**
+	 * Finds all colleges that have the specified major by ID
+	 * @param id - a Major entity ID
+	 * @return List of all colleges that have this Major
+	 */
+	List<College> findByDegreesMajorId(String id);
 }
