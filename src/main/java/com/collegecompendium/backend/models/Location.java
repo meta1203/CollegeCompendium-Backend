@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
@@ -85,6 +86,7 @@ public class Location {
 				this.longitude == o2.longitude;
 	}
 	
+	@JsonIgnore
 	public String getLatitudeFixedPrecision() {
 		long r = (long)Math.round(latitude * 1000000);
 		StringBuilder ret = new StringBuilder(String.valueOf(r));
@@ -92,6 +94,7 @@ public class Location {
 		return ret.toString();
 	}
 	
+	@JsonIgnore
 	public String getLongitudeFixedPrecision() {
 		long r = (long)Math.round(longitude * 1000000);
 		StringBuilder ret = new StringBuilder(String.valueOf(r));

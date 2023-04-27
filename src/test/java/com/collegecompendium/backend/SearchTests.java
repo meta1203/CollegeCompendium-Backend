@@ -1,8 +1,12 @@
 package com.collegecompendium.backend;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 
-import com.collegecompendium.backend.configurations.UserProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -18,12 +22,18 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
-import com.collegecompendium.backend.models.*;
-import com.collegecompendium.backend.repositories.*;
+import com.collegecompendium.backend.configurations.UserProvider;
+import com.collegecompendium.backend.models.College;
+import com.collegecompendium.backend.models.Degree;
+import com.collegecompendium.backend.models.Location;
+import com.collegecompendium.backend.models.Major;
+import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.repositories.CollegeRepository;
+import com.collegecompendium.backend.repositories.DegreeRepository;
+import com.collegecompendium.backend.repositories.MajorRepository;
+import com.collegecompendium.backend.repositories.StudentRepository;
 
 import lombok.extern.log4j.Log4j2;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
@@ -42,8 +52,6 @@ public class SearchTests {
 	@Autowired
 	private MajorRepository majorRepository;
 	@Autowired
-	private CollegeAdminRepository collegeAdminRepository;
-	@Autowired
 	private UserProvider userProvider;
 	@Autowired
 	private DegreeRepository degreeRepository;
@@ -52,8 +60,8 @@ public class SearchTests {
 
 	@BeforeEach
 	public void setup() {
-		// TODO: replace with UserProvider
 		userProvider.deleteUser(userProvider.getUserForToken(injectedJwt));
+		
 		Student me = Student.builder()
 				.actScore(30)
 				.college("")
@@ -138,13 +146,13 @@ public class SearchTests {
 		ResponseEntity<List<College>> resp = restTemplate.exchange(re,
 				new ParameterizedTypeReference<List<College>>(){});
 		assertTrue(resp.getStatusCode().is2xxSuccessful());
-		log.warn(resp.getBody());
+		log.debug(resp.getBody());
 
 		List<College> colleges = resp.getBody();
 		assertNotNull(colleges);
 		assertFalse(colleges.isEmpty());
 
-		colleges.forEach(c -> log.warn(c));
+		colleges.forEach(c -> log.debug(c));
 	}
 
 	@Test
@@ -157,10 +165,12 @@ public class SearchTests {
 				.get("http://localhost:8080/search/college/{id}", id)
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.build();
+		
 		ResponseEntity<College> resp = restTemplate.exchange(re,
 				new ParameterizedTypeReference<College>(){});
+		
 		assertTrue(resp.getStatusCode().is2xxSuccessful());
-		log.warn(resp.getBody());
+		// log.debug(resp.getBody());
 
 		College college = resp.getBody();
 		assertNotNull(college);
@@ -168,6 +178,33 @@ public class SearchTests {
 		// Ensure the response the same as the college expected
 		assertEquals(college.getId(), id);
 		assertEquals(college.getName(), c1.getName());
+	}
+	
+	@Test
+	@Order(2)
+	public void findCollegeByNameTest(){
+		String subname = c1.getName();
+		subname = subname.substring(subname.length() - 4, subname.length());
+		
+		// Query the API for the college with partial name
+		RequestEntity<Void> re = RequestEntity
+				.get("http://localhost:8080/search/colleges?name={name}", subname)
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.build();
+		
+		ResponseEntity<List<College>> resp = restTemplate.exchange(re,
+				new ParameterizedTypeReference<List<College>>(){});
+		
+		assertTrue(resp.getStatusCode().is2xxSuccessful());
+
+		List<College> colleges = resp.getBody();
+		assertNotNull(colleges);
+		assertFalse(colleges.isEmpty());
+		// log.debug(resp.getBody().stream().map(c -> c.toString()).collect(Collectors.joining(", ")));
+
+		// Ensure the response contains the substring we selected
+		assertEquals(colleges.get(0).getId(), c1.getId());
+		assertEquals(colleges.get(0).getName(), c1.getName());
 	}
 
 	@Test
@@ -196,7 +233,7 @@ public class SearchTests {
 				.build();
 		ResponseEntity<List<College>> resp = restTemplate.exchange(re,
 				new ParameterizedTypeReference<List<College>>(){});
-		log.warn(resp.getBody());
+		
 		assertTrue(resp.getStatusCode().is2xxSuccessful());
 
 		List<College> colleges = resp.getBody();
@@ -219,7 +256,7 @@ public class SearchTests {
 				.build();
 		resp = restTemplate.exchange(re,
 				new ParameterizedTypeReference<List<College>>(){});
-		log.warn(resp.getBody());
+		log.debug(resp.getBody());
 		assertTrue(resp.getStatusCode().is2xxSuccessful());
 
 		colleges = resp.getBody();
@@ -229,8 +266,7 @@ public class SearchTests {
 		for (College college : colleges) {
 			if(college.getId().equals(c1.getId())) {
 				assertEquals(c1.getName(), college.getName());
-			}
-			if(college.getName().equals(c1.getName())) {
+			} else if (college.getName().equals(c1.getName())) {
 				assertEquals(c1.getId(), college.getId());
 			}
 		}

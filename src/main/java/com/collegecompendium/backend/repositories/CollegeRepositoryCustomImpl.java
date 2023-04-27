@@ -5,7 +5,6 @@ import java.util.List;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Location;
 
-import com.collegecompendium.backend.models.Major;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceContextType;
