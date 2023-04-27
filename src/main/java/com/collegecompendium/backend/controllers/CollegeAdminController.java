@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 // this has to be put on every controller we want to access from a
 // web browser (CORS my beloathed)
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
 public class CollegeAdminController {
 	// Spring annotation - injects a defined Spring Bean here
 	// These beans can be implicit (eg. @Component on a class/interface

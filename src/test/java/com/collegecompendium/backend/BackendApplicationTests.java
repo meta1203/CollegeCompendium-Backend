@@ -29,6 +29,11 @@ import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 import com.collegecompendium.backend.repositories.CollegeRepository;
 import com.collegecompendium.backend.models.College;
+import com.collegecompendium.backend.configurations.LocationProvider;
+import com.collegecompendium.backend.configurations.UserProvider;
+import com.collegecompendium.backend.models.Location;
+import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.models.User;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -47,6 +52,11 @@ class BackendApplicationTests {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Autowired
+	private LocationProvider locationProvider;
+	@Autowired
+	private UserProvider userProvider;
+	
 	@Test
 	@Order(0)
 	void contextLoads() {}
@@ -55,6 +65,11 @@ class BackendApplicationTests {
 	@Order(1)
 	// test New User Experience endpoints
 	void testNewUser() {
+		// clear existing user, if it exists
+		User u = userProvider.getUserForToken(injectedJwt);
+		if (u != null)
+			userProvider.deleteUser(u);
+		
 		// validate we can get an incomplete user object
 		RequestEntity<Void> req1 = RequestEntity
 				.get(URI.create("http://localhost:8080/user"))
@@ -82,6 +97,7 @@ class BackendApplicationTests {
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 				.body(student);
+		
 		resp = restTemplate.exchange(req2, Student.class);
 		assertEquals(HttpStatus.OK, resp.getStatusCode());
 		student = resp.getBody();
@@ -96,14 +112,15 @@ class BackendApplicationTests {
 	
 	@Test
 	@Order(2)
-	void testLocation() {
-		Location abq = new Location("35.1054", "-106.6465");
-		Location denv = new Location("39.762", "-104.8758");
+	void testLocation() throws InterruptedException {
+		Location abq = locationProvider.findLocation("Albuquerque, New Mexico");
+		Thread.sleep(1100);
+		Location denv = locationProvider.findLocation("Denver, Colorado");
 		log.warn(abq.getLatitude() + " | " + abq.getLongitude());
-		assertEquals("35.105400", abq.getLatitude());
-		assertEquals("-104.875800", denv.getLongitude());
+		assertEquals("35.212871", abq.getLatitudeFixedPrecision());
+		assertEquals("-104.984862", denv.getLongitudeFixedPrecision());
 		log.warn("distance is " + abq.distanceFrom(denv));
-		assertEquals(4.981897434713003, abq.distanceFrom(denv));
+		assertEquals(4.845131996719168d, abq.distanceFrom(denv));
 		assertEquals(0, abq.distanceFrom(abq));
 	}
 	

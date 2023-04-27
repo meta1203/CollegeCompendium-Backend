@@ -80,6 +80,10 @@ public class SecurityConfiguration {
 				.hasAuthority("PERM_student")
 			.requestMatchers("/collegeAdmin", "/collegeAdmin/**")
 				.hasAuthority("PERM_collegeAdmin")
+			.requestMatchers("/search/**")
+				.authenticated()
+			.requestMatchers("/superAdmin/**", "/student", "/student/**", "/collegeAdmin", "/collegeAdmin/**")
+				.hasAuthority("PERM_superAdmin")
 			.anyRequest()
 				.authenticated();
 
