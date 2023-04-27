@@ -26,7 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 // Web browser visibility
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
 public class SearchController {
 
     @Autowired
