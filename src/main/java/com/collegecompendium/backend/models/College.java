@@ -73,4 +73,9 @@ public class College {
 	private String phoneNumber;
 
 	private Integer popularity;
+
+	public void addDegree(Degree degree) {
+		degrees.add(degree);
+	}
+
 }

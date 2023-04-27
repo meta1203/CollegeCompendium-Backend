@@ -49,7 +49,7 @@ public class MajorController {
     			}
     		}
     	} else {
-    		result = majorRepository.findByMajorNameContains(name);
+    		result = majorRepository.findByNameContains(name);
     	}
 
         if (result == null || result.isEmpty()) {
