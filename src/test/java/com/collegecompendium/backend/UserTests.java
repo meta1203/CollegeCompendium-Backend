@@ -32,13 +32,11 @@ public class UserTests {
 	@Autowired
 	private UserProvider userProvider;
 	
-	@BeforeEach
-	void cleanup() {
-		for (Student s : studentRepository.findAll())
-			studentRepository.delete(s);
-		for (CollegeAdmin ca : collegeAdminRepository.findAll())
-			collegeAdminRepository.delete(ca);
-	}
+	/*
+	 * @BeforeEach void cleanup() { for (Student s : studentRepository.findAll())
+	 * studentRepository.delete(s); for (CollegeAdmin ca :
+	 * collegeAdminRepository.findAll()) collegeAdminRepository.delete(ca); }
+	 */
 	
 	//Need to add find by CollegeId test when we create College objects
 	@Test
