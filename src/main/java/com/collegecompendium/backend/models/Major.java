@@ -29,4 +29,14 @@ public class Major {
 
     @Enumerated(EnumType.STRING)
     private MajorType majorType;
+
+    public Major(){
+        // Empty constructor for JPA
+    }
+
+    public Major(String id, String name, MajorType majorType) {
+        this.id = id;
+        this.name = name;
+        this.majorType = majorType;
+    }
 }

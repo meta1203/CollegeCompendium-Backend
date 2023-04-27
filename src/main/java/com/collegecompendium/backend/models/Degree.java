@@ -38,5 +38,16 @@ public class Degree {
 	private DegreeType degreeType;
 	private int creditsRequired;
 
+	public Degree(){
+		// Empty constructor for JPA
+	}
+
+	public Degree(String id, Major major, DegreeType degreeType, int creditsRequired) {
+		this.id = id;
+		this.major = major;
+		this.degreeType = degreeType;
+		this.creditsRequired = creditsRequired;
+	}
+
 }
 

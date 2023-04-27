@@ -9,10 +9,7 @@ import com.collegecompendium.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.collegecompendium.backend.configurations.UserProvider;
 
@@ -71,7 +68,7 @@ public class SearchController {
         return result;
     }
 
-    @GetMapping("/search/college/{id}")
+    @GetMapping("/search/college/{collegeID}")
     public College findCollegeByID(
             @PathVariable String collegeID,
             @AuthenticationPrincipal Jwt token,
@@ -85,24 +82,18 @@ public class SearchController {
         College output = result.get();
 
         if (!output.getId().equals(collegeID)) {
-            try {
-                System.out.printf("ID IN:\t %s \nID OUT:\t %s\n", collegeID, output.getId());
-                sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             // If for some reason our fetch doesn't have the right ID, send an error response + the output
-            response.setStatus(505);
+            response.setStatus(500);
             return output;
         }
 
         return output;
     }
 
-    @GetMapping("/search/colleges/major?name={name}&id={id}")
+    @GetMapping("/search/colleges/major")
     public List<College> findCollegesByMajor(
-            @PathVariable String name,
-            @PathVariable String id,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String id,
             @AuthenticationPrincipal Jwt token,
             HttpServletResponse response
     ) {
@@ -126,8 +117,14 @@ public class SearchController {
         }
 
         List<College> result = new ArrayList<>();
+
         for (Major major : majors) {
-            result.addAll(collegeRepository.findAllCollegesByMajor(major));
+            List<College> colleges = collegeRepository.findAllCollegesByMajor(major);
+            for (College college : colleges) {
+                if (!result.contains(college)) {
+                    result.add(college);
+                }
+            }
         }
 
         if (result.isEmpty()) {
