@@ -1,7 +1,7 @@
 package com.collegecompendium.backend.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -15,13 +15,14 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIdentityInfo(
+		generator = ObjectIdGenerators.PropertyGenerator.class, 
+		property = "id")
 public class CollegeAdmin extends User {
-	
+
 	@ManyToOne
-	@JsonBackReference
 	private College college;
-	
+
 	//NotNull and Column(nullable = false) not needed, will always be t/f
 	private boolean approved;
 }
