@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -16,8 +17,9 @@ import lombok.Data;
  */
 @Data
 @Entity
+@Builder
 public class Degree {
-	private enum DegreeType {
+	public enum DegreeType {
 		ASSOCIATE,
 		BACHELOR,
 		MASTER,
@@ -35,6 +37,17 @@ public class Degree {
 	// These actually can be empty/null, if the school doesn't provide enough data
 	private DegreeType degreeType;
 	private int creditsRequired;
+
+	public Degree(){
+		// Empty constructor for JPA
+	}
+
+	public Degree(String id, Major major, DegreeType degreeType, int creditsRequired) {
+		this.id = id;
+		this.major = major;
+		this.degreeType = degreeType;
+		this.creditsRequired = creditsRequired;
+	}
 
 }
 
