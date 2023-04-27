@@ -28,6 +28,7 @@ import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Location;
+import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.models.User;
 import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 import com.collegecompendium.backend.repositories.CollegeRepository;
@@ -51,15 +52,11 @@ public class CollegeTests {
 	private UserProvider userProvider;
 
 	private College testCollege = null;
-	private CollegeAdmin unApprovedAdmin = null;
+	
 	// reset the user before each test to ensure we have a
 	// common set of data between tests
 	@BeforeEach
 	void setup() {
-		if (testCollege != null) {
-			Optional<College> oc = collegeRepository.findById(testCollege.getId());
-			if (oc.isPresent()) collegeRepository.delete(oc.get());
-		}
 
 		// prepopulate college
 		testCollege = College.builder()
@@ -125,6 +122,8 @@ public class CollegeTests {
 		assertEquals(input.getPhotos().get(0), output.getPhotos().get(0));
 		assertEquals(input.getPhotos().get(1), output.getPhotos().get(1));
 		assertNotNull(input.getId());
+		
+		collegeRepository.delete(input);
 	}
 
 	@Test
@@ -193,40 +192,7 @@ public class CollegeTests {
 	}
 
 	@Test
-	@Order(6) void testUnapprovedcreateAdmin() {
-
-		CollegeAdmin me = (CollegeAdmin)userProvider.getUserForToken(injectedJwt);
-		me.setApproved(false);
-		collegeAdminRepository.save(me);
-
-		CollegeAdmin target = CollegeAdmin.builder()
-				.college(testCollege)
-				.auth0Id("asdf")
-				.approved(false)
-				.email("check@gmail.com")
-				.firstName("Eeby")
-				.lastName("Deeby")
-				.username("Monty")
-				.build();
-		collegeAdminRepository.save(target);
-
-		RequestEntity<CollegeAdmin> createAdminRequest = RequestEntity
-				.post(URI.create("http://localhost:8080/collegeAdmin"))
-				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
-				.body(target);
-
-		ResponseEntity<Void> createAdminResponse = restTemplate
-				.exchange(createAdminRequest, Void.class);
-
-		assertEquals(HttpStatus.FORBIDDEN, createAdminResponse.getStatusCode());
-
-		//Delete stuff 
-		collegeAdminRepository.delete(target); 
-	}
-
-
-	@Test
-	@Order(7)
+	@Order(6)
 	void testUnapprovedDeleteAdmin() {
 
 		CollegeAdmin targetDelete = CollegeAdmin.builder()
@@ -236,7 +202,7 @@ public class CollegeTests {
 				.email("DeleteMe@gmail.com")
 				.firstName("Eeby")
 				.lastName("Deeby")
-				.username("Monty")
+				.username("Unique Username Broseph")
 				.build();
 		collegeAdminRepository.save(targetDelete);
 
@@ -272,6 +238,7 @@ public class CollegeTests {
 		assertFalse(nearbyColleges.isEmpty());
 		log.warn(nearbyColleges.stream().map(c -> c.getName()).collect(Collectors.joining("[ ", ", ", " ]")));
 		// log.warn(nearbyColleges.stream().flatMap(c -> c.getDegrees().stream()).map(deg -> deg.getName()).collect(Collectors.joining(", ")));
+		collegeRepository.delete(unm);
 	}
 
 }

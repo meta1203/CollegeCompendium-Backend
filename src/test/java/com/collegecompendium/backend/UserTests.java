@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,11 +32,19 @@ public class UserTests {
 	@Autowired
 	private UserProvider userProvider;
 	
+	@BeforeEach
+	void cleanup() {
+		for (Student s : studentRepository.findAll())
+			studentRepository.delete(s);
+		for (CollegeAdmin ca : collegeAdminRepository.findAll())
+			collegeAdminRepository.delete(ca);
+	}
+	
 	//Need to add find by CollegeId test when we create College objects
 	@Test
 	void testStudentRepo() {
-		User user = userProvider.getUserForToken(injectedJwt);
-    	if (user != null) userProvider.deleteUser(user);
+//		User user = userProvider.getUserForToken(injectedJwt);
+//    	if (user != null) userProvider.deleteUser(user);
     	
 		final String EMAIL_ADDRESS = "hancock.hunter@gmail.com";
 		// create
