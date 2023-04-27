@@ -66,7 +66,7 @@ public class CollegeAdminController {
 	 */
 
 	/**
-	 * Creates a new college object and adds to the database.
+	 * Creates a new college admin object and adds to the database.
 	 * @param input The college object to be created
 	 * @param token Auth0 token (idk if this works)
 	 * @param response Http response object.
@@ -84,6 +84,13 @@ public class CollegeAdminController {
 			return null;
 		}
 
+		// check if the caller admin is approved
+		CollegeAdmin callingAdmin = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
+		if (callingAdmin == null || !callingAdmin.isApproved()) {
+			response.setStatus(403);
+			return null;
+		}
+		
 		// Set Auth0 ID of the new college. Must be used for verification later!!!
 		input.setAuth0Id(token.getSubject());
 		
@@ -96,7 +103,30 @@ public class CollegeAdminController {
 		
 		return output;
 	}
+	@PostMapping("/collegeAdmin/approve/{email}")
+	public CollegeAdmin approveCollegeAdmin(
+	        @PathVariable String email,
+	        @AuthenticationPrincipal Jwt token,
+	        HttpServletResponse response) {
 
+		CollegeAdmin callingCollegeAdmin = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
+
+	    if (callingCollegeAdmin == null || !callingCollegeAdmin.isApproved()) {
+	        response.setStatus(403);
+	        return null;
+	    }
+
+	    CollegeAdmin targetCollegeAdmin = collegeAdminRepository.findDistinctByEmail(email);
+
+	    if (targetCollegeAdmin == null || !callingCollegeAdmin.getCollege().getId().equals(targetCollegeAdmin.getCollege().getId())) {
+	        response.setStatus(403);
+	        return null;
+	    }
+
+	    targetCollegeAdmin.setApproved(true);
+	    collegeAdminRepository.save(targetCollegeAdmin);
+	    return null;
+	}
 	/**
 	 * Returns the college of the calling token
 	 * @param token - the token of the calling user
@@ -116,6 +146,13 @@ public class CollegeAdminController {
 			response.setStatus(404);
 			return null;
 		}
+		
+		// check if admin is approved
+		if (! result.isApproved()) { 
+			response.setStatus(403);
+			return null;
+		}
+		
 		// if the token doesn't belong to the result, then send back 403
 		if (! token.getSubject().equals(result.getAuth0Id())) {
 			response.setStatus(403);
@@ -140,12 +177,17 @@ public class CollegeAdminController {
 			response.setStatus(404);
 			return null;
 		}
+		
+		// check if caller admin is approved
+		CollegeAdmin result = query.get();
+		if (!result.isApproved()) { 
+			response.setStatus(403);
+			return null;
+		}
 		// HttpServletResponse defaults to 200 okay,
 		// so just return the object we got
-		return query.get();
+		return result;
 	}
-
-
 
 	@PutMapping("/collegeAdmin")
 	public CollegeAdmin modifyCollegeAdmin(
@@ -189,6 +231,13 @@ public class CollegeAdminController {
 			response.setStatus(404);
 			return false;
 		}
+		
+		// check if caller admin is approved
+		CollegeAdmin result = query.get();
+		if (!result.isApproved()) { 
+			response.setStatus(403);
+			return false;
+		}
 		collegeAdminRepository.delete(query.get());
 		return true;
 	}
@@ -204,7 +253,7 @@ public class CollegeAdminController {
 	public List<CollegeAdmin> getCollegeAdminsByCollegeId(@PathVariable String collegeId, HttpServletResponse response) {
 		// TODO: modify this function to use the CollegeAdminRepository's
 		// findByDegreeIn function
-
+		
 	    Optional<College> collegeQuery = collegeRepository.findById(collegeId);
         if (collegeQuery.isEmpty()) {
         	response.setStatus(404);

@@ -20,8 +20,15 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.collegecompendium.backend.models.CollegeAdmin;
+import com.collegecompendium.backend.models.Location;
+import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.repositories.CollegeAdminRepository;
+import com.collegecompendium.backend.repositories.CollegeRepository;
+import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.configurations.LocationProvider;
 import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.Location;
@@ -44,6 +51,7 @@ class BackendApplicationTests {
 	private Jwt injectedJwt;
 	@Autowired
 	private RestTemplate restTemplate;
+
 	@Autowired
 	private LocationProvider locationProvider;
 	@Autowired
@@ -115,4 +123,6 @@ class BackendApplicationTests {
 		assertEquals(4.845131996719168d, abq.distanceFrom(denv));
 		assertEquals(0, abq.distanceFrom(abq));
 	}
+	
+	
 }

@@ -15,7 +15,7 @@ import jakarta.transaction.Transactional;
  */
 
 // JPA annotation - makes operations performed with this repository transactional. you most likely want this
-@Transactional
+@Transactional 
 // this interface extends CrudRepository, which uses the generic types
 // CollegeAdmin (denotes the class to provide a CRUD repo for) and String
 // (denotes the ID type on the class)
@@ -28,4 +28,5 @@ public interface CollegeAdminRepository extends CrudRepository<CollegeAdmin, Str
 	List<CollegeAdmin> findByCollege(College college);
 	public CollegeAdmin findDistinctByUsername(String username);
 	public CollegeAdmin findDistinctByAuth0Id(String auth0Id);
+	public CollegeAdmin findDistinctByEmail(String email);
 }
