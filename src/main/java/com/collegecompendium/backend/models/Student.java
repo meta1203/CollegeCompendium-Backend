@@ -1,12 +1,17 @@
 package com.collegecompendium.backend.models;
 
 import java.util.ArrayList;
+import jakarta.persistence.JoinColumn;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -42,4 +47,13 @@ public class Student extends User {
 	
 	@Embedded
 	private Location location;
+	
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(
+        name = "student_favorite_college",
+        joinColumns = @JoinColumn(name = "student_id"),
+        inverseJoinColumns = @JoinColumn(name = "college_id")
+    )
+    private Set<College> favoriteColleges = new HashSet<>();
 }
