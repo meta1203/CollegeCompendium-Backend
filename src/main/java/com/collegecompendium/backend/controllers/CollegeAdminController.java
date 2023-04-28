@@ -293,6 +293,7 @@ public class CollegeAdminController {
 				&& result.getDegreeType().equals(degree.getDegreeType())) {
 				// This degree already exists in the database and is the same as the one we are trying to add.
 				college.addDegree(degree);
+				return degree;
 			} else {
 				// This degree already exists in the database but is different from the one we are trying to add.
 				response.setStatus(409);
