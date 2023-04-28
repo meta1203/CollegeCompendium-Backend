@@ -3,7 +3,6 @@ package com.collegecompendium.backend.controllers;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -131,6 +130,7 @@ public class StudentController {
 		return input;
 	}
 	
+	//Student Favorites a College by Id
 	@PutMapping("/student/favorite/{collegeId}")
 	public boolean addFavoriteCollege(
 	        @PathVariable String collegeId,
@@ -149,8 +149,8 @@ public class StudentController {
 		Student student = studentQuery.get();
 		College college = collegeQuery.get();
 		
-		boolean added = student.setFavoriteColleges(college);
-		
+		boolean added = student.getFavoriteColleges().add(college);
+	
 		if (!added) {
 			// college already exists
 			response.setStatus(200);
