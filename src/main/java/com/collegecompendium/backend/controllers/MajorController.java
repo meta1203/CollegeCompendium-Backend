@@ -1,5 +1,6 @@
 package com.collegecompendium.backend.controllers;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class MajorController {
 
         if (result == null || result.isEmpty()) {
             response.setStatus(404);
-            return null;
+            return Collections.emptyList();
         } else {
             response.setStatus(200);
             return result;
