@@ -3,6 +3,7 @@ package com.collegecompendium.backend.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import com.collegecompendium.backend.models.Degree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -264,6 +265,31 @@ public class CollegeAdminController {
 		incoming = collegeRepository.save(incoming);
 		
 		return incoming;
+	}
+
+	@PutMapping("/collegeAdmin/degree")
+	public Degree updateDegree(@RequestBody Degree degree, @AuthenticationPrincipal Jwt jwt, HttpServletResponse response) {
+		CollegeAdmin admin = collegeAdminRepository.findDistinctByAuth0Id(jwt.getSubject());
+
+		// Checking if admin exists
+		if (admin == null || !admin.isApproved()) {
+			response.setStatus(403);
+			return null;
+
+		}
+		// Checking if the degree major is null.
+		if (degree.getMajor() == null) {
+			response.setStatus(404);
+			return null;
+		}
+
+		//adding degrees to the college
+		College adminCollege = admin.getCollege();
+		adminCollege.addDegree(degree);
+
+		response.setStatus(200);
+		return degree;
+
 	}
 
 	/**
