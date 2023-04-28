@@ -40,7 +40,7 @@ public class SearchController {
 
     // /search/college/distances/{miles}
     @GetMapping("/search/colleges/distance/{miles}")
-    public List<College> listWithinRadiusCollege(@PathVariable int miles, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
+    public List<College> listWithinRadiusCollege(@PathVariable double miles, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
         Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
         // for test function
         // create three colleges

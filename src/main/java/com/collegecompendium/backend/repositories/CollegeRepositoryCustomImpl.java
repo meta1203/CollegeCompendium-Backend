@@ -16,9 +16,9 @@ public class CollegeRepositoryCustomImpl implements CollegeRepositoryCustom {
     private EntityManager entityManager;
 	
 	@Override
-	public List<College> findAllCollegesNear(Location location, Integer range) {
+	public List<College> findAllCollegesNear(Location location, Double range) {
 		// convert range from miles to degrees
-		range = range * 1000000 / 69;
+		range = range / 69;
 		
 		double lat = location.getLatitude();
 		double lng = location.getLongitude();

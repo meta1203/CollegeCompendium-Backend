@@ -91,7 +91,7 @@ public class LocationProvider {
 			}
 		}
 
-		if(lat.equals("") || lon.equals("")){
+		if(lat.equals("") || lon.equals("")) {
 			throw new IllegalArgumentException("Could not find location: " + query);
 		}
 

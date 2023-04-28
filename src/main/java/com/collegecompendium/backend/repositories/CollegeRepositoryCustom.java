@@ -6,5 +6,5 @@ import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Location;
 
 public interface CollegeRepositoryCustom {
-	public List<College> findAllCollegesNear(Location location, Integer range);
+	public List<College> findAllCollegesNear(Location location, Double range);
 }

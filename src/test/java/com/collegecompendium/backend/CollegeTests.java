@@ -56,6 +56,7 @@ public class CollegeTests {
 	// common set of data between tests
 	@BeforeEach
 	void setup() {
+		// collegeRepository.findAll().forEach(c -> collegeRepository.delete(c));
 
 		// prepopulate college
 		testCollege = College.builder()
@@ -249,10 +250,11 @@ public class CollegeTests {
 
 		Location nearby = new Location("Neel Dr, Socorro, NM 87801", "34.063226", "-106.905866");
 
-		List<College> nearbyColleges = collegeRepository.findAllCollegesNear(nearby, 1000);
+		List<College> nearbyColleges = collegeRepository.findAllCollegesNear(nearby, 1d);
 		assertNotNull(nearbyColleges);
 		assertFalse(nearbyColleges.isEmpty());
-		log.warn(nearbyColleges.stream().map(c -> c.getName()).collect(Collectors.joining("[ ", ", ", " ]")));
+		// assertEquals(1, nearbyColleges.size());
+		log.warn(nearbyColleges.stream().map(c -> c.getName()).collect(Collectors.joining(", ", "[ ", " ]")));
 		// log.warn(nearbyColleges.stream().flatMap(c -> c.getDegrees().stream()).map(deg -> deg.getName()).collect(Collectors.joining(", ")));
 		collegeRepository.delete(unm);
 	}

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.collegecompendium.backend.configurations.LocationProvider;
 import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.repositories.StudentRepository;
@@ -23,12 +24,12 @@ import jakarta.servlet.http.HttpServletResponse;
 // Web browser visibility
 @CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
 public class StudentController {
-	
 	@Autowired
 	private StudentRepository studentRepository;
-	
 	@Autowired
 	private UserProvider userProvider;
+	@Autowired
+	private LocationProvider locationProvider;
 	
 	@PostMapping("/student")
 	public Student createNewStudent(@RequestBody Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
@@ -43,6 +44,13 @@ public class StudentController {
 
 		// Setting the ID to null will allow the User Model to generate the information.
 		input.setId(null);
+		
+		// Look up student location
+		input.setLocation(
+				locationProvider.findLocation(
+						input.getLocation().getAddress()
+						)
+				);
 
 		// Saving the student to the db
 		Student output = studentRepository.save(input);
