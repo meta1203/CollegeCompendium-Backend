@@ -3,6 +3,8 @@ package com.collegecompendium.backend.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import com.collegecompendium.backend.models.Degree;
+import com.collegecompendium.backend.repositories.DegreeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -41,6 +43,9 @@ public class CollegeAdminController {
 
 	@Autowired
 	private UserProvider userProvider;
+
+	@Autowired
+	private DegreeRepository degreeRepository;
 
 	// Spring annotation - defines a REST endpoint to be handled by
 	// the annotated function. function arguments can be annotated
@@ -290,4 +295,73 @@ public class CollegeAdminController {
 		return collegeAdmins;
 	}
 
+	@PostMapping("/collegeAdmin/college/degree")
+	public Degree addDegreeToCollege(
+			@RequestBody Degree degree,
+			@AuthenticationPrincipal Jwt jwt,
+			HttpServletResponse response
+			) {
+		CollegeAdmin caller = collegeAdminRepository.findDistinctByAuth0Id(jwt.getSubject());
+		if (caller == null || !caller.isApproved()) {
+			response.setStatus(403);
+			return null;
+		}
+
+		// Get the college
+		College college = caller.getCollege();
+		if (college == null) {
+			response.setStatus(400);
+			return null;
+		}
+
+		// check if degree already exists
+		if(college.getDegrees().contains(degree)){
+			response.setStatus(400);
+			return null;
+		}
+
+		degree = degreeRepository.save(degree);
+		college.addDegree(degree);
+		college = collegeRepository.save(college);
+		return degree;
+	}
+
+	@DeleteMapping("/collegeAdmin/college/degree/{degreeId}")
+	public void removeDegreeFromCollege(
+			@PathVariable String degreeId,
+			@AuthenticationPrincipal Jwt jwt,
+			HttpServletResponse response
+			) {
+		CollegeAdmin caller = collegeAdminRepository.findDistinctByAuth0Id(jwt.getSubject());
+		if (caller == null || !caller.isApproved()) {
+			response.setStatus(403);
+			return;
+		}
+
+		// Get the college
+		College college = caller.getCollege();
+		if (college == null) {
+			response.setStatus(400);
+			return;
+		}
+
+		// check if degree exists
+		Optional<Degree> result = degreeRepository.findById(degreeId);
+		if(result.isEmpty()){
+			response.setStatus(400);
+			return;
+		}
+
+		// check if degree is in college
+		Degree d = result.get();
+		if(!college.getDegrees().contains(d)){
+			response.setStatus(200);
+			return;
+		}
+
+		college.getDegrees().remove(d);
+		collegeRepository.save(college);
+		degreeRepository.delete(d);
+		return;
+	}
 }

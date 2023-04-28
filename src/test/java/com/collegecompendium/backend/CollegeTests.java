@@ -1,13 +1,10 @@
 package com.collegecompendium.backend;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.collegecompendium.backend.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -24,14 +21,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 import com.collegecompendium.backend.configurations.UserProvider;
-import com.collegecompendium.backend.models.College;
-import com.collegecompendium.backend.models.CollegeAdmin;
-import com.collegecompendium.backend.models.Location;
-import com.collegecompendium.backend.models.User;
-import com.collegecompendium.backend.repositories.CollegeAdminRepository;
-import com.collegecompendium.backend.repositories.CollegeRepository;
+import com.collegecompendium.backend.repositories.*;
 
 import lombok.extern.log4j.Log4j2;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("dev")
@@ -43,6 +37,8 @@ public class CollegeTests {
 	private CollegeRepository collegeRepository; // CRUD repo for database
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
+	@Autowired MajorRepository majorRepository;
+	@Autowired DegreeRepository degreeRepository;
 	@Autowired
 	private RestTemplate restTemplate;
 	@Autowired
@@ -257,6 +253,43 @@ public class CollegeTests {
 		collegeRepository.delete(unm);
 	}
 
+	@Test
+	@Order(11)
+	public void addDegreeToCollegeTest(){
+		Major m = Major.builder()
+				.name("Computer Science")
+				.majorType(Major.MajorType.BUSINESS)
+				.build();
+		m = majorRepository.save(m);
+		Degree d = Degree.builder()
+				.degreeType(Degree.DegreeType.BACHELOR)
+				.creditsRequired(120)
+				.major(m)
+				.build();
+
+		// Add the degree to the college
+		RequestEntity<Degree> re = RequestEntity
+				.post("http://localhost:8080/collegeAdmin/college/degree/")
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.body(d);
+		ResponseEntity<Degree> resp = restTemplate.exchange(re, Degree.class);
+		assertEquals(HttpStatus.OK, resp.getStatusCode());
+		Degree saved = resp.getBody();
+
+		// Verify that the degree was added to the college
+		assertEquals(d.getDegreeType(), saved.getDegreeType());
+		assertEquals(d.getCreditsRequired(), saved.getCreditsRequired());
+		assertEquals(d.getMajor().getName(), saved.getMajor().getName());
+		assertEquals(d.getMajor().getMajorType(), saved.getMajor().getMajorType());
+		assertEquals(d.getMajor().getId(), saved.getMajor().getId());
+	}
+
+	@Test
+	@Order(12)
+	public void removeDegreeFromCollegeTest(){
+		assertTrue(false);
+	}
+
 //    @Autowired
 //    private CollegeRepository collegeRepository; // CRUD repo for database
 //    @Autowired
@@ -321,7 +354,7 @@ public class CollegeTests {
 //
 //    }
 //    
-//    @Test
+//    @Test.
 //    @Order(10)
 //    void testCollegeRange() {
 //    	College unm = College.builder()
