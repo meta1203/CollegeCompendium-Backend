@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.CollegeAdmin;
-import com.collegecompendium.backend.repositories.CollegeAdminRepository;
-import com.collegecompendium.backend.repositories.CollegeRepository;
+import com.collegecompendium.backend.repositories.*;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -283,10 +282,27 @@ public class CollegeAdminController {
 			return null;
 		}
 
-		//adding degrees to the college
-		College adminCollege = admin.getCollege();
-		adminCollege.addDegree(degree);
+		College college = admin.getCollege();
 
+		// Check if the Degree exists in the database
+		Optional<Degree> degreeQuery = degreeRepository.findById(degree.getId());
+		if (degreeQuery.isPresent()) {
+			Degree result = degreeQuery.get();
+			if(result.getMajor().getName().equals(degree.getMajor().getName())
+				&& result.getMajor().getMajorType().equals(degree.getMajor().getMajorType())
+				&& result.getDegreeType().equals(degree.getDegreeType())) {
+				// This degree already exists in the database and is the same as the one we are trying to add.
+				college.addDegree(degree);
+			} else {
+				// This degree already exists in the database but is different from the one we are trying to add.
+				response.setStatus(409);
+				return null;
+			}
+		}
+
+		// The degree does not exist in the database.
+		degree = degreeRepository.save(degree);
+		college.addDegree(degree);
 		response.setStatus(200);
 		return degree;
 
