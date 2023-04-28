@@ -50,7 +50,7 @@ public class MajorController {
     			}
     		}
     	} else {
-    		result = majorRepository.findByNameContains(name);
+    		result = majorRepository.findByNameContainsIgnoreCase(name);
     	}
 
         if (result == null || result.isEmpty()) {
