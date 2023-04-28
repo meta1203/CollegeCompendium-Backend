@@ -8,7 +8,10 @@ import org.springframework.stereotype.Component;
 
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Location;
+import com.collegecompendium.backend.models.Major;
+import com.collegecompendium.backend.models.Major.MajorType;
 import com.collegecompendium.backend.repositories.CollegeRepository;
+import com.collegecompendium.backend.repositories.MajorRepository;
 
 import jakarta.annotation.PostConstruct;
 
@@ -16,6 +19,8 @@ import jakarta.annotation.PostConstruct;
 public class PostStartup {
 	@Autowired
 	private CollegeRepository collegeRepository;
+	@Autowired
+	private MajorRepository majorRepository;
 
 	@Profile("dev")
 	@PostConstruct
@@ -79,5 +84,23 @@ public class PostStartup {
 				.url("https://unm.edu")
 				.build();
 		c3 = collegeRepository.save(c3);
+		// prepopulate some majors
+		Major m1 = Major.builder()
+				.majorType(MajorType.SCIENCE)
+				.name("Computer Science")
+				.build();
+		m1 = majorRepository.save(m1);
+		
+		Major m2 = Major.builder()
+				.majorType(MajorType.ARTS)
+				.name("Communication")
+				.build();
+		m2 = majorRepository.save(m2);
+		
+		Major m3 = Major.builder()
+				.majorType(MajorType.BUSINESS)
+				.name("Marketing")
+				.build();
+		m3 = majorRepository.save(m3);
 	}
 }
