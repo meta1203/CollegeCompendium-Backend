@@ -128,6 +128,8 @@ public class StudentController {
 			input.setId(result.getId());
 		}
 		
+		input.setLocation(locationProvider.findLocation(input.getLocation().getAddress()));
+		
 		// update the db with the new student object
 		input = studentRepository.save(input);
 		return input;

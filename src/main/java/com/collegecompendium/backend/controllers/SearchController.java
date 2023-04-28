@@ -124,7 +124,7 @@ public class SearchController {
             major = majorRepository.findDistinctById(id);
             if(major.isEmpty() && name == null) {
                 response.setStatus(404);
-                return null;
+                return Collections.emptyList();
             }
             major.ifPresent(majors::add);
         }
@@ -132,7 +132,7 @@ public class SearchController {
             List<Major> majorList = majorRepository.findByNameContainsIgnoreCase(name);
             if(majorList.isEmpty()) {
                 response.setStatus(404);
-                return null;
+                return Collections.emptyList();
             }
             majors.addAll(majorList);
         }
@@ -150,7 +150,7 @@ public class SearchController {
 
         if (result.isEmpty()) {
             response.setStatus(404);
-            return null;
+            return Collections.emptyList();
         }
         return result;
 
