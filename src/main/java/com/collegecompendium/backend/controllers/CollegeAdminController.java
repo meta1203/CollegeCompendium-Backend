@@ -314,11 +314,35 @@ public class CollegeAdminController {
 			return null;
 		}
 
-		// check if degree already exists
+		// check if degree already exists in college
 		if(college.getDegrees().contains(degree)){
 			response.setStatus(400);
 			return null;
 		}
+
+		// Check if the Degree exists already. This SHOULD NOT happen, but just in case.
+		if(degree.getId() != null) { // If the degree has an id, it may exist in the database.
+			// Check if it exists in the database and is the same as the one we are trying to add.
+			Optional<Degree> degreeQuery = degreeRepository.findById(degree.getId());
+			if (degreeQuery.isPresent()) {
+				Degree result = degreeQuery.get();
+				if (result.getMajor().getName().equals(degree.getMajor().getName())
+						&& result.getMajor().getMajorType().equals(degree.getMajor().getMajorType())
+						&& result.getDegreeType().equals(degree.getDegreeType())) {
+					// This degree already exists in the database and is the same as the one we are trying to add.
+					college.addDegree(degree);
+					return degree;
+				} else {
+					// This degree already exists in the database but is different from the one we are trying to add.
+					response.setStatus(409);
+					return null;
+				}
+			}
+		}
+
+		// The degree does not exist in the database.
+		degree = degreeRepository.save(degree);
+		college.addDegree(degree);
 
 		degree = degreeRepository.save(degree);
 		college.addDegree(degree);
@@ -361,7 +385,9 @@ public class CollegeAdminController {
 
 		college.getDegrees().remove(d);
 		collegeRepository.save(college);
-		degreeRepository.delete(d);
+
+		// TODO: check if degree is in any other colleges before deleting it (or just don't delete it at all)
+//		degreeRepository.delete(d);
 		return;
 	}
 }
