@@ -344,8 +344,6 @@ public class CollegeAdminController {
 		degree = degreeRepository.save(degree);
 		college.addDegree(degree);
 
-		degree = degreeRepository.save(degree);
-		college.addDegree(degree);
 		college = collegeRepository.save(college);
 		return degree;
 	}
