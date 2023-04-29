@@ -297,12 +297,95 @@ public class CollegeTests {
 		assertEquals(d.getMajor().getName(), saved.getMajor().getName());
 		assertEquals(d.getMajor().getMajorType(), saved.getMajor().getMajorType());
 		assertEquals(d.getMajor().getId(), saved.getMajor().getId());
+
+		// Get the college to ensure the degree was added
+		RequestEntity<Void> reCollege = RequestEntity
+				.get("http://localhost:8080/collegeAdmin")
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.build();
+		ResponseEntity<CollegeAdmin> respCollege = restTemplate.exchange(reCollege, CollegeAdmin.class);
+		assertEquals(HttpStatus.OK, respCollege.getStatusCode());
+		CollegeAdmin collegeAdmin = respCollege.getBody();
+		College testCollege = collegeAdmin.getCollege();
+
+		boolean found = false;
+		for (Degree degree : testCollege.getDegrees()){
+			if(degree.getId().equals(saved.getId())){
+				found = true;
+				break;
+			}
+		}
+		assertTrue(found);
 	}
 
 	// @Test
 	@Order(12)
 	public void removeDegreeFromCollegeTest(){
-		assertTrue(false);
+		Major m = Major.builder()
+				.name("Gender Studies")
+				.majorType(Major.MajorType.ARTS)
+				.build();
+		m = majorRepository.save(m);
+		Degree d = Degree.builder()
+				.degreeType(Degree.DegreeType.DOCTORATE)
+				.creditsRequired(689)
+				.major(m)
+				.build();
+
+		// Add the degree to the college
+		RequestEntity<Degree> re = RequestEntity
+				.post("http://localhost:8080/collegeAdmin/college/degree")
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.body(d);
+		ResponseEntity<Degree> resp = restTemplate.exchange(re, Degree.class);
+		assertEquals(HttpStatus.OK, resp.getStatusCode());
+		Degree saved = resp.getBody();
+
+		assertEquals(d.getMajor().getId(), saved.getMajor().getId());
+
+		// Get the college to ensure the degree was added
+		RequestEntity<Void> reCollege = RequestEntity
+				.get("http://localhost:8080/collegeAdmin")
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.build();
+		ResponseEntity<CollegeAdmin> respCollege = restTemplate.exchange(reCollege, CollegeAdmin.class);
+		assertEquals(HttpStatus.OK, respCollege.getStatusCode());
+		CollegeAdmin collegeAdmin = respCollege.getBody();
+		College testCollege = collegeAdmin.getCollege();
+
+		boolean found = false;
+		for (Degree degree : testCollege.getDegrees()){
+			if(degree.getId().equals(saved.getId())){
+				found = true;
+				break;
+			}
+		}
+		assertTrue(found);
+
+		// Remove the degree from the college
+		RequestEntity<Void> re2 = RequestEntity
+				.delete("http://localhost:8080/collegeAdmin/college/degree/" + saved.getId())
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.build();
+		ResponseEntity<Void> resp2 = restTemplate.exchange(re2, Void.class);
+		assertEquals(HttpStatus.OK, resp2.getStatusCode());
+
+		// Get the college to ensure the degree was removed
+		reCollege = RequestEntity.get("http://localhost:8080/collegeAdmin")
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.build();
+		respCollege = restTemplate.exchange(reCollege, CollegeAdmin.class);
+		collegeAdmin = respCollege.getBody();
+		testCollege = collegeAdmin.getCollege();
+
+		found = false;
+		for (Degree degree : testCollege.getDegrees()){
+			if(degree.getId().equals(saved.getId())){
+				found = true;
+				break;
+			}
+		}
+		assertFalse(found);
 	}
 
 //    @Autowired
