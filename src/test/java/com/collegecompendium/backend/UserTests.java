@@ -44,7 +44,11 @@ public class UserTests {
 	private RestTemplate restTemplate;
 	@Autowired
 	private UserProvider userProvider;
-	  	
+	 
+	@BeforeEach
+	public void setup() {
+
+	}
 	//Need to add find by CollegeId test when we create College objects
 	@Test
 	@Order(1)
@@ -135,47 +139,42 @@ public class UserTests {
 
 	@Test
 	@Order(3)
-	void testAddFavCollege() {
-
-		Student testStudent = null;
-		testStudent = Student.builder()
+	public void testAddFavCollege() {
+		Student testStudent = Student.builder()
 				.email("PrestonAndHamdy4Eva@languageDesigners.com")
 				.firstName("Chad")
 				.lastName("Sexton")
-				.location(new Location("Darlington Ct., Montgomery Village, MD 20886", "14.063226", "-10.905866"))
+				.location(new Location("Darlington Ct., Montgomery Village, MD 20886",
+						"14.063226",
+						"-10.905866"))
 				.username("EgyptIz4Luvers")
 				.auth0Id(injectedJwt.getSubject())
 				.build();
-		testStudent = studentRepository.save(testStudent);
 		
+		testStudent = studentRepository.save(testStudent);
 		College testFavCollege = null;
 		testFavCollege = College.builder()
-				.name("New Mexico Tech")
+				.name("Favorite This School")
 				.inStateCost(30000)
 				.outStateCost(40000)
 				.location(new Location(
-						"801 Leroy Pl, Socorro, NM 87801",
+						"Somewhere Over the Rainbow",
 						"34.06609123582969",
 						"-106.9056496898088"
 						))
 				.description("The second test college")
 				.popularity(80085)
-				.id(testFavCollege != null ? testFavCollege.getId() : null)
-				.url("https://www.nmt.edu/")
+				.id("CollegeToBeFavorited")
+				.url("https://www.plz.edu/")
 				.build();
 		testFavCollege = collegeRepository.save(testFavCollege);
-		//404 PROBS 4 LYFE
-		assertNotNull(testFavCollege.getId());
-
-		College persistedCollege = collegeRepository.findById(testFavCollege.getId()).orElseThrow();
-		assertEquals(testFavCollege.getId(), persistedCollege.getId());
-		
+	
 	    RequestEntity<Void> request = RequestEntity
-	            .put(URI.create("http://localhost:8080/student/favorite/" + testFavCollege.getId()))
+	            .put(URI.create("http://localhost:8080/student/favorite/college?id=" + testFavCollege.getId()))
 	            .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 	            .build();
 
-	    ResponseEntity<Void> response = restTemplate.exchange(request, Void.class);
+	    ResponseEntity<College> response = restTemplate.exchange(request, College.class);
 	    assertEquals(HttpStatus.OK, response.getStatusCode());
 
 	    // Retrieve the student again from the database
@@ -183,5 +182,8 @@ public class UserTests {
 
 	    // Verify that the student's list of favorite colleges contains the added college
 	    assertTrue(student.getFavoriteColleges().contains(testFavCollege));
+	    
+	    studentRepository.delete(testStudent);
+	    collegeRepository.delete(testFavCollege);
 	}
 }

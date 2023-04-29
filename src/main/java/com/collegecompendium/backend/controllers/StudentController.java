@@ -132,7 +132,7 @@ public class StudentController {
 	
 	//Student Favorites a College by Id
 	@PutMapping("/student/favorite/{collegeId}")
-	public boolean addFavoriteCollege(
+	public Student addFavoriteCollege(
 	        @PathVariable String collegeId,
 	        @AuthenticationPrincipal Jwt token,
 	        HttpServletResponse response) {
@@ -141,9 +141,14 @@ public class StudentController {
 		Optional<Student> studentQuery = studentRepository.findById(token.getSubject());
 		Optional<College> collegeQuery = collegeRepository.findById(collegeId);
 		
-		if (studentQuery.isEmpty() || collegeQuery.isEmpty()) {
+		if (studentQuery.isEmpty()) {
 			response.setStatus(404);
-			return false;
+			return null;
+		}
+		
+		if (collegeQuery.isEmpty()) {
+			response.setStatus(404);
+			return null;
 		}
 		
 		Student student = studentQuery.get();
@@ -159,7 +164,7 @@ public class StudentController {
 			response.setStatus(200);
 		}
 		
-		return true;
+		return null;
 	}
 	
 	@DeleteMapping("/student/{id}")
