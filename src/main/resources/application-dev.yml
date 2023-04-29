@@ -4,7 +4,7 @@ logging:
     path: logs
   level:
     root: INFO
-    '[com.collegecompendium]': TRACE
+    '[com.collegecompendium]': DEBUG
 server:
   port: 8080
   ssl:
