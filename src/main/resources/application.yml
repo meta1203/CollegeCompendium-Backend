@@ -6,6 +6,10 @@ logging:
     root: INFO
     '[com.collegecompendium]': INFO
 spring:
+  jpa:
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
   profiles:
     active:
     - dev
