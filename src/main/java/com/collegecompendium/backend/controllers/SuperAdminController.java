@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.collegecompendium.backend.models.College;
+import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Major;
+import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 import com.collegecompendium.backend.repositories.CollegeRepository;
 import com.collegecompendium.backend.repositories.MajorRepository;
 
@@ -27,6 +30,8 @@ public class SuperAdminController {
 	private MajorRepository majorRepository;
 	@Autowired
 	private CollegeRepository collegeRepository;
+	@Autowired
+	private CollegeAdminRepository collegeAdminRepository;
 	
 	@GetMapping("/test")
 	public Jwt testSuperAdmin(@AuthenticationPrincipal Jwt token) {
@@ -81,5 +86,16 @@ public class SuperAdminController {
 			return null;
 		toAdd = collegeRepository.save(toAdd);
 		return toAdd;
+	}
+	
+	@PutMapping("/collegeAdmin/approve/{email}")
+	public CollegeAdmin approveCollegeAdmin(@PathVariable String email) {
+		CollegeAdmin ca = collegeAdminRepository.findDistinctByEmail(email);
+		if (ca == null) return null;
+		if (! ca.isApproved()) {
+			ca.setApproved(true);
+			collegeAdminRepository.save(ca);
+		}
+		return ca;
 	}
 }

@@ -217,6 +217,23 @@ public class CollegeTests {
 		// Delete stuff
 		collegeAdminRepository.delete(targetDelete);
 	}
+	
+	@Test
+	@Order(7)
+	void testCollegeUpdate() {
+		final String NEW_NAME = "new name";
+		testCollege.setName(NEW_NAME);
+		RequestEntity<College> updateCollegeRequest = RequestEntity
+				.put(URI.create("http://localhost:8080/collegeAdmin/college"))
+				.header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+				.body(testCollege);
+		ResponseEntity<College> updateCollegeResponse = restTemplate
+				.exchange(updateCollegeRequest, College.class);
+		
+		assertEquals(updateCollegeResponse.getStatusCode(), HttpStatus.OK);
+		College resp = updateCollegeResponse.getBody();
+		assertEquals(resp.getName(), NEW_NAME);
+	}
 
 	@Test
 	@Order(10)

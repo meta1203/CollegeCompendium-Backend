@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
@@ -28,44 +31,47 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
+@JsonIdentityInfo(
+		generator = ObjectIdGenerators.PropertyGenerator.class, 
+		property = "id")
 public class College {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
-	
+
 	@OneToMany(mappedBy = "college")
 	@Builder.Default
 	private List<CollegeAdmin> collegeAdmins = new ArrayList<CollegeAdmin>();
-	
+
 	@ManyToMany
 	@Builder.Default
 	private List<Degree> degrees = new ArrayList<Degree>();
-	
+
 	@NotEmpty
 	@NotNull
 	private String name;	
-	
+
 	@NotNull
 	@Size(min = 12, max = 1024)
 	@Column(length = 1024)
 	private String url;
-	
+
 	@Min(100)
 	@NotNull
 	private Integer inStateCost;
-	
+
 	@Min(100)
 	@NotNull
 	private Integer outStateCost;
 
 	@Embedded
 	private Location location;
-	
+
 	@ElementCollection
 	@Builder.Default
 	private List<String> photos = new ArrayList<String>();
-	
+
 	@Size(max = 4096)
 	@Column(length = 4096)
 	private String description;

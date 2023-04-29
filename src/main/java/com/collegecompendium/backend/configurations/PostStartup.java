@@ -1,5 +1,7 @@
 package com.collegecompendium.backend.configurations;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,9 @@ public class PostStartup {
 						"-106.9056496898088"
 						))
 				.description("The first test college")
+				.photos(Arrays.asList(
+						"https://www.nmt.edu/_resources/img/photos/heroimages/NMTGenericHero.png",
+						"https://www.nmt.edu/advancement/images/Drone_Shot_Campus_August2021_large.jpg"))
 				// .phoneNumber("5758355133")
 				.popularity(69)
 				.url("https://www.nmt.edu/")
@@ -45,6 +50,10 @@ public class PostStartup {
 						"-106.89836091130815"
 						))
 				.description("The second test college")
+				.photos(Arrays.asList(
+						"http://www.hrwiki.org/w/images/f/f5/CGNU_Crest.png",
+						"http://www.hrwiki.org/w/images/e/e2/Sbemail178_screenshot.PNG"
+						))
 				// .phoneNumber("5059800370")
 				.popularity(1)
 				.url("http://cgnuonline-eniversity.edu")
@@ -61,6 +70,10 @@ public class PostStartup {
 						"-106.61977049166329"
 						))
 				.description("The third test college")
+				.photos(Arrays.asList(
+						"https://s3.amazonaws.com/cms.ipressroom.com/175/files/20198/5d76bea32cfac25e55abafe4_UNM+Lobo+with+Scholes/UNM+Lobo+with+Scholes_hero.jpg",
+						"https://www.unm.edu/features/2022/smith-plaza.jpg"
+						))
 				//.phoneNumber("5052778900")
 				.popularity(420)
 				.url("https://unm.edu")

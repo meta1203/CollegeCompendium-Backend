@@ -32,6 +32,7 @@ public class Location {
 			@JsonProperty("address") String address,
 			@JsonProperty("latitude") double latitude,
 			@JsonProperty("longitude") double longitude) {
+		this.address = address;
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
@@ -44,6 +45,7 @@ public class Location {
 			String address,
 			String latitude,
 			String longitude) {
+		this.address = address;
 		this.latitude = Double.parseDouble(latitude);
 		this.longitude = Double.parseDouble(longitude);
 	}

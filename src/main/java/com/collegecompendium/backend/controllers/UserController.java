@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.collegecompendium.backend.configurations.UserProvider;
+import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Location;
 import com.collegecompendium.backend.models.Student;
 import com.collegecompendium.backend.models.User;
@@ -45,7 +46,16 @@ public class UserController {
     		) {
     	
     	User user = userProvider.getUserForToken(token);
-    	if (user != null) return user;
+    	if (user != null) {
+    		if (user instanceof CollegeAdmin) {
+    			CollegeAdmin ca = (CollegeAdmin)user;
+    			if (!ca.isApproved()) {
+    				ca.setCollege(null);
+    				return ca;
+    			}
+    		}
+    		return user;
+    	}
     	
     	Map<String, String> auth0Data = userProvider.tokenToAuth0Data(token);
     	user = Student.builder()
