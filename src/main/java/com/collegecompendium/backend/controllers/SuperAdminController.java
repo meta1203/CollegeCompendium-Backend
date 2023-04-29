@@ -2,11 +2,13 @@ package com.collegecompendium.backend.controllers;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -86,6 +88,15 @@ public class SuperAdminController {
 			return null;
 		toAdd = collegeRepository.save(toAdd);
 		return toAdd;
+	}
+	
+	@DeleteMapping("/college/{id}")
+	public boolean deleteCollege(@PathVariable String id) {
+		College c = collegeRepository.findById(id).orElse(null);
+		if (c == null)
+			return false;
+		collegeRepository.delete(c);
+		return true;
 	}
 	
 	@PutMapping("/collegeAdmin/approve/{email}")
