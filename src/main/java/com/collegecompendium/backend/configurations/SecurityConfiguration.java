@@ -60,7 +60,7 @@ public class SecurityConfiguration {
                 // claims
                 Map.of(
                         "sub", "test|1234",
-                        "permissions", List.of("student", "collegeAdmin")
+                        "permissions", List.of("student", "collegeAdmin", "superAdmin")
                 )
         );
         log.error("LOOK ==> injected token is " + ret.getTokenValue());

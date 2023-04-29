@@ -96,7 +96,7 @@ public class SearchController {
     
     @GetMapping("/search/colleges")
     public List<College> findCollegesByName(
-    		@RequestParam String name,
+    		@RequestParam(required = false) String name,
     		HttpServletResponse response
     		) {
     	List<College> ret = collegeRepository.findByNameContainsIgnoreCase(name);
