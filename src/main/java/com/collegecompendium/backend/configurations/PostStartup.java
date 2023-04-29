@@ -15,6 +15,7 @@ import com.collegecompendium.backend.repositories.MajorRepository;
 
 import jakarta.annotation.PostConstruct;
 
+@Profile("dev")
 @Component
 public class PostStartup {
 	@Autowired
@@ -22,7 +23,6 @@ public class PostStartup {
 	@Autowired
 	private MajorRepository majorRepository;
 
-	@Profile("dev")
 	@PostConstruct
 	public void init() {
 		// prepopulate colleges
