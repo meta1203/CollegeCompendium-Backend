@@ -138,11 +138,11 @@ public class StudentController {
 	        HttpServletResponse response) {
 		
 		
-		Optional<Student> studentQuery = studentRepository.findById(token.getSubject());
+		Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
 		Optional<College> collegeQuery = collegeRepository.findById(collegeId);
 		
-		if (studentQuery.isEmpty()) {
-			response.setStatus(404);
+		if (student == null) {
+			response.setStatus(400);
 			return null;
 		}
 		
@@ -151,7 +151,6 @@ public class StudentController {
 			return null;
 		}
 		
-		Student student = studentQuery.get();
 		College college = collegeQuery.get();
 		
 		boolean added = student.getFavoriteColleges().add(college);
@@ -160,11 +159,11 @@ public class StudentController {
 			// college already exists
 			response.setStatus(200);
 		} else {
-			studentRepository.save(student);
+			student = studentRepository.save(student);
 			response.setStatus(200);
 		}
 		
-		return null;
+		return student;
 	}
 	
 	@DeleteMapping("/student/{id}")

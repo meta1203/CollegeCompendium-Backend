@@ -2,10 +2,13 @@ package com.collegecompendium.backend;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
+import java.util.stream.Collectors;
 
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -29,8 +32,11 @@ import com.collegecompendium.backend.repositories.CollegeAdminRepository;
 import com.collegecompendium.backend.repositories.CollegeRepository;
 import com.collegecompendium.backend.repositories.StudentRepository;
 
+import lombok.extern.log4j.Log4j2;
+
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("dev")
+@Log4j2
 public class UserTests {
 	@Autowired
 	private StudentRepository studentRepository;
@@ -74,7 +80,7 @@ public class UserTests {
 		
 		String id = student.getId();
 		
-		System.out.println(student);
+		log.warn(student);
 		
 		// read
 		Student fetchedStudent = studentRepository.findDistinctByUsername("meta1203");
@@ -117,7 +123,7 @@ public class UserTests {
 		
 		String collegeAdminId = collegeAdmin.getId();
 		
-		System.out.println(collegeAdmin);
+		log.warn(collegeAdmin);
 	
 		// R
 		CollegeAdmin fetchedCollegeAdmin = collegeAdminRepository.findDistinctByUsername("mountainDewYoloSwag420");
@@ -140,6 +146,7 @@ public class UserTests {
 	@Test
 	@Order(3)
 	public void testAddFavCollege() {
+		assertNull(userProvider.getUserForToken(injectedJwt));
 		Student testStudent = Student.builder()
 				.email("PrestonAndHamdy4Eva@languageDesigners.com")
 				.firstName("Chad")
@@ -152,8 +159,7 @@ public class UserTests {
 				.build();
 		
 		testStudent = studentRepository.save(testStudent);
-		College testFavCollege = null;
-		testFavCollege = College.builder()
+		College testFavCollege1 = College.builder()
 				.name("Favorite This School")
 				.inStateCost(30000)
 				.outStateCost(40000)
@@ -167,10 +173,10 @@ public class UserTests {
 				.id("CollegeToBeFavorited")
 				.url("https://www.plz.edu/")
 				.build();
-		testFavCollege = collegeRepository.save(testFavCollege);
-	
+		final College testFavCollege2 = collegeRepository.save(testFavCollege1);
+
 	    RequestEntity<Void> request = RequestEntity
-	            .put(URI.create("http://localhost:8080/student/favorite/college?id=" + testFavCollege.getId()))
+	            .put(URI.create("http://localhost:8080/student/favorite/" + testFavCollege2.getId()))
 	            .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
 	            .build();
 
@@ -178,12 +184,16 @@ public class UserTests {
 	    assertEquals(HttpStatus.OK, response.getStatusCode());
 
 	    // Retrieve the student again from the database
-	    Student student = studentRepository.findById(testStudent.getId()).orElseThrow();
-
+	    Student student = studentRepository.findDistinctByAuth0Id(injectedJwt.getSubject());
+	    
 	    // Verify that the student's list of favorite colleges contains the added college
-	    assertTrue(student.getFavoriteColleges().contains(testFavCollege));
+	    log.warn("Is initalized: " + Hibernate.isInitialized(student.getCollege()));
+	    Hibernate.initialize(student.getCollege());
+	    log.warn(student.getFavoriteColleges().stream().map(c -> c.toString()).collect(Collectors.joining(", ")));
+	    assertTrue(student.getFavoriteColleges()
+	    		.stream().filter(c -> c.getId().equals(testFavCollege2.getId())).count() == 1);
 	    
 	    studentRepository.delete(testStudent);
-	    collegeRepository.delete(testFavCollege);
+	    collegeRepository.delete(testFavCollege2);
 	}
 }

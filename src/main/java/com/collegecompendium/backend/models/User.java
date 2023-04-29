@@ -10,18 +10,18 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @MappedSuperclass
 // Lombok constructors
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @SuperBuilder
-@Data
+@Getter
+@Setter
 public abstract class User {
 	
 	@Id
