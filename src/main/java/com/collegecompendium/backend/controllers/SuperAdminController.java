@@ -2,7 +2,6 @@ package com.collegecompendium.backend.controllers;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.collegecompendium.backend.configurations.LocationProvider;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Major;
@@ -34,6 +34,8 @@ public class SuperAdminController {
 	private CollegeRepository collegeRepository;
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
+	@Autowired
+	private LocationProvider locationProvider;
 	
 	@GetMapping("/test")
 	public Jwt testSuperAdmin(@AuthenticationPrincipal Jwt token) {
@@ -76,6 +78,7 @@ public class SuperAdminController {
 	
 	@PostMapping("/college")
 	public College addCollege(@RequestBody College toAdd) {
+		toAdd.setLocation(locationProvider.findLocation(toAdd.getLocation().getAddress()));
 		toAdd = collegeRepository.save(toAdd);
 		return toAdd;
 	}
