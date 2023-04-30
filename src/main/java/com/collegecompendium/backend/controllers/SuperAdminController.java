@@ -25,6 +25,9 @@ import com.collegecompendium.backend.repositories.MajorRepository;
 @CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
 @RestController
 @RequestMapping(path = "/superAdmin")
+/**
+ * REST endpoint controller for super admin
+ */
 public class SuperAdminController {
 	@Autowired
 	private MajorRepository majorRepository;
@@ -34,11 +37,20 @@ public class SuperAdminController {
 	private CollegeAdminRepository collegeAdminRepository;
 	
 	@GetMapping("/test")
+	/**
+	 * Test function for super admin
+	 * @param token the JWT token of the super admin
+	 * @return the JWT token of the super admin
+	 */
 	public Jwt testSuperAdmin(@AuthenticationPrincipal Jwt token) {
 		return token;
 	}
 	
 	@GetMapping("/majors")
+	/**
+	 * Gets a list of all majors
+	 * @return a list of all majors
+	 */
 	public List<Major> getAllMajors() {
 		LinkedList<Major> ret = new LinkedList<>();
 		for (Major m : majorRepository.findAll()) {
@@ -48,12 +60,22 @@ public class SuperAdminController {
 	}
 	
 	@PostMapping("/major")
+	/**
+	 * Adds a major to the database
+	 * @param toAdd the major to add
+	 * @return the major that was added
+	 */
 	public Major addMajor(@RequestBody Major toAdd) {
 		toAdd = majorRepository.save(toAdd);
 		return toAdd;
 	}
 	
 	@PutMapping("/major")
+	/**
+	 * Updates a major in the database
+	 * @param toAdd the major to update
+	 * @return the major that was updated
+	 */
 	public Major updateMajor(@RequestBody Major toAdd) {
 		if (toAdd.getId() == null)
 			return null;
@@ -64,6 +86,10 @@ public class SuperAdminController {
 	}
 	
 	@GetMapping("/colleges")
+	/**
+	 * Gets a list of all colleges
+	 * @return a list of all colleges
+	 */
 	public List<College> getAllColleges() {
 		LinkedList<College> ret = new LinkedList<>();
 		for (College c : collegeRepository.findAll()) {
@@ -73,12 +99,22 @@ public class SuperAdminController {
 	}
 	
 	@PostMapping("/college")
+	/**
+	 * Adds a college to the database
+	 * @param toAdd the college to add
+	 * @return the college that was added
+	 */
 	public College addCollege(@RequestBody College toAdd) {
 		toAdd = collegeRepository.save(toAdd);
 		return toAdd;
 	}
 	
 	@PutMapping("/college")
+	/**
+	 * Updates a college in the database
+	 * @param toAdd the college to update
+	 * @return the college that was updated
+	 */
 	public College updateCollege(@RequestBody College toAdd) {
 		if (toAdd.getId() == null)
 			return null;
@@ -89,6 +125,11 @@ public class SuperAdminController {
 	}
 	
 	@PutMapping("/collegeAdmin/approve/{email}")
+	/**
+	 * Approves a college admin
+	 * @param email the email of the college admin to approve
+	 * @return the college admin that was approved
+	 */
 	public CollegeAdmin approveCollegeAdmin(@PathVariable String email) {
 		CollegeAdmin ca = collegeAdminRepository.findDistinctByEmail(email);
 		if (ca == null) return null;

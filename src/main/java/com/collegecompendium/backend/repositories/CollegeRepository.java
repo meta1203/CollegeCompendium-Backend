@@ -11,6 +11,9 @@ import com.collegecompendium.backend.models.Degree;
 import jakarta.transaction.Transactional;
 
 @Transactional
+/**
+ * Repository for College, provides CRUD operations
+ */
 public interface CollegeRepository extends CrudRepository<College, String>, CollegeRepositoryCustom {
 	Optional<College> findById(String id);
 	List<College> findByNameContainsIgnoreCase(String name);

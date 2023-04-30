@@ -32,6 +32,9 @@ import lombok.NoArgsConstructor;
 @JsonIdentityInfo(
 		generator = ObjectIdGenerators.PropertyGenerator.class, 
 		property = "id")
+/**
+ * Represents a college
+ */
 public class College {
 
 	@Id

@@ -16,11 +16,20 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
+/**
+ * REST endpoint controller for majors
+ */
 public class MajorController {
     @Autowired
     private MajorRepository majorRepository;
 
     @GetMapping("/search/major")
+    /**
+     * Gets a major by its ID
+     * @param id the ID of the major to get
+     * @param response the HTTP response to modify
+     * @return the major with the given ID
+     */
     private Major getMajorById(@RequestParam String id, HttpServletResponse response) {
         Major result = majorRepository.findById(id).orElse(null);
 
@@ -36,6 +45,12 @@ public class MajorController {
 
     // GET /search/majors?name={partialName}
     @GetMapping("/search/majors")
+    /**
+     * Gets a list of majors by their partial name
+     * @param name the partial name of the majors to get
+     * @param response the HTTP response to modify
+     * @return the list of majors with the given partial name
+     */
     private List<Major> getMajorByPartialName(@RequestParam(required = false) String name, HttpServletResponse response) {
     	List<Major> result = null;
     	

@@ -18,6 +18,9 @@ import lombok.extern.log4j.Log4j2;
 
 @Configuration
 @Log4j2
+/**
+ * Validates logins for Auth0 and sets up the security configuration for the dev environment.
+ */
 public class SecurityConfiguration {
 	@Profile("prod")
 	@Bean

@@ -15,6 +15,9 @@ import lombok.ToString;
 
 @Embeddable
 @ToString
+/**
+ * Represents a location
+ */
 public class Location {
 	@Column(length = 200)
 	@Size(min = 0, max = 200)
@@ -28,6 +31,12 @@ public class Location {
 	// this constructor & its annotations define how
 	// Jackson will (de)serialize JSON representations
 	@JsonCreator
+	/**
+	 * Creates a location
+	 * @param address the address
+	 * @param latitude the latitude
+	 * @param longitude the longitude
+	 */
 	public Location(
 			@JsonProperty("address") String address,
 			@JsonProperty("latitude") double latitude,
@@ -89,6 +98,10 @@ public class Location {
 	}
 	
 	@JsonIgnore
+	/**
+	 * Gets the latitude with fixed precision
+	 * @return the latitude with fixed precision
+	 */
 	public String getLatitudeFixedPrecision() {
 		long r = (long)Math.round(latitude * 1000000);
 		StringBuilder ret = new StringBuilder(String.valueOf(r));
@@ -97,6 +110,10 @@ public class Location {
 	}
 	
 	@JsonIgnore
+	/**
+	 * Gets the longitude with fixed precision
+	 * @return the longitude with fixed precision
+	 */
 	public String getLongitudeFixedPrecision() {
 		long r = (long)Math.round(longitude * 1000000);
 		StringBuilder ret = new StringBuilder(String.valueOf(r));

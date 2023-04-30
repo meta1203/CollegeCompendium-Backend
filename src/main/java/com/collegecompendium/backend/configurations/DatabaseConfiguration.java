@@ -19,6 +19,10 @@ import com.zaxxer.hikari.HikariDataSource;
 // Spring annotation - almost identical to @Component, just
 // alerts the user that this class is specifically for 
 // configuration and not just generic bean declaration
+
+/**
+ * This class is used to configure the database connection.
+ */
 @Configuration
 public class DatabaseConfiguration {
 	/*
@@ -47,6 +51,10 @@ public class DatabaseConfiguration {
 	// specified Spring profile is active
 	// https://www.baeldung.com/spring-profiles
 	@Profile("dev")
+	/**
+	 * This method is used to configure the database connection for dev environment.
+	 * @return DataSource object
+	 */
 	DataSource inMemoryDataSource() {
 		// set the data source's JDBC URL.
 		// I'm using H2's in-memory DB for demonstration purposes 
@@ -72,6 +80,10 @@ public class DatabaseConfiguration {
 
 	@Bean
 	@Profile("prod")
+	/**
+	 * This method is used to configure the database connection for production environment.
+	 * @return DataSource object
+	 */
 	DataSource mariaDataSource() {
 		// get db connection string from environment variables
 		config.setJdbcUrl("jdbc:mariadb://" + url + ":3306/" + database);

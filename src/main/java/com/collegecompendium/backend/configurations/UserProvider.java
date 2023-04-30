@@ -27,6 +27,9 @@ import lombok.extern.log4j.Log4j2;
 
 @Service
 @Log4j2
+/**
+ * Provides methods for interacting with the Auth0 API.
+ */
 public class UserProvider {
 	@Autowired
 	private StudentRepository studentRepository;

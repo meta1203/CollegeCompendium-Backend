@@ -22,6 +22,9 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode
 @SuperBuilder
 @Data
+/**
+ * Represents a user, extended by Student and CollegeAdmin
+ */
 public abstract class User {
 	
 	@Id

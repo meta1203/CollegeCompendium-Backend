@@ -18,6 +18,9 @@ import lombok.experimental.SuperBuilder;
 @JsonIdentityInfo(
 		generator = ObjectIdGenerators.PropertyGenerator.class, 
 		property = "id")
+/**
+ * Represents a college admin
+ */
 public class CollegeAdmin extends User {
 
 	@ManyToOne

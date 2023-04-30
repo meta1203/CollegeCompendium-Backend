@@ -10,12 +10,21 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceContextType;
 import jakarta.persistence.TypedQuery;
 
+/**
+ * Custom database queries for College interface
+ */
 public class CollegeRepositoryCustomImpl implements CollegeRepositoryCustom {
 	// TODO: can we get lazy loading without using an extended persistance context?
 	@PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
 	
 	@Override
+	/**
+	 * Finds all colleges within a certain range of a location
+	 * @param location - the location to search around
+	 * @param range - the range in miles to search
+	 * @return List of all colleges within range
+	 */
 	public List<College> findAllCollegesNear(Location location, Integer range) {
 		// convert range from miles to degrees
 		range = range * 1000000 / 69;

@@ -6,6 +6,9 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository for Major, provides CRUD operations
+ */
 public interface MajorRepository extends CrudRepository<Major, String> {
     public Major findByName(String name);
 
