@@ -1,6 +1,7 @@
 package com.collegecompendium.backend.controllers;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.collegecompendium.backend.configurations.UserProvider;
+import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Student;
+import com.collegecompendium.backend.repositories.CollegeRepository;
 import com.collegecompendium.backend.repositories.StudentRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,6 +32,9 @@ public class StudentController {
 	
 	@Autowired
 	private StudentRepository studentRepository;
+	
+	@Autowired
+	private CollegeRepository collegeRepository;
 	
 	@Autowired
 	private UserProvider userProvider;
@@ -153,6 +159,68 @@ public class StudentController {
 		// update the db with the new student object
 		input = studentRepository.save(input);
 		return input;
+	}
+	
+	//Student Favorites a College by Id
+	@PutMapping("/student/favorite/{collegeId}")
+	public Student addFavoriteCollege(
+	        @PathVariable String collegeId,
+	        @AuthenticationPrincipal Jwt token,
+	        HttpServletResponse response) {
+		
+		
+		Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
+		Optional<College> collegeQuery = collegeRepository.findById(collegeId);
+		
+		if (student == null) {
+			response.setStatus(400);
+			return null;
+		}
+		
+		if (collegeQuery.isEmpty()) {
+			response.setStatus(404);
+			return null;
+		}
+		
+		College college = collegeQuery.get();
+		
+		boolean added = student.getFavoriteColleges().add(college);
+	
+		if (!added) {
+			// college already exists
+			response.setStatus(200);
+		} else {
+			student = studentRepository.save(student);
+			response.setStatus(200);
+		}
+		
+		return student;
+	}
+	
+	@DeleteMapping("/student/favorite/{collegeId}")
+	public boolean removeFavoriteCollege(
+	        @PathVariable String collegeId,
+	        @AuthenticationPrincipal Jwt token,
+	        HttpServletResponse response
+	        ) {
+	    Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
+	    Optional<College> collegeQuery = collegeRepository.findById(collegeId);
+	    
+	    if (student == null) {
+	    	response.setStatus(400);
+	    	return false;
+	    }
+
+	    College college = collegeQuery.get();
+
+	    boolean removed = student.getFavoriteColleges().remove(college);
+	        studentRepository.save(student);
+	        if(removed) {
+	        response.setStatus(200);
+	        return removed;
+	        }
+	        response.setStatus(200);
+	        return removed;
 	}
 	
 	@DeleteMapping("/student/{id}")

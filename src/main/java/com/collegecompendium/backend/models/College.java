@@ -2,6 +2,8 @@ package com.collegecompendium.backend.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -86,5 +88,8 @@ public class College {
 	public void addDegree(Degree degree) {
 		degrees.add(degree);
 	}
-
+    
+	@Builder.Default
+    @ManyToMany(mappedBy = "favoriteColleges")
+    private Set<Student> favoritedByStudents = new HashSet<>();
 }

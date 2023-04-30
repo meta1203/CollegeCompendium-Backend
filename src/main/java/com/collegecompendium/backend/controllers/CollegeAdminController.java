@@ -3,6 +3,8 @@ package com.collegecompendium.backend.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import com.collegecompendium.backend.models.Degree;
+import com.collegecompendium.backend.repositories.DegreeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -44,6 +46,9 @@ public class CollegeAdminController {
 
 	@Autowired
 	private UserProvider userProvider;
+
+	@Autowired
+	private DegreeRepository degreeRepository;
 
 	// Spring annotation - defines a REST endpoint to be handled by
 	// the annotated function. function arguments can be annotated
@@ -337,4 +342,97 @@ public class CollegeAdminController {
 		return collegeAdmins;
 	}
 
+	@PostMapping("/collegeAdmin/college/degree")
+	public Degree addDegreeToCollege(
+			@RequestBody Degree degree,
+			@AuthenticationPrincipal Jwt jwt,
+			HttpServletResponse response
+			) {
+		CollegeAdmin caller = collegeAdminRepository.findDistinctByAuth0Id(jwt.getSubject());
+		if (caller == null || !caller.isApproved()) {
+			response.setStatus(403);
+			return null;
+		}
+
+		// Get the college
+		College college = caller.getCollege();
+		if (college == null) {
+			response.setStatus(400);
+			return null;
+		}
+
+		// check if degree already exists in college
+		if(college.getDegrees().contains(degree)){
+			response.setStatus(400);
+			return null;
+		}
+
+		// Check if the Degree exists already. This SHOULD NOT happen, but just in case.
+		if(degree.getId() != null) { // If the degree has an id, it may exist in the database.
+			// Check if it exists in the database and is the same as the one we are trying to add.
+			Optional<Degree> degreeQuery = degreeRepository.findById(degree.getId());
+			if (degreeQuery.isPresent()) {
+				Degree result = degreeQuery.get();
+				if (result.getMajor().getName().equals(degree.getMajor().getName())
+						&& result.getMajor().getMajorType().equals(degree.getMajor().getMajorType())
+						&& result.getDegreeType().equals(degree.getDegreeType())) {
+					// This degree already exists in the database and is the same as the one we are trying to add.
+					college.addDegree(degree);
+					return degree;
+				} else {
+					// This degree already exists in the database but is different from the one we are trying to add.
+					response.setStatus(409);
+					return null;
+				}
+			}
+		}
+
+		// The degree does not exist in the database.
+		degree = degreeRepository.save(degree);
+		college.addDegree(degree);
+
+		college = collegeRepository.save(college);
+		return degree;
+	}
+
+	@DeleteMapping("/collegeAdmin/college/degree/{degreeId}")
+	public void removeDegreeFromCollege(
+			@PathVariable String degreeId,
+			@AuthenticationPrincipal Jwt jwt,
+			HttpServletResponse response
+			) {
+		CollegeAdmin caller = collegeAdminRepository.findDistinctByAuth0Id(jwt.getSubject());
+		if (caller == null || !caller.isApproved()) {
+			response.setStatus(403);
+			return;
+		}
+
+		// Get the college
+		College college = caller.getCollege();
+		if (college == null) {
+			response.setStatus(400);
+			return;
+		}
+
+		// check if degree exists
+		Optional<Degree> result = degreeRepository.findById(degreeId);
+		if(result.isEmpty()){
+			response.setStatus(400);
+			return;
+		}
+
+		// check if degree is in college
+		Degree d = result.get();
+		if(!college.getDegrees().contains(d)){
+			response.setStatus(200);
+			return;
+		}
+
+		college.getDegrees().remove(d);
+		collegeRepository.save(college);
+
+		// TODO: check if degree is in any other colleges before deleting it (or just don't delete it at all)
+//		degreeRepository.delete(d);
+		return;
+	}
 }
