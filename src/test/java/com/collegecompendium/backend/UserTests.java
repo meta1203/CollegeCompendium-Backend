@@ -196,4 +196,57 @@ public class UserTests {
 	    studentRepository.delete(testStudent);
 	    collegeRepository.delete(testFavCollege2);
 	}
+	
+	@Test
+	@Order(4)
+	public void testDeleteFavCollege() {
+	    assertNull(userProvider.getUserForToken(injectedJwt));
+	    Student testStudent = Student.builder()
+	            .email("JonahsChinHairIsDisturbing@yikes.com")
+	            .firstName("Lars")
+	            .lastName("Ulrich")
+	            .location(new Location("Shrewsbury Ct., Montgomery Village, MD 20886",
+	                    "14.063226",
+	                    "-10.905866"))
+	            .username("MidlaneMasters")
+	            .auth0Id(injectedJwt.getSubject())
+	            .build();
+
+	    testStudent = studentRepository.save(testStudent);
+	    College testFavCollege = College.builder()
+	            .name("Favorite This School")
+	            .inStateCost(30000)
+	            .outStateCost(40000)
+	            .location(new Location(
+	                    "Somewhere Over the Rainbow",
+	                    "34.06609123582969",
+	                    "-106.9056496898088"
+	                    ))
+	            .description("The second test college")
+	            .popularity(80085)
+	            .id("CollegeToBeFavorited")
+	            .url("https://www.plz.edu/")
+	            .build();
+	    final College savedFavCollege = collegeRepository.save(testFavCollege);
+
+	    testStudent.getFavoriteColleges().add(savedFavCollege);
+	    studentRepository.save(testStudent);
+
+	    RequestEntity<Void> request = RequestEntity
+	            .delete(URI.create("http://localhost:8080/student/favorite/" + savedFavCollege.getId()))
+	            .header("Authorization", "Bearer " + injectedJwt.getTokenValue())
+	            .build();
+	    ResponseEntity<Void> response = restTemplate.exchange(request, Void.class);
+
+	    assertEquals(HttpStatus.OK, response.getStatusCode());
+
+	    Student student = studentRepository.findById(testStudent.getId()).orElseThrow();
+	    assertEquals(0, student.getFavoriteColleges().stream()
+	    		.filter(c -> c.getId().equals(savedFavCollege.getId()))
+	    		.count()
+	    		);
+
+	    studentRepository.delete(testStudent);
+	    collegeRepository.delete(savedFavCollege);
+	}
 }
