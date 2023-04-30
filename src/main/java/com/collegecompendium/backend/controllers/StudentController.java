@@ -163,6 +163,12 @@ public class StudentController {
 	
 	//Student Favorites a College by Id
 	@PutMapping("/student/favorite/{collegeId}")
+	/**
+	 * Adds a college to a student's favorites
+	 * @param collegeId the ID of the college to add
+	 * @param token the JWT token of the student
+	 * @param response the HTTP response to modify
+	 */
 	public Student addFavoriteCollege(
 	        @PathVariable String collegeId,
 	        @AuthenticationPrincipal Jwt token,
@@ -198,6 +204,13 @@ public class StudentController {
 	}
 	
 	@DeleteMapping("/student/favorite/{collegeId}")
+	/**
+	 * Removes a college from a student's favorites
+	 * @param collegeId the ID of the college to remove
+	 * @param token the JWT token of the student
+	 * @param response the HTTP response to modify
+	 * @return true if the college was removed, false otherwise
+	 */
 	public boolean removeFavoriteCollege(
 	        @PathVariable String collegeId,
 	        @AuthenticationPrincipal Jwt token,

@@ -22,6 +22,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
+/**
+ * Abstract representation of a user to be extended by Student and CollegeAdmin
+ */
 public abstract class User {
 
 	@Id

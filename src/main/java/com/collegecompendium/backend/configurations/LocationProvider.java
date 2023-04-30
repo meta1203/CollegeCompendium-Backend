@@ -21,6 +21,10 @@ import lombok.extern.log4j.Log4j2;
 public class LocationProvider {
 	private static LocationProvider instance = null;
 
+	/**
+	 * Returns the instance of the LocationProvider class.
+	 * @return Instance of the LocationProvider class
+	 */
 	public static LocationProvider getInstance(){
 		if(instance == null){
 			instance = new LocationProvider();

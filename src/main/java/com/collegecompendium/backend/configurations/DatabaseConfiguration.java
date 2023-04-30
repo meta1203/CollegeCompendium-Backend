@@ -107,6 +107,10 @@ public class DatabaseConfiguration {
 	}
 
 	@Bean
+	/**
+	 * Builds and returns the REST template
+	 * @return RestTemplate object
+	 */
 	RestTemplate restTemplate() {
 		return new RestTemplateBuilder()
 				.errorHandler(new ResponseErrorHandler() {

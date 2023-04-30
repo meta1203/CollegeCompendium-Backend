@@ -140,6 +140,7 @@ public class SearchController {
      * @param id the ID of the major to fetch
      * @param token the JWT token of the student
      * @param response the HTTP response to modify
+     * @return a list of colleges with the given major
      */
     public List<College> findCollegesByMajor(
             @RequestParam(required = false) String name,

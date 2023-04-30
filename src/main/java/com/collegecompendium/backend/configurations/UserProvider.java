@@ -50,6 +50,11 @@ public class UserProvider {
 	// gets everything auth0 knows about the given JWT token
 	// returns a HashMap because there's no documentation I can find
 	// that provides a fixed model
+	/**
+	 * Gets everything Auth0 knows about the given JWT token.
+	 * @param token The JWT token to get information about.
+	 * @return A HashMap containing all the information Auth0 knows about the given JWT token.
+	 */
 	public Map<String,String> tokenToAuth0Data(Jwt token) {
 		// use the injected token if we're performing tests
 		if (token.getTokenValue().equals(injectedJwt.getTokenValue())) {
@@ -74,7 +79,12 @@ public class UserProvider {
 		if (response.getStatusCode().is2xxSuccessful()) return response.getBody();
 		return null;
 	}
-	
+
+	/**
+	 * Adds permission to user
+	 * @param user user to add permission to
+	 * @param permission permission to add
+	 */
 	public void addPermissionToUser(User user, String permission) {
 		// if this is the test user, don't do anything
 		if (user.getAuth0Id().equals(injectedJwt.getSubject()))
@@ -128,14 +138,24 @@ public class UserProvider {
 
 		return this.token;
 	}
-	
+
+	/**
+	 * Gets the user associated with the given JWT token.
+	 * @param token The JWT token to get the user for.
+	 * @return The user associated with the given JWT token.
+	 */
 	public User getUserForToken(Jwt token) {
 		Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
 		if (student != null) return student;
 		CollegeAdmin collegeAdmin = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
 		return collegeAdmin;
 	}
-	
+
+	/**
+	 * Deletes the given user from the database.
+	 * @param user The user to delete.
+	 * @return True if the user was deleted, false otherwise.
+	 */
 	public boolean deleteUser(User user) {
 		if (user instanceof CollegeAdmin) {
 			collegeAdminRepository.delete((CollegeAdmin)user);
