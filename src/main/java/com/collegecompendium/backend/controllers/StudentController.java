@@ -1,6 +1,7 @@
 package com.collegecompendium.backend.controllers;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -174,6 +175,32 @@ public class StudentController {
 		}
 		
 		return student;
+	}
+	
+	@DeleteMapping("/student/favorite/{collegeId}")
+	public boolean removeFavoriteCollege(
+	        @PathVariable String collegeId,
+	        @AuthenticationPrincipal Jwt token,
+	        HttpServletResponse response
+	        ) {
+	    Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
+	    Optional<College> collegeQuery = collegeRepository.findById(collegeId);
+	    
+	    if (student == null) {
+	    	response.setStatus(400);
+	    	return false;
+	    }
+
+	    College college = collegeQuery.get();
+
+	    boolean removed = student.getFavoriteColleges().remove(college);
+	        studentRepository.save(student);
+	        if(removed) {
+	        response.setStatus(200);
+	        return removed;
+	        }
+	        response.setStatus(200);
+	        return removed;
 	}
 	
 	@DeleteMapping("/student/{id}")
