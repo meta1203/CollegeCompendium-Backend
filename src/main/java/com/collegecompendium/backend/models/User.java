@@ -22,39 +22,36 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
-/**
- * Represents a user, extended by Student and CollegeAdmin
- */
 public abstract class User {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-	
+	private String id;
+
 	@NotNull
 	@Column(length = 256, unique = true)
 	private String auth0Id;
-	
+
 	@NotNull
 	@Email
 	@Column(length = 1024)
-    private String email;
-	
+	private String email;
+
 	@NotNull
 	@NotEmpty
 	@Column(length = 128, unique = true)
 	private String username;
-	
+
 	@NotNull
 	@Column(length = 128)
-    private String firstName;
-	
+	private String firstName;
+
 	@NotNull
 	@Column(length = 128)
-    private String lastName;
-	
+	private String lastName;
+
 	@Column(length = 16)
 	@Size(max = 16)
 	private String middleInitial;
-	
+
 }
