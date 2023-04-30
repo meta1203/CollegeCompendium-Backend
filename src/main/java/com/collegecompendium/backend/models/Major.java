@@ -14,7 +14,13 @@ import lombok.Data;
 @Data
 @Entity
 @Builder
+/**
+ * Represents a college major
+ */
 public class Major {
+    /**
+     * Represents the type of major, such as Arts or Science
+     */
     public enum MajorType {
         ARTS, SCIENCE, BUSINESS, PUBLIC,
     }
@@ -34,6 +40,12 @@ public class Major {
         // Empty constructor for JPA
     }
 
+    /**
+     * Creates a new Major object
+     * @param id The id of the major (Generated automatically by saving to the database)
+     * @param name The name of the major
+     * @param majorType The type of major
+     */
     public Major(String id, String name, MajorType majorType) {
         this.id = id;
         this.name = name;

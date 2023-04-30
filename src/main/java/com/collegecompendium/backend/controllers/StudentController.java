@@ -25,6 +25,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 // Web browser visibility
 @CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
+/**
+ * REST endpoint for Students
+ */
 public class StudentController {
 	
 	@Autowired
@@ -37,6 +40,13 @@ public class StudentController {
 	private UserProvider userProvider;
 	
 	@PostMapping("/student")
+	/**
+	 * Creates a new student
+	 * @param input the student to create
+	 * @param token the JWT token of the student
+	 * @param response the HTTP response to modify
+	 * @return the created student
+	 */
 	public Student createNewStudent(@RequestBody Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
 		// Checking if user already exists, if so then do not let them create a new one.
 		if(userProvider.getUserForToken(token) != null) {
@@ -60,6 +70,13 @@ public class StudentController {
 
 	
 	@GetMapping("/student/{id}")
+	/**
+	 * Gets a student by their ID
+	 * @param id the ID of the student to get
+	 * @param token the JWT token of the student
+	 * @param response the HTTP response to modify
+	 * @return the student with the given ID
+	 */
 	public Student getStudentById(
 			@PathVariable String id,
 			@AuthenticationPrincipal Jwt token,
@@ -82,6 +99,12 @@ public class StudentController {
 	}
 	
 	@GetMapping("/student")
+	/**
+	 * Gets the student that is calling the endpoint
+	 * @param token the JWT token of the student
+	 * @param response the HTTP response to modify
+	 * @return the student that is calling the endpoint
+	 */
 	public Student getCallingStudent(@AuthenticationPrincipal Jwt token, HttpServletResponse response) {
 		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
 		if(result == null) {
@@ -97,6 +120,13 @@ public class StudentController {
 
 
 	@PutMapping("/student")
+	/**
+	 * Modifies a student
+	 * @param input the student to modify
+	 * @param token the JWT token of the student
+	 * @param response the HTTP response to modify
+	 * @return the modified student
+	 */
 	public Student modifyStudent(
 		@RequestBody Student input, 
 		@AuthenticationPrincipal Jwt token, 
@@ -133,6 +163,12 @@ public class StudentController {
 	
 	//Student Favorites a College by Id
 	@PutMapping("/student/favorite/{collegeId}")
+	/**
+	 * Adds a college to a student's favorites
+	 * @param collegeId the ID of the college to add
+	 * @param token the JWT token of the student
+	 * @param response the HTTP response to modify
+	 */
 	public Student addFavoriteCollege(
 	        @PathVariable String collegeId,
 	        @AuthenticationPrincipal Jwt token,
@@ -168,6 +204,13 @@ public class StudentController {
 	}
 	
 	@DeleteMapping("/student/favorite/{collegeId}")
+	/**
+	 * Removes a college from a student's favorites
+	 * @param collegeId the ID of the college to remove
+	 * @param token the JWT token of the student
+	 * @param response the HTTP response to modify
+	 * @return true if the college was removed, false otherwise
+	 */
 	public boolean removeFavoriteCollege(
 	        @PathVariable String collegeId,
 	        @AuthenticationPrincipal Jwt token,
@@ -194,6 +237,13 @@ public class StudentController {
 	}
 	
 	@DeleteMapping("/student/{id}")
+	/**
+	 * Deletes a student
+	 * @param id the ID of the student to delete
+	 * @param token the JWT token of the student
+	 * @param response the HTTP response to modify
+	 * @return true if the student was deleted, false otherwise
+	 */
 	public boolean deleteStudent(
 			@PathVariable String id,
 			@AuthenticationPrincipal Jwt token,
@@ -216,7 +266,11 @@ public class StudentController {
 	}
 	
 	//Possible "get students by degree(s)"?
-	
+	/**
+	 * Creates a student from a JWT token
+	 * @param token the JWT token to create the student from
+	 * @return the created student
+	 */
 	private Student createJwtStudent(Jwt token) {
 		
 	    Student student = new Student();

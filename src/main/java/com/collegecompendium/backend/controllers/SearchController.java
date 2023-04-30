@@ -27,6 +27,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 // Web browser visibility
 @CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
+/**
+ * REST endpoint controller for searching
+ */
 public class SearchController {
 
     @Autowired
@@ -38,8 +41,14 @@ public class SearchController {
     @Autowired
     StudentRepository studentRepository;
 
-    // /search/college/distances/{miles}
     @GetMapping("/search/colleges/distance/{miles}")
+    /**
+     * Gets a list of colleges within a certain radius of the student
+     * @param miles the radius to search within
+     * @param token the JWT token of the student
+     * @param response the HTTP response to modify
+     * @return a list of colleges within the given radius
+     */
     public List<College> listWithinRadiusCollege(@PathVariable int miles, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
         Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
         // for test function
@@ -73,6 +82,13 @@ public class SearchController {
     }
 
     @GetMapping("/search/college/{collegeID}")
+    /**
+     * Gets a college by its ID
+     * @param collegeID the ID of the college to fetch
+     * @param token the JWT token of the student
+     * @param response the HTTP response to modify
+     * @return the college with the given ID
+     */
     public College findCollegeByID(
             @PathVariable String collegeID,
             @AuthenticationPrincipal Jwt token,
@@ -95,6 +111,12 @@ public class SearchController {
     }
     
     @GetMapping("/search/colleges")
+    /**
+     * Gets a list of colleges by name
+     * @param name the name of the college to fetch
+     * @param response the HTTP response to modify
+     * @return a list of colleges with the given name
+     */
     public List<College> findCollegesByName(
     		@RequestParam String name,
     		HttpServletResponse response
@@ -112,6 +134,14 @@ public class SearchController {
     }
 
     @GetMapping("/search/colleges/major")
+    /**
+     * Gets a list of colleges by major
+     * @param name the name of the major to fetch
+     * @param id the ID of the major to fetch
+     * @param token the JWT token of the student
+     * @param response the HTTP response to modify
+     * @return a list of colleges with the given major
+     */
     public List<College> findCollegesByMajor(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String id,

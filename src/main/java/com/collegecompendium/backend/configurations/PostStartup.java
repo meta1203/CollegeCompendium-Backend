@@ -13,6 +13,10 @@ import com.collegecompendium.backend.repositories.CollegeRepository;
 import jakarta.annotation.PostConstruct;
 
 @Component
+/**
+ * This class is responsible for populating the database with test data
+ * for the development environment.
+ */
 public class PostStartup {
 	@Autowired
 	private CollegeRepository collegeRepository;

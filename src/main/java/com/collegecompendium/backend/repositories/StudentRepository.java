@@ -8,6 +8,9 @@ import jakarta.transaction.Transactional;
 
 
 @Transactional
+/**
+ * Repository for Student, provides CRUD operations
+ */
 public interface StudentRepository extends CrudRepository<Student, String> {
 	
 	Optional<Student> findById(String id);

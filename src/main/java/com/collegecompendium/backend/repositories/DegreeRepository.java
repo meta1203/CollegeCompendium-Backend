@@ -5,5 +5,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.repository.CrudRepository;
 
 @Transactional
+/**
+ * Repository for Degree, provides CRUD operations
+ */
 public interface DegreeRepository extends CrudRepository<Degree, String> {
 }

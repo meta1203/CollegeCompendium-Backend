@@ -23,6 +23,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
+/**
+ * Represents a student, extends User
+ */
 public class Student extends User {
 
 	@Size(min = 0, max = 120)

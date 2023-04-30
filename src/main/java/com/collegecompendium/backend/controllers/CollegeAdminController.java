@@ -29,6 +29,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 // this has to be put on every controller we want to access from a
 // web browser (CORS my beloathed)
+/**
+ * REST endpoint controller for CollegeAdmin objects.
+ */
 @CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
 public class CollegeAdminController {
 	// Spring annotation - injects a defined Spring Bean here
@@ -102,7 +105,15 @@ public class CollegeAdminController {
 
 		return output;
 	}
+
 	@PostMapping("/collegeAdmin/approve/{email}")
+	/**
+	 * Approves a college admin
+	 * @param email the email of the college admin to approve
+	 * @param token the token of the calling user
+	 * @param response the response object to set the status code
+	 * @return null
+	 */
 	public CollegeAdmin approveCollegeAdmin(
 			@PathVariable String email,
 			@AuthenticationPrincipal Jwt token,
@@ -128,8 +139,8 @@ public class CollegeAdminController {
 	}
 	/**
 	 * Returns the college of the calling token
-	 * @param token - the token of the calling user
-	 * @param response - the response object to set the status code
+	 * @param token the token of the calling user
+	 * @param response the response object to set the status code
 	 * @return the college of the calling token
 	 */
 	@GetMapping("/collegeAdmin")
@@ -165,6 +176,12 @@ public class CollegeAdminController {
 	// Notice the `{id}` in there. That is used by Spring's
 	// @PathVariable annotation to get variables encoded in the path
 	@GetMapping("/collegeAdmin/{id}")
+	/**
+	 * Gets a college admin object by its ID
+	 * @param id the ID of the college admin object
+	 * @param response the response object to set the status code
+	 * @return the college admin object
+	 */
 	public CollegeAdmin getCollegeAdminById(
 			// Spring annotation - takes a variable from the
 			// REST path and bundles it so we can use it in our code
@@ -190,6 +207,13 @@ public class CollegeAdminController {
 	}
 
 	@PutMapping("/collegeAdmin")
+	/**
+	 * Modifies the college admin object
+	 * @param input the college admin object to be modified
+	 * @param token the token of the calling user
+	 * @param response the response object to set the status code
+	 * @return the modified college admin object
+	 */
 	public CollegeAdmin modifyCollegeAdmin(
 			@RequestBody CollegeAdmin input,
 			@AuthenticationPrincipal Jwt token,
@@ -221,11 +245,20 @@ public class CollegeAdminController {
 	}
 
 	@DeleteMapping("/collegeAdmin/{id}")
+	/**
+	 * Deletes the college admin with the given id. Requires a valid college admin
+	 * @param id the id of the college admin to be deleted
+	 * @param token the token of the calling user
+	 * @param response the response object to set the status code
+	 * @return true if the college admin was deleted, false otherwise
+	 */
 	public boolean deleteCollegeAdmin(
 			@PathVariable String id,
+			@AuthenticationPrincipal Jwt token,
 			HttpServletResponse response
 			) {
 		Optional<CollegeAdmin> query = collegeAdminRepository.findById(id);
+		CollegeAdmin caller = collegeAdminRepository.findDistinctByAuth0Id(token.getSubject());
 		if (query.isEmpty()) {
 			// couldn't find it, so return a 404
 			response.setStatus(404);
@@ -233,16 +266,30 @@ public class CollegeAdminController {
 		}
 
 		// check if caller admin is approved
-		CollegeAdmin result = query.get();
-		if (!result.isApproved()) { 
+		if (!caller.isApproved()) {
 			response.setStatus(403);
 			return false;
 		}
-		collegeAdminRepository.delete(query.get());
+		CollegeAdmin del = query.get();
+
+		// check if caller admin is in same college
+		if (!caller.getCollege().getId().equals(del.getCollege().getId())) {
+			response.setStatus(403);
+			return false;
+		}
+
+		collegeAdminRepository.delete(del);
 		return true;
 	}
 
 	@PutMapping("/collegeAdmin/college")
+	/**
+	 * Updates the college of the calling token
+	 * @param incoming the college to be updated
+	 * @param jwt the token of the calling user
+	 * @param response the response object to set the status code
+	 * @return the updated college
+	 */
 	public College updateCollegeAdmin(
 			@RequestBody College incoming,
 			@AuthenticationPrincipal Jwt jwt,

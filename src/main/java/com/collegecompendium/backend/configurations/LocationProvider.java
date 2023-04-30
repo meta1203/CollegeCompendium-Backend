@@ -15,13 +15,16 @@ import lombok.extern.log4j.Log4j2;
 /**
  * This class is responsible for finding the longitude and latitude of a location.
  * It uses the OpenStreetMap API to find the location.
- *
  */
 @Service
 @Log4j2
 public class LocationProvider {
 	private static LocationProvider instance = null;
 
+	/**
+	 * Returns the instance of the LocationProvider class.
+	 * @return Instance of the LocationProvider class
+	 */
 	public static LocationProvider getInstance(){
 		if(instance == null){
 			instance = new LocationProvider();
@@ -29,6 +32,11 @@ public class LocationProvider {
 		return instance;
 	}
 
+	/**
+	 * Sends a GET request to the given URL and returns the response as a string.
+	 * @param url URL to send the GET request to
+	 * @return Response from the server as a string
+	 */
 	private String getResponse(String url) {
 		try {
 			URL server = new URL(url);

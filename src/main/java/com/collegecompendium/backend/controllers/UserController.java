@@ -21,6 +21,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
 @RestController
+/**
+ * REST endpoint controller for users
+ */
 public class UserController {
 	@Autowired
 	private UserProvider userProvider;
@@ -40,6 +43,12 @@ public class UserController {
     }
     
     @GetMapping("/user")
+	/**
+	 * Gets the user associated with the given JWT token
+	 * @param token the JWT token of the user
+	 * @param response the HTTP response to modify
+	 * @return the user associated with the given JWT token
+	 */
     public User getUser(
     		@AuthenticationPrincipal Jwt token,
     		HttpServletResponse response
