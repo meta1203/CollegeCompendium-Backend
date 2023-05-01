@@ -26,16 +26,16 @@ import jakarta.servlet.http.HttpServletResponse;
 // Web browser visibility
 @CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
 public class StudentController {
-	
+
 	@Autowired
 	private StudentRepository studentRepository;
-	
+
 	@Autowired
 	private CollegeRepository collegeRepository;
-	
+
 	@Autowired
 	private UserProvider userProvider;
-	
+
 	@PostMapping("/student")
 	public Student createNewStudent(@RequestBody Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
 		// Checking if user already exists, if so then do not let them create a new one.
@@ -52,13 +52,13 @@ public class StudentController {
 
 		// Saving the student to the db
 		Student output = studentRepository.save(input);
-		
+
 		// add student permission to auth0
 		userProvider.addPermissionToUser(output, "student");
 		return output;
 	}
 
-	
+
 	@GetMapping("/student/{id}")
 	public Student getStudentById(
 			@PathVariable String id,
@@ -66,21 +66,21 @@ public class StudentController {
 			HttpServletResponse response
 			) {
 		Optional<Student> query = studentRepository.findById(id);
-		
+
 		if(query.isEmpty()) {
 			response.setStatus(404);
 			return null;
 		}
-		
+
 		Student ret = query.get();
 		if (! ret.getAuth0Id().equals(token.getSubject())) {
 			response.setStatus(403);
 			return null;
 		}
-		
+
 		return ret;
 	}
-	
+
 	@GetMapping("/student")
 	public Student getCallingStudent(@AuthenticationPrincipal Jwt token, HttpServletResponse response) {
 		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
@@ -93,106 +93,100 @@ public class StudentController {
 			return result;
 		}
 	}
-	
+
 
 
 	@PutMapping("/student")
 	public Student modifyStudent(
-		@RequestBody Student input, 
-		@AuthenticationPrincipal Jwt token, 
-		HttpServletResponse response) {
-		
+			@RequestBody Student input, 
+			@AuthenticationPrincipal Jwt token, 
+			HttpServletResponse response) {
+
 		Student result = studentRepository.findDistinctByAuth0Id(token.getSubject());
-		
+
 		// if the student does not exist, sending back 404.
 		if(result == null) {
 			response.setStatus(404);
 			return null;
 		}
-		
+
 		// if the token does not belong to the caller, return 403
 		if (! token.getSubject().equals(input.getAuth0Id())) {
 			response.setStatus(403);
 			return null;
 		}
-		
+
 		if (! input.getAuth0Id().equals(result.getAuth0Id())) {
 			response.setStatus(403);
 			return null;
 		}
-		
+
 		// if the id is different, overwrite given id
 		if (! input.getId().equals(result.getId())) {
 			input.setId(result.getId());
 		}
-		
+
 		// update the db with the new student object
 		input = studentRepository.save(input);
 		return input;
 	}
-	
+
 	//Student Favorites a College by Id
 	@PutMapping("/student/favorite/{collegeId}")
 	public Student addFavoriteCollege(
-	        @PathVariable String collegeId,
-	        @AuthenticationPrincipal Jwt token,
-	        HttpServletResponse response) {
-		
-		
+			@PathVariable String collegeId,
+			@AuthenticationPrincipal Jwt token,
+			HttpServletResponse response) {
+
+
 		Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
 		Optional<College> collegeQuery = collegeRepository.findById(collegeId);
-		
+
 		if (student == null) {
 			response.setStatus(400);
 			return null;
 		}
-		
+
 		if (collegeQuery.isEmpty()) {
 			response.setStatus(404);
 			return null;
 		}
-		
+
 		College college = collegeQuery.get();
-		
+
 		boolean added = student.getFavoriteColleges().add(college);
-	
-		if (!added) {
-			// college already exists
-			response.setStatus(200);
-		} else {
+
+		if (added) {
 			student = studentRepository.save(student);
-			response.setStatus(200);
 		}
-		
+
 		return student;
 	}
-	
+
 	@DeleteMapping("/student/favorite/{collegeId}")
-	public boolean removeFavoriteCollege(
-	        @PathVariable String collegeId,
-	        @AuthenticationPrincipal Jwt token,
-	        HttpServletResponse response
-	        ) {
-	    Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
-	    Optional<College> collegeQuery = collegeRepository.findById(collegeId);
-	    
-	    if (student == null) {
-	    	response.setStatus(400);
-	    	return false;
-	    }
+	public Student removeFavoriteCollege(
+			@PathVariable String collegeId,
+			@AuthenticationPrincipal Jwt token,
+			HttpServletResponse response
+			) {
+		Student student = studentRepository.findDistinctByAuth0Id(token.getSubject());
+		Optional<College> collegeQuery = collegeRepository.findById(collegeId);
 
-	    College college = collegeQuery.get();
+		if (student == null) {
+			response.setStatus(400);
+			return null;
+		}
 
-	    boolean removed = student.getFavoriteColleges().remove(college);
-	        studentRepository.save(student);
-	        if(removed) {
-	        response.setStatus(200);
-	        return removed;
-	        }
-	        response.setStatus(200);
-	        return removed;
+		College college = collegeQuery.get();
+
+		boolean removed = student.getFavoriteColleges().remove(college);
+		student = studentRepository.save(student);
+		if(removed) {
+			return student;
+		}
+		return student;
 	}
-	
+
 	@DeleteMapping("/student/{id}")
 	public boolean deleteStudent(
 			@PathVariable String id,
@@ -204,32 +198,32 @@ public class StudentController {
 			response.setStatus(404);
 			return false;
 		}
-		
+
 		Student ret = query.get();
 		if (! ret.getAuth0Id().equals(token.getSubject())) {
 			response.setStatus(403);
 			return false;
 		}
-		
+
 		studentRepository.delete(ret);
 		return true;
 	}
-	
+
 	//Possible "get students by degree(s)"?
-	
+
 	private Student createJwtStudent(Jwt token) {
-		
-	    Student student = new Student();
-	    student.setEmail(token.getClaim("email"));
-	    student.setUsername(token.getClaim("nickname"));
-	    student.setLocation(null);
-	    student.setFirstName(token.getClaim("given_name"));
-	    student.setLastName(token.getClaim("family_name"));
-	    student.setMiddleInitial("");
-	    student.setHighschool("");
-	    student.setCollege("");
-	    student.setSatScore(null);
-	    student.setActScore(null);
-	    return student;
+
+		Student student = new Student();
+		student.setEmail(token.getClaim("email"));
+		student.setUsername(token.getClaim("nickname"));
+		student.setLocation(null);
+		student.setFirstName(token.getClaim("given_name"));
+		student.setLastName(token.getClaim("family_name"));
+		student.setMiddleInitial("");
+		student.setHighschool("");
+		student.setCollege("");
+		student.setSatScore(null);
+		student.setActScore(null);
+		return student;
 	}
 }
