@@ -48,6 +48,4 @@ public class Degree {
 		this.degreeType = degreeType;
 		this.creditsRequired = creditsRequired;
 	}
-
 }
-

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.collegecompendium.backend.configurations.LocationProvider;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.CollegeAdmin;
 import com.collegecompendium.backend.models.Major;
@@ -32,6 +34,8 @@ public class SuperAdminController {
 	private CollegeRepository collegeRepository;
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
+	@Autowired
+	private LocationProvider locationProvider;
 	
 	@GetMapping("/test")
 	public Jwt testSuperAdmin(@AuthenticationPrincipal Jwt token) {
@@ -74,6 +78,7 @@ public class SuperAdminController {
 	
 	@PostMapping("/college")
 	public College addCollege(@RequestBody College toAdd) {
+		toAdd.setLocation(locationProvider.findLocation(toAdd.getLocation().getAddress()));
 		toAdd = collegeRepository.save(toAdd);
 		return toAdd;
 	}
@@ -86,6 +91,15 @@ public class SuperAdminController {
 			return null;
 		toAdd = collegeRepository.save(toAdd);
 		return toAdd;
+	}
+	
+	@DeleteMapping("/college/{id}")
+	public boolean deleteCollege(@PathVariable String id) {
+		College c = collegeRepository.findById(id).orElse(null);
+		if (c == null)
+			return false;
+		collegeRepository.delete(c);
+		return true;
 	}
 	
 	@PutMapping("/collegeAdmin/approve/{email}")

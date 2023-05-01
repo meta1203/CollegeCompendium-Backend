@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.collegecompendium.backend.configurations.LocationProvider;
 import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.CollegeAdmin;
@@ -37,12 +38,12 @@ public class CollegeAdminController {
 	// (@Bean on a function that returns a value)
 	@Autowired
 	private CollegeAdminRepository collegeAdminRepository;
-
 	@Autowired
 	private CollegeRepository collegeRepository;
-
 	@Autowired
 	private UserProvider userProvider;
+	@Autowired
+	private LocationProvider locationProvider;
 
 	@Autowired
 	private DegreeRepository degreeRepository;
@@ -265,6 +266,12 @@ public class CollegeAdminController {
 		incoming.setCollegeAdmins(original.getCollegeAdmins());
 		incoming.setPopularity(original.getPopularity());
 		incoming.setDegrees(original.getDegrees());
+		// lookup location based on provided address
+		incoming.setLocation(
+				locationProvider.findLocation(
+						incoming.getLocation().getAddress()
+						)
+				);
 		
 		incoming = collegeRepository.save(incoming);
 		

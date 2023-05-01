@@ -77,7 +77,7 @@ public class College {
 	private String description;
 
 	@Size(min = 12, max = 16)
-	@Column(length = 15)
+	@Column(length = 16)
 	private String phoneNumber;
 
 	private Integer popularity;
