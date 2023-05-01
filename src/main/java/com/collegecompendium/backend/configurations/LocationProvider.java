@@ -66,8 +66,8 @@ public class LocationProvider {
 	 * @param query Location we are attempting to find
 	 * @return Location object representing the locations longitude and latitude, or null if the location could not be found
 	 */
-	public Location findLocation(String query) {
-		query = query.replace(" ", "+");
+	public Location findLocation(String input) {
+		String query = input.replace(" ", "+");
 		String queryURL = "https://nominatim.openstreetmap.org/search?q=" + query + "&format=json" ; //+ "&format=json&polygon=1&addressdetails=1";
 		String result;
 
@@ -91,7 +91,7 @@ public class LocationProvider {
 			}
 		}
 
-		if(lat.equals("") || lon.equals("")){
+		if(lat.equals("") || lon.equals("")) {
 			throw new IllegalArgumentException("Could not find location: " + query);
 		}
 
@@ -101,6 +101,6 @@ public class LocationProvider {
 		log.debug("Lat: " + lat);
 		log.debug("Lon: " + lon);
 
-		return new Location(query, lat, lon);
+		return new Location(input, lat, lon);
 	}
 }

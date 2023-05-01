@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -59,7 +60,7 @@ public class SecurityConfiguration {
                 // claims
                 Map.of(
                         "sub", "test|1234",
-                        "permissions", List.of("student", "collegeAdmin")
+                        "permissions", List.of("student", "collegeAdmin", "superAdmin")
                 )
         );
         log.error("LOOK ==> injected token is " + ret.getTokenValue());
@@ -76,14 +77,16 @@ public class SecurityConfiguration {
 		// enforce permissions
 		// changed /college to /collegeAdmin
 		http.authorizeHttpRequests()
+			.requestMatchers(HttpMethod.POST, "/collegeAdmin", "/student")
+				.authenticated()
 			.requestMatchers("/student", "/student/**")
 				.hasAuthority("PERM_student")
 			.requestMatchers("/collegeAdmin", "/collegeAdmin/**")
 				.hasAuthority("PERM_collegeAdmin")
-			.requestMatchers("/search/**")
-				.authenticated()
 			.requestMatchers("/superAdmin/**", "/student", "/student/**", "/collegeAdmin", "/collegeAdmin/**")
 				.hasAuthority("PERM_superAdmin")
+			.requestMatchers("/search/**")
+				.authenticated()
 			.anyRequest()
 				.authenticated();
 

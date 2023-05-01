@@ -1,7 +1,6 @@
 package com.collegecompendium.backend.controllers;
 
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.collegecompendium.backend.configurations.LocationProvider;
 import com.collegecompendium.backend.configurations.UserProvider;
 import com.collegecompendium.backend.models.College;
 import com.collegecompendium.backend.models.Student;
@@ -26,16 +26,16 @@ import jakarta.servlet.http.HttpServletResponse;
 // Web browser visibility
 @CrossOrigin(origins = {"http://localhost:3000", "https://cse326.meta1203.com/"})
 public class StudentController {
-
 	@Autowired
 	private StudentRepository studentRepository;
-
 	@Autowired
 	private CollegeRepository collegeRepository;
 
 	@Autowired
 	private UserProvider userProvider;
-
+	@Autowired
+	private LocationProvider locationProvider;
+	
 	@PostMapping("/student")
 	public Student createNewStudent(@RequestBody Student input, @AuthenticationPrincipal Jwt token, HttpServletResponse response) {
 		// Checking if user already exists, if so then do not let them create a new one.
@@ -49,6 +49,13 @@ public class StudentController {
 
 		// Setting the ID to null will allow the User Model to generate the information.
 		input.setId(null);
+		
+		// Look up student location
+		input.setLocation(
+				locationProvider.findLocation(
+						input.getLocation().getAddress()
+						)
+				);
 
 		// Saving the student to the db
 		Student output = studentRepository.save(input);
@@ -125,7 +132,9 @@ public class StudentController {
 		if (! input.getId().equals(result.getId())) {
 			input.setId(result.getId());
 		}
-
+		
+		input.setLocation(locationProvider.findLocation(input.getLocation().getAddress()));
+		
 		// update the db with the new student object
 		input = studentRepository.save(input);
 		return input;
